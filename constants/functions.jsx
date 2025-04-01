@@ -81,7 +81,7 @@ const loadAndAlignTileset = async (viewer, assetId) => {
 export const loadNewBuildingTileset = async (cesiumViewer) => {
   // Array of tileset IDs and corresponding names for better debugging
   const tilesets = [
-    // { id: 3220424, name: "map" },
+    // { id: 3268940, name: "map" },
     { id: 2593928, name: "senate" },
     { id: 2593447, name: "roundabout" },
     { id: 2975229, name: "NDDC" },
@@ -138,12 +138,15 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 2979494, name: "SOES" },
     { id: 2979496, name: "BackOFSOES" },
     { id: 2979497, name: "BesideDGS" },
+    { id: 3266179, name: "DGS" },
+    { id: 3266239, name: "afterDGS" },
+    { id: 3266277, name: "hostelC" },
   ];
 
   try {
     // Load all tilesets sequentially to ensure smooth loading and debug visibility
     for (const { id, name } of tilesets) {
-      // console.log(`Loading tileset: ${name} (ID: ${id})`);
+      console.log(`Loading tileset: ${name} (ID: ${id})`);
       const tileset = await Cesium3DTileset.fromIonAssetId(id);
       cesiumViewer.scene.primitives.add(tileset);
 

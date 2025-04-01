@@ -14,7 +14,7 @@ const TerrainPositioner = ({ viewer, modelUrl }) => {
   const [heading, setHeading] = useState(0);
   const [pitch, setPitch] = useState(0);
   const [roll, setRoll] = useState(0);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(2.0803245856);
   const [modelEntity, setModelEntity] = useState(null);
 
   // Update model function

@@ -140,7 +140,7 @@ const CesiumMapB = () => {
 
         const loadTerrain = async () => {
           try {
-            const modelUrl = "/models/fmap10.glb"; // Ensure this path is correct
+            const modelUrl = "/models/futo14.glb"; // Ensure this path is correct
 
             // Define model properties
             const longitude = 6.9955297993;
@@ -149,7 +149,7 @@ const CesiumMapB = () => {
             const heading = 90; // Adjust to rotate the model
             const pitch = 0;
             const roll = 0;
-            const scale = 1.4;
+            const scale = 1;
 
             // Convert position & rotation
             const position = Cartesian3.fromDegrees(
@@ -182,7 +182,7 @@ const CesiumMapB = () => {
         };
 
         // Call the function
-        await loadTerrain();
+        // await loadTerrain();
 
         loadNewBuildingTileset(viewer);
 
@@ -362,7 +362,7 @@ const CesiumMapB = () => {
           className="w-full h-screen overflow-hidden relative border "
         >
           {/* {viewer && (
-            <TerrainPositioner viewer={viewer} modelUrl="/models/fmap10.glb" />
+            <TerrainPositioner viewer={viewer} modelUrl="/models/futo14.glb" />
           )} */}
           {/* search/other basr */}
           <MapFlyers
