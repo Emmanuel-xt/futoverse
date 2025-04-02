@@ -81,7 +81,7 @@ const loadAndAlignTileset = async (viewer, assetId) => {
 export const loadNewBuildingTileset = async (cesiumViewer) => {
   // Array of tileset IDs and corresponding names for better debugging
   const tilesets = [
-    // { id: 3268940, name: "map" },
+    { id: 3268940, name: "map" },
     { id: 2593928, name: "senate" },
     { id: 2593447, name: "roundabout" },
     { id: 2975229, name: "NDDC" },
@@ -112,6 +112,7 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 2977063, name: "SOPS" },
     { id: 2977064, name: "oppositeSOPS" },
     { id: 2977065, name: "ICT" },
+    { id: 2977066, name: "besideICT" },
     { id: 2977067, name: "SIWES" },
     { id: 2977068, name: "besideJUPEB" },
     { id: 2977070, name: "jupeb1" },
