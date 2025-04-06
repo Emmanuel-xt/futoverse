@@ -97,7 +97,7 @@ const CesiumMapB = () => {
           },
         });
 
-        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 50; // Minimum zoom level (higher value = less zoom-in)
+        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // Minimum zoom level (higher value = less zoom-in)
         viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1000;
 
         const flyToLocationFromURL = () => {
