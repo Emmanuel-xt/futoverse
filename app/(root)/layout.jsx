@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
                         <div className="">{children}</div>
                         <Toaster />
                         <ButtomNav />
-                        {/* <CesiumMapB /> */}
+                        <CesiumMapB />
                       </main>
                     </CartProvider>
                   </CesiumViewerProvider>
