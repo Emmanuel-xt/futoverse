@@ -79,6 +79,11 @@ const MapFlyers = ({
         return;
       }
       const shopLocation = { longitude: long, latitude: lat };
+      const userLocation = {
+        longitude: stableLocation.longitude,
+        latitude: stableLocation.latitude,
+      };
+
       await drawLineBetweenPoints(viewer, userLocation, shopLocation);
     }
   };

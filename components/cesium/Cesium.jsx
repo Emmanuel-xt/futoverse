@@ -86,9 +86,9 @@ const CesiumMapB = () => {
       if (viewerReady && viewer) {
         viewer.camera.flyTo({
           destination: Cartesian3.fromDegrees(
-            6.987165014949664,
-            5.394837089099982,
-            500
+            6.99495977717274,
+            5.383510261110621,
+            400
           ),
           orientation: {
             heading: 0,

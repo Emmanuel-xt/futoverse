@@ -73,8 +73,8 @@ const UserInfoModal = ({ showModal, setShowModal, userInfo }) => {
                 className="rounded-full w-24 h-24"
               />
             </div>
-            <p className="">{user?.name}</p>
-            <p className="text-slate-300 text-sm">{user.username}</p>
+            <p className="font-semibold">{user?.name}</p>
+            <p className="text-[12px]">@{user?.username}</p>
             <p className="">{user?.department?.name}</p>
             <p className="">{user?.level?.name} Level</p>
             <div className="flex flex-col gap-2">

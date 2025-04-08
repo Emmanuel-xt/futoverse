@@ -28,15 +28,15 @@ export const AddUserMarkerToMap = () => {
       const socketBasedId = socket.id ? `user-${socket.id}` : fallbackId;
       markerIdRef.current = socketBasedId;
 
-      const position = Cartesian3.fromDegrees(longitude, latitude);
+      const position = Cartesian3.fromDegrees(longitude, latitude, 5);
 
       // Check if the user's marker already exists and update its position
-      const existingEntity = viewer.entities.getById(markerIdRef.current);
+      const existingEntity = viewer.entities.getById(fallbackId);
       if (existingEntity) {
         existingEntity.position = position;
       } else {
         viewer.entities.add({
-          id: markerIdRef.current,
+          id: fallbackId,
           name: `User: ${username}`,
           position: position,
           properties: {
@@ -105,13 +105,13 @@ export const DisplayAllUserMarkers = () => {
             // Skip the current user's marker
             if (username === session?.user.username) return;
             // if (socketId === socket.id) return;
-            const position = Cartesian3.fromDegrees(longitude, latitude);
-            const existingEntity = viewer.entities.getById(`user-${socketId}`);
+            const position = Cartesian3.fromDegrees(longitude, latitude, 10);
+            const existingEntity = viewer.entities.getById(`user-${username}`);
             if (existingEntity) {
               existingEntity.position = position;
             } else {
               viewer.entities.add({
-                id: `user-${socketId}`, // Use socket ID as the unique identifier
+                id: `user-${username}`, // Use socket ID as the unique identifier
                 name: `User: ${username}`,
                 position: position,
                 properties: {

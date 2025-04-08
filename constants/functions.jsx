@@ -29,6 +29,7 @@ import {
   IonResource,
   Cartographic,
   Matrix4,
+  PolylineOutlineMaterialProperty,
 } from "cesium";
 import { concatPlaces, groupedPlaces, places } from "./places";
 import { toast } from "sonner";
@@ -107,9 +108,9 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 2977053, name: "workshop1" },
     { id: 2977054, name: "automotiveWS" },
     { id: 2977055, name: "SOPsExtend" },
-    { id: 2977058, name: "physicsPractExt" },
-    { id: 2977060, name: "physicsPractical" },
-    { id: 2977061, name: "physicsPracticalNew" },
+    // { id: 2977058, name: "physicsPractExt" },
+    // { id: 2977060, name: "physicsPractical" },
+    // { id: 2977061, name: "physicsPracticalNew" },
     { id: 2977063, name: "SOPS" },
     { id: 2977064, name: "oppositeSOPS" },
     { id: 2977065, name: "ICT" },
@@ -145,9 +146,9 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 3266277, name: "hostelC" },
     { id: 3280046, name: "Architecture-Short" },
     { id: 3280049, name: "infront-Archi" },
-    { id: 3280050, name: "ArchitectureHall" },
+    // { id: 3280050, name: "ArchitectureHall" },
     { id: 3280053, name: "opposite_archi" },
-    { id: 3280058, name: "beforeSOES" },
+    { id: 3280054, name: "beforeSOES" },
     { id: 3280055, name: "be4Archi-short" },
     { id: 3280061, name: "backofArchiHall" },
     { id: 3280063, name: "ArchitectureSecondBuilding" },
@@ -168,18 +169,40 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 3280369, name: "SEET_3" },
     { id: 3280461, name: "Stac" },
     { id: 3280704, name: "futo-cafe" },
+    { id: 3284551, name: "after-press" },
+    { id: 3284552, name: "press" },
+    { id: 3284555, name: "geology" },
+    { id: 3284557, name: "architecture-hall" },
+    { id: 3284561, name: "biochem" },
+    { id: 3284564, name: "sat-new-lecture-hall" },
+    { id: 3284605, name: "physics-new" },
+    { id: 3284608, name: "colledge-of-medicine" },
+    { id: 3284609, name: "beside-physics-new" },
+    { id: 3284611, name: "physics-textbook" },
+    { id: 3284613, name: "SOPS-theatre" },
+    { id: 3284616, name: "micro-bio" },
+    { id: 3284618, name: "last-sat-building" },
+    { id: 3284620, name: "logistics" },
+    { id: 3284622, name: "ENS" },
+    { id: 3284624, name: "Bank" },
+    { id: 3284626, name: "dental" },
+    { id: 3284627, name: "optometry" },
+    { id: 3284629, name: "beside-dental" },
+    { id: 3284633, name: "SOHT-hall" },
+    { id: 3284638, name: "prostetics" },
+    { id: 3284646, name: "beside-prostetics" },
   ];
 
   try {
     // Load all tilesets sequentially to ensure smooth loading and debug visibility
     for (const { id, name } of tilesets) {
-      console.log(`Loading tileset: ${name} (ID: ${id})`);
+      // console.log(`Loading tileset: ${name} (ID: ${id})`);
       const tileset = await Cesium3DTileset.fromIonAssetId(id);
       cesiumViewer.scene.primitives.add(tileset);
 
       // Wait for the tileset to be ready before proceeding
       await tileset.readyPromise;
-      // console.log(`Successfully loaded tileset: ${name}`);
+      console.log(`Successfully loaded tileset: ${name}`);
       // await alignTilesetBaseToGround(tileset);
 
       // Adjust height offset
@@ -430,40 +453,37 @@ export const drawLineBetweenPoints = async (
     endLocation.latitude
   );
 
+  const positions =
+    waypoints && waypoints.length > 0
+      ? waypoints.map(([longitude, latitude]) =>
+          Cartesian3.fromDegrees(longitude, latitude, 5)
+        )
+      : [startPoint, endPoint];
+
+  viewer.entities.add({
+    polyline: {
+      positions: positions,
+      width: 10, // thicker line
+      material: new PolylineOutlineMaterialProperty({
+        color: Color.BLUE.withAlpha(0.9),
+        outlineColor: Color.BLUE.withAlpha(0.6),
+        outlineWidth: 2,
+      }),
+    },
+  });
+
   if (waypoints && waypoints.length > 0) {
-    // Draw the polyline following the road
-    const positions = waypoints.map(([longitude, latitude]) =>
-      Cartesian3.fromDegrees(longitude, latitude)
-    );
-
-    viewer.entities.add({
-      polyline: {
-        positions: positions,
-        width: 3,
-        material: Color.RED,
-      },
-    });
-
-    // Fly to the destination (last waypoint)
     const [destinationLon, destinationLat] = waypoints[waypoints.length - 1];
     viewer.camera.flyToBoundingSphere(
       new BoundingSphere(
         Cartesian3.fromDegrees(destinationLon, destinationLat, 0),
         500
-      ), // 500 meters offset
+      ),
       {
         duration: 2,
         offset: new HeadingPitchRange(0, Math.toRadians(-30), 500),
       }
     );
-  } else {
-    viewer.entities.add({
-      polyline: {
-        positions: [startPoint, endPoint],
-        width: 3,
-        material: Color.RED,
-      },
-    });
   }
 };
 
