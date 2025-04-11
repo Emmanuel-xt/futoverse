@@ -7,43 +7,43 @@ import useConversation from "zustand/useConversation";
 
 const SearchInput = () => {
   const [search, setSearch] = useState("");
-  const { setSelectedConversation } = useConversation();
-  const { conversations, setConversations } = useGetConversations();
+  const { conversations } = useGetConversations();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (!search) return;
     if (search.length < 3) {
-      return toast.error("Search term must be at least 3 characters long");
+      return toast("Search term must be at least 3 characters long");
     }
-
+    const searchTerm = search.toLowerCase();
     // Step 1: Try to find a conversation that matches the search
-    const filteredConversations = conversations.filter((c) =>
-      c?.name.toLowerCase().includes(search.toLowerCase())
+    const matchedConversations = conversations.filter((c) =>
+      c?.name?.toLowerCase().includes(searchTerm)
     );
-
-    if (filteredConversations.length > 0) {
-      setConversations(filteredConversations); // Update UI with filtered conversations
-      return;
-    }
-
-    // Step 2: If no conversation is found, search for users in the database
     try {
-      const filteredUsers = await searchUsers(search);
+      const matchedUsers = await searchUsers(search); // 👈 Search in DB
+      const existingIds = new Set(conversations.map((c) => c.id));
 
-      if (filteredUsers > 0) {
-        setConversations(filteredUsers); // Display users matching search
-      } else {
-        toast.error("No matching users found!");
+      const newUsers = matchedUsers.filter((u) => !existingIds.has(u.id)); // exclude existing convos
+
+      if (matchedConversations.length === 0 && newUsers.length === 0) {
+        toast.error("No results found");
+        return;
       }
-    } catch (error) {
-      console.error("Error searching users:", error);
-      toast.error("Something went wrong while searching.");
+
+      // Update searchResults in parent
+      setSearchResults({
+        conversations: matchedConversations,
+        users: newUsers,
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Search failed.");
     }
   };
 
   return (
-    <form className="flex items-center gap-2" onSubmit={handleSubmit}>
+    <div className="flex items-center gap-2">
       <input
         type="text"
         placeholder="Search…"
@@ -51,10 +51,10 @@ const SearchInput = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button type="submit" className="text-sky-500">
+      <button onClick={handleSubmit} className="text-sky-500">
         <Search className="text-lg font-bold" />
       </button>
-    </form>
+    </div>
   );
 };
 

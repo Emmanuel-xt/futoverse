@@ -1,10 +1,17 @@
 const path = require("path");
 const process = require("process");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development", // Only enable PWA in production
+});
+
 const pathBuilder = (subpath) => path.join(process.cwd(), subpath);
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const baseConfig = {
   webpack: (config, { webpack }) => {
     config.plugins.push(
       new CopyWebpackPlugin({
@@ -45,7 +52,8 @@ const nextConfig = {
       }),
       new webpack.DefinePlugin({ CESIUM_BASE_URL: JSON.stringify("/cesium") })
     );
-    // Add the rule for handling GLB files
+
+    // Add the rule for handling GLB/GLTF models
     config.module.rules.push({
       test: /\.(glb|gltf)$/,
       use: [
@@ -61,16 +69,17 @@ const nextConfig = {
 
     return config;
   },
-  experimental: { serverComponentsExternalPackages: ["mongoose"] },
+  experimental: {
+    serverComponentsExternalPackages: ["mongoose"],
+  },
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
   output: "standalone",
   images: {
-    domains: ["res.cloudinary.com", "randomuser.me"], // Allow images from Cloudinary
+    domains: ["res.cloudinary.com", "randomuser.me"],
   },
 };
 
-module.exports = nextConfig;
+// Wrap your config with PWA support
+module.exports = withPWA(baseConfig);

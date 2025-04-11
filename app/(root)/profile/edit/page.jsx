@@ -59,7 +59,8 @@ const EditProfile = () => {
     bio: "",
     about: "",
     gender: "",
-    department: "",
+    departmentName: "", // NEW
+    departmentInitial: "", // NEW
     level: "",
     latitude: "",
     longitude: "",
@@ -132,7 +133,8 @@ const EditProfile = () => {
         about: form.about,
         bio: form.bio,
         gender: form.gender,
-        departmentName: form.department,
+        departmentName: form.departmentName,
+        departmentInitial: form.departmentInitial,
         levelName: form.level,
         latitude: parseFloat(form.latitude),
         longitude: parseFloat(form.longitude),
@@ -311,7 +313,7 @@ const EditProfile = () => {
                   aria-expanded={open}
                   className="w-full justify-between flex items-center border p-2 rounded-md"
                 >
-                  {form.department || "Select department"}
+                  {form.departmentName || "Select department"}
                   <ChevronsUpDown className="opacity-50 ml-auto" />
                 </button>
               </PopoverTrigger>
@@ -323,21 +325,22 @@ const EditProfile = () => {
                     <CommandGroup>
                       {departments.map((department) => (
                         <CommandItem
-                          key={department}
-                          value={department}
+                          key={department.initial}
+                          value={department.name}
                           onSelect={() => {
                             setForm((prev) => ({
                               ...prev,
-                              department,
+                              departmentName: department.name,
+                              departmentInitial: department.initial,
                             }));
                             setOpen(false);
                           }}
                         >
-                          {department}
+                          {department.name}
                           <Check
                             className={cn(
                               "ml-auto",
-                              form.department === department
+                              form.departmentName === department.name
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}

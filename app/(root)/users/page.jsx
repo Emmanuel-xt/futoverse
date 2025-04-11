@@ -1,138 +1,132 @@
 "use client";
-import { useState } from "react";
-import { FiSearch, FiMoreVertical } from "react-icons/fi";
+import { departments } from "@constants/arrays";
+import { fetchAllUsersForListing } from "@lib/actions/user.prisma";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { FiSearch } from "react-icons/fi";
+import { IoMdArrowDropdown } from "react-icons/io";
 
-const dummyUsers = [
-  {
-    id: 1,
-    name: "Okonkwo okeke",
-    mutualFriends: 402,
-    time: "1h",
-    image: "/assets/logo.svg",
-  },
-  {
-    id: 2,
-    name: "Emma Stallion",
-    mutualFriends: 350,
-    time: "3h",
-    image: "/assets/IceHomeImage1.jpg",
-  },
-  {
-    id: 3,
-    name: "Fortune Shitcoins",
-    mutualFriends: 171,
-    time: "",
-    image: "/assets/logo.svg",
-  },
-  {
-    id: 4,
-    name: "Meka Kennedy",
-    mutualFriends: 318,
-    time: "",
-    image: "/assets/IceHomeImage1.jpg",
-  },
-  {
-    id: 5,
-    name: "Favour Nwa",
-    mutualFriends: 217,
-    time: "",
-    image: "/assets/logo.svg",
-  },
-  {
-    id: 6,
-    name: "Aza Man",
-    mutualFriends: 494,
-    time: "1h",
-    image: "/assets/IceHomeImage1.jpg",
-  },
-  {
-    id: 7,
-    name: "Arinze Okeke",
-    mutualFriends: 168,
-    time: "",
-    image: "/assets/logo.svg",
-  },
-  {
-    id: 8,
-    name: "Emmanuel Javascript",
-    mutualFriends: 152,
-    time: "",
-    image: "/assets/IceHomeImage1.jpg",
-  },
-  {
-    id: 9,
-    name: "wizard code",
-    mutualFriends: 58,
-    time: "32m",
-    image: "/assets/logo.svg",
-  },
-];
+const levels = ["100", "200", "300", "400", "500"];
 
-const FriendsList = () => {
-  const [users, setUsers] = useState(dummyUsers);
-  const [menuOpen, setMenuOpen] = useState(null);
+const Users = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+  const [users, setUsers] = useState([]);
+  const [errorMessage, seterrorMessage] = useState("");
+
+  // Filter logic
+  const filteredUsers = users.filter((user) => {
+    const matchesSearchTerm =
+      (user.name &&
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.username &&
+        user.username.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesDepartment =
+      !selectedDepartment || user.department?.name === selectedDepartment;
+
+    const matchesLevel = !selectedLevel || user.level?.name === selectedLevel;
+
+    return matchesSearchTerm && matchesDepartment && matchesLevel;
+  });
+
+  useEffect(() => {
+    const fetchALlUsers = async () => {
+      try {
+        const users = await fetchAllUsersForListing();
+        console.log("Userssss", users);
+        setUsers(users);
+      } catch (error) {
+        seterrorMessage("Error fetching Users");
+        console.log("Error");
+      }
+    };
+
+    fetchALlUsers();
+    console.log("Users ---->", users);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-      <div className="w-full max-w-md bg-white p-4 rounded shadow">
-        <div className="flex justify-between items-center mb-4">
-          <button className="bg-blue-500 text-white px-3 py-1 rounded-full">
-            All
-          </button>
-          <div className="relative w-full mx-3">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full pl-8 pr-4 py-2 rounded-full bg-gray-200 text-gray-700 focus:outline-none"
-            />
-            <FiSearch className="absolute left-2 top-3 text-gray-500" />
-          </div>
+    <div className="p-3 mb-14">
+      <div className="flex gap-2 mb-3">
+        <div className="flex gap-1 items-center border">
+          <select
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            className="px-3 py-1 text-sm"
+          >
+            <option value="">Department</option>
+            {departments.map((dept, index) => (
+              <option key={index} value={dept.name}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
         </div>
-        <h2 className="text-lg font-bold mb-4">735 Friends</h2>
-        <div>
-          {users.map((user) => (
-            <div
-              key={user.id}
-              className="flex items-center justify-between p-3 border-b relative"
-            >
-              <div className="flex items-center">
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-12 h-12 rounded-full mr-3"
-                />
-                <div>
-                  <h3 className="font-semibold">{user.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    {user.mutualFriends} mutual friends
-                  </p>
-                </div>
-              </div>
-              <div className="relative">
-                <button
-                  onClick={() =>
-                    setMenuOpen(menuOpen === user.id ? null : user.id)
-                  }
-                >
-                  <FiMoreVertical className="text-gray-600" />
-                </button>
-                {menuOpen === user.id && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md z-10">
-                    <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                      Block User
-                    </button>
-                    <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                      Cancel Request
-                    </button>
-                  </div>
-                )}
-              </div>
+        <div className="flex gap-1 items-center border">
+          <select
+            value={selectedLevel}
+            onChange={(e) => setSelectedLevel(e.target.value)}
+            className="px-3 py-1 text-sm"
+          >
+            <option value="">Level</option>
+            {levels.map((level, index) => (
+              <option key={index} value={level}>
+                {level}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="flex items-center bg-slate-200 rounded-2xl w-full p-1 px-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search Users"
+          className="outline-none w-full bg-transparent"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <FiSearch className="font-bold text-xl" />
+      </div>
+
+      <h5 className="font-semibold text-2xl mb-4">Users </h5>
+
+      <div className="flex flex-col gap-3">
+        {filteredUsers.map((user) => (
+          <Link
+            href={`/profile/${user.username}`}
+            key={user.id}
+            className="flex items-center gap-1 hover:bg-slate-100 focus:bg-slate-50 cursor-pointer"
+          >
+            <div className="w-20 h-20">
+              <Image
+                src={
+                  user.picture ||
+                  "https://randomuser.me/api/portraits/men/1.jpg"
+                }
+                alt="Profile Picture"
+                width={50}
+                height={50}
+                className="rounded-full w-16 h-16 object-cover"
+              />
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col w-full">
+              <h5>{user.name}</h5>
+              <h5 className="text-slate-400 text-sm">@{user.username}</h5>
+              <h6 className="text-slate-500">
+                {user.department && user.department?.initial}{" "}
+                {user.level && `${user.level.name}lvl`}
+              </h6>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
 };
 
-export default FriendsList;
+export default Users;

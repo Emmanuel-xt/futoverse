@@ -14,10 +14,14 @@ import CesiumMapB from "@components/cesium/Cesium";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "FUTO-VERSE",
-  description: "Shaping the future of Campus Navigation and Business Promotion",
+  title: "Futo Verse",
+  description: "The first ever 3D digital map of FUTO",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/logo-192x192.png",
+    apple: "/icons/logo-192x192.png",
+  },
 };
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

@@ -10,7 +10,7 @@ import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { MdDone } from "react-icons/md";
 import useConversation from "zustand/useConversation";
 
-const Conversation = ({ conversation, emoji }) => {
+const Conversation = ({ conversation, emoji, isUserOnly }) => {
   const { setSelectedConversation, selectedConversation } = useConversation();
   const isSelected = selectedConversation?.id === conversation.id;
   const { data: session } = useSession();
@@ -90,39 +90,43 @@ const Conversation = ({ conversation, emoji }) => {
             <p className="font-semibold text-slate-600  text-sm md:text-md">
               {conversation.name}
             </p>
-            <span className="text-slate-600 text-xs">
-              {formatMessageTime(conversation?.lastMessage?.createdAt)}
-            </span>
+            {!isUserOnly && (
+              <span className="text-slate-600 text-xs">
+                {formatMessageTime(conversation?.lastMessage?.createdAt)}
+              </span>
+            )}
           </div>
-          <div className=" flex justify-between">
-            <div className="flex gap-2 w-full">
-              {session?.user.id == conversation?.lastMessage?.senderId && (
-                <>
-                  {conversation?.lastMessage?.isRead ? (
-                    <>
-                      <IoCheckmarkDoneSharp className="" />
-                    </>
-                  ) : (
-                    <>
-                      <MdDone className="" />
-                    </>
-                  )}
-                </>
-              )}
-
-              <p className=" flex  w-full items-center justify-between text-slate-600 text-xs">
-                {" "}
-                {conversation?.lastMessage?.body}
-                {session?.user.id != conversation?.lastMessage?.senderId && (
+          {!isUserOnly && (
+            <div className=" flex justify-between">
+              <div className="flex gap-2 w-full">
+                {session?.user.id == conversation?.lastMessage?.senderId && (
                   <>
-                    {!conversation?.lastMessage?.isRead && (
-                      <div className="bg-blue-700 rounded-full p-1"></div>
+                    {conversation?.lastMessage?.isRead ? (
+                      <>
+                        <IoCheckmarkDoneSharp className="" />
+                      </>
+                    ) : (
+                      <>
+                        <MdDone className="" />
+                      </>
                     )}
                   </>
                 )}
-              </p>
+
+                <p className=" flex  w-full items-center justify-between text-slate-600 text-xs">
+                  {" "}
+                  {conversation?.lastMessage?.body}
+                  {session?.user.id != conversation?.lastMessage?.senderId && (
+                    <>
+                      {!conversation?.lastMessage?.isRead && (
+                        <div className="bg-blue-700 rounded-full p-1"></div>
+                      )}
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

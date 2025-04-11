@@ -1,3 +1,5 @@
+"use client";
+
 // import Conversations from "./Conversations";
 // import LogoutButton from "./LogoutButton";
 // import SearchInput from "./SearchInput";
@@ -5,9 +7,11 @@
 import useConversation from "zustand/useConversation";
 import Conversations from "./Conversations";
 import SearchInput from "./SearchInput";
+import { useState } from "react";
 
 const Sidebar = () => {
   const { setSelectedConversation, selectedConversation } = useConversation();
+  const [searchResults, setSearchResults] = useState(null); // 💡 shared search result
 
   return (
     <div
@@ -16,9 +20,9 @@ const Sidebar = () => {
       }`}
     >
       <h2 className="text-2xl font-Semibold mb-4">Chat</h2>
-      <SearchInput />
+      <SearchInput setSearchResults={setSearchResults} />
       {/* <div className="divider px-3" /> */}
-      <Conversations />
+      <Conversations searchResults={searchResults} />
       {/* <LogoutButton /> */}
     </div>
   );

@@ -136,9 +136,10 @@ model StoreStatus {
 }
 
 model Department {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  initial String?
+  users   User[]
 }
 
 model Level {
