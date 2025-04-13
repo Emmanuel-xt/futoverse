@@ -2,9 +2,9 @@
 
 import CesiumMapB from "@components/cesium/Cesium";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const Mqp = () => {
+const MapPage = () => {
   const { viewerReady, setMapVisible } = useCesiumViewer();
   const [mapLoadingMessage, setMapLoadingMessage] = useState("");
 
@@ -12,22 +12,19 @@ const Mqp = () => {
     if (viewerReady) {
       setMapVisible(true);
     } else {
-      setMapLoadingMessage(
-        "Map is not yet ready, please wait. Here you can display a loading spinner or an option to use the 2D map."
-      );
+      setMapLoadingMessage("Loading the 3D map, please wait...");
     }
-
-    // No return value here since no cleanup is necessary
   }, [viewerReady, setMapVisible]);
 
   return (
-    <div>
+    <div className="p-6">
       {!viewerReady && (
-        <p className="font-bold text-3xl">{mapLoadingMessage}</p>
+        <p className="font-bold text-3xl text-center">{mapLoadingMessage}</p>
       )}
-      <CesiumMapB />
+      {/* <CesiumMapB /> */}
+      {/* No need to render CesiumMapB here, it's already in the layout */}
     </div>
   );
 };
 
-export default Mqp;
+export default MapPage;

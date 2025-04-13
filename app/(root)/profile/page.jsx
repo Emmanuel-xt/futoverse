@@ -17,6 +17,7 @@ import { departments } from "@constants/arrays";
 import Modal from "@components/modals/Modal";
 import { useRouter } from "next/navigation";
 import { deleteDB } from "idb";
+import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
 
 const Profile = () => {
   const { data: session, status } = useSession();
@@ -55,6 +56,25 @@ const Profile = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const [userFriendListCount, setUserFriendListCount] = useState(0);
+
+  useEffect(() => {
+    const fetchFriendListCount = async () => {
+      if (session) {
+        try {
+          const count = await fetchUsersFriendCount(session.user.username);
+          setUserFriendListCount(count);
+        } catch (error) {
+          console.log("Error fetching count", error);
+          return 0;
+        } finally {
+        }
+      }
+    };
+
+    fetchFriendListCount();
+  }, [session]);
 
   const router = useRouter();
   const handleSignOut = async () => {
@@ -105,13 +125,19 @@ const Profile = () => {
         {menuOpen && (
           <div
             ref={menuRef}
-            className="absolute right-5 top-3 mt-2 w-40 bg-white shadow-md rounded-md "
+            className="absolute right-5 top-3 mt-2 w-44 text-sm bg-white shadow-md rounded-md "
           >
             <Link
               href="/profile/edit"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               Edit Profile
+            </Link>
+            <Link
+              href="/profile/friend-requests"
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            >
+              Connection Requests
             </Link>
             <Link
               href="/profile/settings"
@@ -158,15 +184,15 @@ const Profile = () => {
       </p> */}
 
       <div className="mt-4 flex gap-8 text-center">
-        <div>
+        <Link href={`profile/${session?.user?.username}/friends`}>
           <h2 className="text-xl font-semibold text-gray-800">
-            {user?.connections || 0}
+            {userFriendListCount || 0}
           </h2>
           <p className="text-sm text-gray-500">Connections</p>
-        </div>
+        </Link>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">
-            {user?.connections || 0}
+            {user?._count.shops || 0}
           </h2>
           <p className="text-sm text-gray-500">Stores</p>
         </div>
@@ -189,23 +215,23 @@ const Profile = () => {
         <div className="mt-6 w-full max-w-md bg-white p-6 shadow-lg rounded-lg">
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">About </h3>
-            <p className="mt-1 text-gray-600">{user?.about}</p>
+            <p className="mt-1 text-gray-600">{session?.user?.about}</p>
           </div>
 
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">Email Address</h3>
-            <p className="mt-1 text-gray-600">{user?.email}</p>
+            <p className="mt-1 text-gray-600">{session?.user?.email}</p>
           </div>
 
           <div className="mb-6">
             <h3 className="text-lg font-bold text-gray-800">Gender</h3>
-            <p className="mt-1 text-gray-600">{user?.gender}</p>
+            <p className="mt-1 text-gray-600">{session?.user?.gender}</p>
           </div>
           <div className="mb-6">
             <h3 className="text-lg font-bold text-gray-800">Department</h3>
             <p className="mt-1 text-gray-600">{user?.department?.name}</p>
           </div>
-          <div className="mb-6">
+          <div className="mb-2">
             <h3 className="text-lg font-bold text-gray-800">Level</h3>
             <p className="mt-1 text-gray-600">{user?.level?.name}</p>
           </div>

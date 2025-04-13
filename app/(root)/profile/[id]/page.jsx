@@ -11,7 +11,10 @@ import { HiDotsVertical } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { generateProfileLink } from "@constants/functions";
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
-import { sendFriendRequest } from "@lib/actions/connect.prisma";
+import {
+  fetchUsersFriendCount,
+  sendFriendRequest,
+} from "@lib/actions/connect.prisma";
 import { toast } from "sonner";
 
 const Profile = ({ params }) => {
@@ -50,6 +53,23 @@ const Profile = ({ params }) => {
     };
 
     fetchUserData();
+  }, [id]);
+
+  const [userFriendListCount, setUserFriendListCount] = useState(0);
+
+  useEffect(() => {
+    const fetchFriendListCount = async () => {
+      if (id) {
+        try {
+          const count = await fetchUsersFriendCount(id);
+          setUserFriendListCount(count);
+        } catch (error) {
+        } finally {
+        }
+      }
+    };
+
+    fetchFriendListCount();
   }, [id]);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -157,16 +177,16 @@ const Profile = ({ params }) => {
         )}
       </p> */}
 
-      <div className="mt-4 flex gap-8 text-center">
-        <div>
+      <div className="mt-4 flex gap-8 text-center cursor-pointer">
+        <Link href={`${user?.username}/friends`}>
           <h2 className="text-xl font-semibold text-gray-800">
-            {user?.connections || 0}
+            {user?._count?.friends || 0}
           </h2>
           <p className="text-sm text-gray-500">Connections</p>
-        </div>
+        </Link>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">
-            {user?.connections || 0}
+            {user?._count?.shops || 0}
           </h2>
           <p className="text-sm text-gray-500">Stores</p>
         </div>

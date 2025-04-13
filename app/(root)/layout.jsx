@@ -10,6 +10,7 @@ import { CesiumViewerProvider } from "@components/providers/CesiumViewerProvider
 import { Toaster } from "sonner";
 import { CartProvider } from "@components/providers/CartProvider";
 import CesiumMapB from "@components/cesium/Cesium";
+import CesiumMapBWrapper from "@components/cesium/CesiumWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
                         <Toaster />
                         <ButtomNav />
                         {/* <CesiumMapB /> */}
+                        <CesiumMapBWrapper />
                       </main>
                     </CartProvider>
                   </CesiumViewerProvider>

@@ -189,6 +189,11 @@ const FriendRequests = () => {
             </div>
           </div>
         ))}
+        {requests.length === 0 && (
+          <div className="text-center text-lg font-semibold  h-40 flex justify-center items-center">
+            No Pending Connection Request
+          </div>
+        )}
       </div>
     </div>
   );
