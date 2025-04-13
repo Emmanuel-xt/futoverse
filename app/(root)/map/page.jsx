@@ -1,5 +1,6 @@
 "use client";
 
+import CesiumMapB from "@components/cesium/Cesium";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import React, { useEffect, useState } from "react";
 
@@ -24,6 +25,7 @@ const Mqp = () => {
       {!viewerReady && (
         <p className="font-bold text-3xl">{mapLoadingMessage}</p>
       )}
+      <CesiumMapB />
     </div>
   );
 };

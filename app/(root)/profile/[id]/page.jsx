@@ -11,6 +11,8 @@ import { HiDotsVertical } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { generateProfileLink } from "@constants/functions";
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
+import { sendFriendRequest } from "@lib/actions/connect.prisma";
+import { toast } from "sonner";
 
 const Profile = ({ params }) => {
   const [user, setUser] = useState(null);
@@ -21,6 +23,8 @@ const Profile = ({ params }) => {
   const isUserActive = onlineUsers.find(
     (onlineUser) => onlineUser.username === user?.username
   );
+  const { data: session } = useSession();
+  const currentUserId = parseFloat(session?.user?.id);
 
   // const [posts, setPosts] = useState([]);
   // const { viewer, viewerReady, setMapVisible } = useCesiumViewer();
@@ -63,6 +67,22 @@ const Profile = ({ params }) => {
   }, []);
 
   const router = useRouter();
+
+  const [friendRequestLoad, setfriendRequestLoad] = useState(false);
+  const handleSendFriendRequest = async (id) => {
+    try {
+      setfriendRequestLoad(true);
+      const send = await sendFriendRequest(currentUserId, id);
+      if (send) {
+        toast("Connection Request Sent");
+      }
+    } catch (error) {
+      toast("Failed to Send Request");
+      console.log("Error sending friend request", error);
+    } finally {
+      setfriendRequestLoad(false);
+    }
+  };
 
   if (status === "loading") {
     // Show a loading spinner or placeholder while the session is loading
@@ -160,7 +180,11 @@ const Profile = ({ params }) => {
       <div className="flex gap-3 items-center mt-2">
         <button
           type="button"
-          className="w- bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={() => handleSendFriendRequest(user.id)}
+          className={`bg-blue-500 ${
+            friendRequestLoad && "bg-blue-400"
+          } text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          disabled={friendRequestLoad}
         >
           Connect
         </button>
@@ -186,14 +210,14 @@ const Profile = ({ params }) => {
           </div>
         )}
 
-        {user?.department.name && (
+        {user?.department?.departmentName && (
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">Department</h3>
             <p className="mt-1 text-gray-600">{user?.department?.name}</p>
           </div>
         )}
 
-        {user?.level.name && (
+        {user?.level?.name && (
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">Level</h3>
             <p className="mt-1 text-gray-600">{user?.level?.name}</p>

@@ -37,6 +37,26 @@ model User {
 
   conversations Conversation[]
   messages      Message[]
+
+  // Friend requests
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
+  // Friends
+  friends  User[] @relation("Friendship")
+  friendOf User[] @relation("Friendship")
+}
+
+model FriendRequest {
+  id         Int      @id @default(autoincrement())
+  sender     User     @relation("SentRequests", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  receiverId Int
+  status     String // 'pending', 'accepted', 'rejected'
+  createdAt  DateTime @default(now())
+
+  @@unique([senderId, receiverId]) // prevent duplicate friend requests
 }
 
 model Conversation {
