@@ -18,6 +18,9 @@ import Modal from "@components/modals/Modal";
 import { useRouter } from "next/navigation";
 import { deleteDB } from "idb";
 import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
+import { FiMenu } from "react-icons/fi";
+import { FaUserFriends } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa6";
 
 const Profile = () => {
   const { data: session, status } = useSession();
@@ -73,7 +76,7 @@ const Profile = () => {
       }
     };
 
-    fetchFriendListCount();
+    // fetchFriendListCount();
   }, [session]);
 
   const router = useRouter();
@@ -116,8 +119,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 mb-10 flex flex-col items-center">
-      <div className="flex fixed top-5 right-5 ">
-        <HiDotsVertical
+      <div className="flex gap-4 absolute top-5 right-5 ">
+        <Link href="/profile/friend-requests">
+          <FaUserPlus className="rounded-full text-3xl cursor-pointer" />
+        </Link>
+        <FiMenu
           className="rounded-full text-3xl cursor-pointer"
           onClick={() => setMenuOpen(!menuOpen)}
         />
@@ -133,12 +139,12 @@ const Profile = () => {
             >
               Edit Profile
             </Link>
-            <Link
+            {/* <Link
               href="/profile/friend-requests"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               Connection Requests
-            </Link>
+            </Link> */}
             <Link
               href="/profile/settings"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -160,9 +166,9 @@ const Profile = () => {
           </div>
         )}
       </div>
-      <div className="w-32 h-32 mb-4">
+      <div className="w-32 h-32 mb-4 mt-5">
         <Image
-          src={user?.picture || "/assets/logo.svg"}
+          src={session?.user?.image || "/assets/logo.svg"}
           alt="Profile Picture"
           width={200}
           height={200}

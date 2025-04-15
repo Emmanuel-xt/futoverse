@@ -96,34 +96,52 @@ const Users = () => {
       <h5 className="font-semibold text-2xl mb-4">Users </h5>
 
       <div className="flex flex-col gap-3">
-        {filteredUsers.map((user) => (
-          <Link
-            href={`/profile/${user.username}`}
-            key={user.id}
-            className="flex items-center gap-1 hover:bg-slate-100 focus:bg-slate-50 cursor-pointer"
-          >
-            <div className="w-20 h-20">
-              <Image
-                src={
-                  user.picture ||
-                  "https://randomuser.me/api/portraits/men/1.jpg"
-                }
-                alt="Profile Picture"
-                width={50}
-                height={50}
-                className="rounded-full w-16 h-16 object-cover"
-              />
-            </div>
-            <div className="flex flex-col w-full">
-              <h5>{user.name}</h5>
-              <h5 className="text-slate-400 text-sm">@{user.username}</h5>
-              <h6 className="text-slate-500">
-                {user.department && user.department?.initial}{" "}
-                {user.level && `${user.level.name}lvl`}
-              </h6>
-            </div>
-          </Link>
-        ))}
+        {filteredUsers.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {filteredUsers.map((user) => (
+              <Link
+                href={`/profile/${user.username}`}
+                key={user.id}
+                className="flex items-center gap-1 hover:bg-slate-100 focus:bg-slate-50 cursor-pointer"
+              >
+                <div className="w-20 h-20">
+                  <Image
+                    src={
+                      user.picture ||
+                      "https://randomuser.me/api/portraits/men/1.jpg"
+                    }
+                    alt="Profile Picture"
+                    width={50}
+                    height={50}
+                    className="rounded-full w-16 h-16 object-cover"
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <h5>{user.name}</h5>
+                  <h5 className="text-slate-400 text-sm">@{user.username}</h5>
+                  <h6 className="text-slate-500">
+                    {user.department && user.department?.initial}{" "}
+                    {user.level && `${user.level.name}lvl`}
+                  </h6>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center mt-12 text-center text-slate-500">
+            <Image
+              src="/assets/search.svg" // Replace with your own image or illustration path
+              alt="No users found"
+              width={180}
+              height={180}
+              className="mb-4"
+            />
+            <h4 className="font-semibold text-lg">No user found</h4>
+            <p className="text-sm text-slate-400 mt-1">
+              Try adjusting your filters or search again.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

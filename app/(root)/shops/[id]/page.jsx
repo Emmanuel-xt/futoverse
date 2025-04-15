@@ -144,12 +144,16 @@ const ShopDynamicPage = ({ params }) => {
       </div>
     );
   }
+  const router = useRouter();
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
     <div className="min-h-screen bg--100 pb-14">
       <div className="relative bg-blue-500 text-white flex flex-col gap-3  items-center justify-center text-center h-[30vh] p-6 rounded-b-3xl pb-20">
         <div className="absolute top-4 left-4 text-2xl cursor-pointer">
-          <AiOutlineArrowLeft />
+          <AiOutlineArrowLeft onClick={handleBack} />
         </div>
 
         <h2 className="text-lg font-bold">{shopId}</h2>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import ButtomNav from "@components/ButtomNav"; // Assuming you have this
 import Link from "next/link";
 import Image from "next/image";
+import InstallPWAButton from "@components/InstallPWAButton";
 
 const media = [
   {
@@ -61,12 +62,16 @@ const page = () => {
           Connection.
         </p>
         <div className="flex gap-3 mt-3">
-          <button className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl">
+          {/* <button className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl">
             Launch the App
-          </button>
-          <button className="bg-transparent text-black border border-black py-2 px-3 font-semibold rounded-3xl">
+          </button> */}
+          <InstallPWAButton />
+          <Link
+            href={"/sign-up"}
+            className="bg-transparent text-black border border-black py-2 px-3 font-semibold rounded-3xl"
+          >
             Sign Up
-          </button>
+          </Link>
         </div>
       </div>
 

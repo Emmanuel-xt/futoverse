@@ -76,9 +76,9 @@ export const sidebarLinks = [
     label: "Home",
   },
   {
-    imgURL: "/assets/shop.svg",
-    route: "/shops",
-    label: "Stores",
+    imgURL: "/assets/search.svg",
+    route: "/find",
+    label: "Find",
   },
 
   {

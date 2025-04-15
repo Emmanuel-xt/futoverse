@@ -62,7 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.level = token.level;
         session.user.gender = token.gender;
       }
-      console.log("session after modification", session.user);
+      // console.log("session after modification", session.user);
       return session;
     },
   },

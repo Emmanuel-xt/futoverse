@@ -1,8 +1,9 @@
 // components/InstallPWAButton.tsx
 "use client";
 
+import { useInstallPrompt } from "hooks/useInstallPrompt";
 import { useState } from "react";
-import { useInstallPrompt } from "@/hooks/useInstallPrompt";
+// import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 export default function InstallPWAButton() {
   const { deferredPrompt, isInstallable } = useInstallPrompt();
@@ -25,9 +26,9 @@ export default function InstallPWAButton() {
   return (
     <button
       onClick={handleClick}
-      className="px-4 py-2 mt-4 bg-blue-600 text-white rounded-md shadow-lg"
+      className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl"
     >
-      Install FutoVerse App
+      Launch the App
     </button>
   );
 }

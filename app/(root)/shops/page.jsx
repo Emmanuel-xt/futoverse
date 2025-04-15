@@ -4,6 +4,7 @@ import { fetchAllShops, filterShops } from "@lib/actions/shops.prisma";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { FiSearch } from "react-icons/fi";
 import { IoIosLogOut } from "react-icons/io";
 
 const Shops = () => {
@@ -50,18 +51,21 @@ const Shops = () => {
 
   return (
     <div className="mb-10">
-      <div className="flex items-end gap-5 bg-primary backdrop-blur-lg px-10 py-5 rounded-b-2xl">
+      <div className="flex items-end gap-5 bg-primary backdrop-blur-lg px-10 py-5 pt-10 rounded-b-2xl">
         <div className="w-full">
-          <p className="text-white font-bold">
+          <p className="text-white font-bold mb-2">
             Explore All Stores in the Market Place
           </p>
-          <input
-            type="text"
-            value={searchTerm} // Bind the search input to state
-            onChange={handleInputChange} // Update state on input change and trigger search after debounce
-            placeholder="Enter shop name or item...."
-            className="w-full bg-amber-950 rounded px-2 py-1"
-          />
+          <div className="flex items-center bg-slate-200 rounded-2xl w-full p-1 px-3 mb-4">
+            <input
+              type="text"
+              placeholder="Search Users"
+              className="outline-none w-full bg-transparent"
+              value={searchTerm}
+              onChange={handleInputChange}
+            />
+            <FiSearch className="font-bold text-xl" />
+          </div>
         </div>
       </div>
       <div className="flex flex-col p.-14 py-2  rounded-b-lg mx-1 h-[65v] overflow-y-scrol">
