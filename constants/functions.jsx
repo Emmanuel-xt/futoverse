@@ -500,7 +500,7 @@ export const flytoDestination = (viewer, lon, lat) => {
   );
 
   // Add a 3D model entity that "hangs" in the air above the target location
-  const pointerHeightOffset = 10; // Adjust the height above the 3D object (in meters)
+  const pointerHeightOffset = 40; // Adjust the height above the 3D object (in meters)
   const position = Cartesian3.fromDegrees(lon, lat, pointerHeightOffset);
 
   // Define the model's rotation (Heading, Pitch, Roll)
@@ -512,16 +512,16 @@ export const flytoDestination = (viewer, lon, lat) => {
   // Compute the quaternion for the orientation based on position
   const orientation = Transforms.headingPitchRollQuaternion(position, hpr);
 
-  // const pointerEntity = viewer.entities.add({
-  //   position: Cartesian3.fromDegrees(lon, lat, pointerHeightOffset), // Add a height offset
-  //   orientation: orientation, // Set the orientation
-  //   model: {
-  //     uri: "/models/pointer.glb", // Path or URL to your 3D model file
-  //     scale: 1.0, // Scale the model if needed
-  //     minimumPixelSize: 64, // Ensures the model is visible even at lower zoom levels
-  //     maximumScale: 200, // Optional: to limit scaling at higher zoom
-  //   },
-  // });
+  const pointerEntity = viewer.entities.add({
+    position: Cartesian3.fromDegrees(lon, lat, pointerHeightOffset), // Add a height offset
+    orientation: orientation, // Set the orientation
+    model: {
+      uri: "/models/pointer.glb", // Path or URL to your 3D model file
+      scale: 5.0, // Scale the model if needed
+      minimumPixelSize: 64, // Ensures the model is visible even at lower zoom levels
+      maximumScale: 200, // Optional: to limit scaling at higher zoom
+    },
+  });
 
   // Optionally, zoom to the new entity
   // viewer.zoomTo(pointerEntity);

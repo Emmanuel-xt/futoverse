@@ -17,7 +17,7 @@ const MapPage = () => {
   }, [viewerReady, setMapVisible]);
 
   return (
-    <div className="p-6">
+    <div className="">
       {!viewerReady && (
         <p className="font-bold text-3xl text-center">{mapLoadingMessage}</p>
       )}

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { FaCamera } from "react-icons/fa";
 import {
   drawLineBetweenPoints,
+  flytoDestination,
   generateProfileLink,
 } from "@constants/functions";
 import { userLocation } from "@constants/userDat";
@@ -60,7 +61,7 @@ const ShopDynamicPage = ({ params }) => {
       try {
         const fetchedShop = await fetchUserShopById(shopId);
         setShop(fetchedShop);
-        console.log("fetched shop to check if shop is min ", fetchedShop);
+        // console.log("fetched shop to check if shop is min ", fetchedShop);
       } catch (error) {
         console.error("Error fetching shop:", error);
       } finally {
@@ -75,7 +76,7 @@ const ShopDynamicPage = ({ params }) => {
       (order) => order.status === "Pending"
     ); // Filter only pending orders
     setOrders(pendingOrders);
-    console.log("Orders", orders);
+    // console.log("Orders", orders);
     socket.on("new_order", (orderData) => {
       toast("New Order was placed");
 
@@ -84,6 +85,7 @@ const ShopDynamicPage = ({ params }) => {
   }, [shop]);
 
   const pushToRelativeMap = () => {
+    router.push("/map");
     setMapVisible(true);
     const shopLocation = {
       longitude: shop.longitude,
@@ -99,7 +101,7 @@ const ShopDynamicPage = ({ params }) => {
 
   const handleRejectClick = async (orderId) => {
     const rejected = await rejectOrder(orderId, "Items not available");
-    console.log("rejected", rejected);
+    // console.log("rejected", rejected);
   };
 
   const calculateOrderTotal = (items) => {
@@ -151,14 +153,21 @@ const ShopDynamicPage = ({ params }) => {
 
   return (
     <div className="min-h-screen bg--100 pb-14">
-      <div className="relative bg-blue-500 text-white flex flex-col gap-3  items-center justify-center text-center h-[30vh] p-6 rounded-b-3xl pb-20">
+      <div
+        className={`relative text-white flex flex-col gap-3 items-center justify-center text-center h-[25vh] p-6 rounded-b-3xl pb-20 storCover ${
+          shop?.coverImage ? "bg-cover bg-center" : "bg-blue-500"
+        }`}
+        style={{
+          backgroundImage: !shop?.coverImage
+            ? `url("/assets/IceHomeImage1.jpg")`
+            : // ? `url(${shop.coverImage})`
+              undefined,
+        }}
+      >
+        {" "}
         <div className="absolute top-4 left-4 text-2xl cursor-pointer">
           <AiOutlineArrowLeft onClick={handleBack} />
         </div>
-
-        <h2 className="text-lg font-bold">{shopId}</h2>
-        <p className="text-sm text-slate-200">{shop?.description}</p>
-
         <div
           className={`absolute  bottom-[-20px] ${
             shop?.statuses && shop.statuses.length > 0
@@ -193,7 +202,7 @@ const ShopDynamicPage = ({ params }) => {
             {isShopMyOwn ? (
               <>
                 <Link
-                  href="/profile/edit"
+                  href={`/shops/${shopId}/edit`}
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
                   Edit Store details
@@ -221,7 +230,7 @@ const ShopDynamicPage = ({ params }) => {
               Share Store Profile
             </button>
             <button
-              onClick={() => pushToRelativeMap}
+              onClick={pushToRelativeMap}
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
             >
               View Store in Map
@@ -241,6 +250,11 @@ const ShopDynamicPage = ({ params }) => {
           status={shop?.statuses}
         />
       )}
+
+      <div className="flex flex-col items-center justify-center mt-5 ">
+        <h2 className="text-lg font-bold">{shopId}</h2>
+        <p className="text-sm text-slate-500">{shop?.description}</p>
+      </div>
 
       <div className="mt-5 px-4">
         <div className="flex w-full justify-around mb-4 border-b">

@@ -35,6 +35,7 @@
   }
 }
 
-/* .home-bg {
-  background-image: url();
-} */
+.storCover {
+  background-image: url("/public/images/ichie.jpg");
+  background-size: cover;
+}
