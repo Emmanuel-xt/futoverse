@@ -93,6 +93,7 @@ const Profile = () => {
       console.error("Error during sign out:", error);
     }
   };
+
   if (status === "loading") {
     // Show a loading spinner or placeholder while the session is loading
     return (
@@ -105,14 +106,30 @@ const Profile = () => {
   if (!session) {
     // Handle unauthenticated state
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-xl">You must be logged in to view this page.</p>
-        <Link
-          href="/login"
-          className="bg-primary text-white rounded-xl p-1 ml-2"
-        >
-          Sign In
-        </Link>
+      <div className="">
+        <div className="flex justify-between items-center p-3">
+          <div className="flex gap-2 items-center">
+            <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
+            <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+          </div>
+          <div className="flex gap-4">
+            <Link
+              href={"/sign-up"}
+              className="bg-transperent border border-black text-black  px-3 py-1 font-semibold rounded-3xl w-fit"
+            >
+              Create Account
+            </Link>
+            <Link
+              href={"/login"}
+              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl w-fit"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+        <div className="flex justify-center items-center h-[90vh]">
+          <p className="text-xl">Login to View Your Profile</p>
+        </div>
       </div>
     );
   }

@@ -158,7 +158,7 @@ const ShopDynamicPage = ({ params }) => {
           shop?.coverImage ? "bg-cover bg-center" : "bg-blue-500"
         }`}
         style={{
-          backgroundImage: !shop?.coverImage
+          backgroundImage: shop?.coverImage
             ? `url("/assets/IceHomeImage1.jpg")`
             : // ? `url(${shop.coverImage})`
               undefined,

@@ -230,7 +230,7 @@ const Profile = ({ params }) => {
           </div>
         )}
 
-        {user?.department?.departmentName && (
+        {user?.department?.name && (
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">Department</h3>
             <p className="mt-1 text-gray-600">{user?.department?.name}</p>

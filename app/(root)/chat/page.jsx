@@ -4,13 +4,14 @@ import MessageContainer from "@components/components/messages/MessageContainer";
 import Sidebar from "@components/components/sidebar/Sidebar";
 import { getUserForConversation } from "@lib/actions/Chat.prisma";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
 import useConversation from "zustand/useConversation";
 
 const ChatPage = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const receiverId = searchParams.get("receiverId");
   const { selectedConversation, setSelectedConversation } = useConversation();
@@ -39,6 +40,46 @@ const ChatPage = () => {
 
     fetchConversation();
   }, [receiverId, session]); // ✅ Dependency array listens for `receiverId` changes
+
+  if (status === "loading") {
+    // Show a loading spinner or placeholder while the session is loading
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl text-primary-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    // Handle unauthenticated state
+    return (
+      <div className="">
+        <div className="flex justify-between items-center p-3">
+          <div className="flex gap-2 items-center">
+            <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
+            <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+          </div>
+          <div className="flex gap-4">
+            <Link
+              href={"/sign-up"}
+              className="bg-transperent border border-black text-black  px-3 py-1 font-semibold rounded-3xl w-fit"
+            >
+              Create Account
+            </Link>
+            <Link
+              href={"/login"}
+              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl w-fit"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+        <div className="flex justify-center items-center h-[90vh]">
+          <p className="text-xl">Login to Start Conversations</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full rounded-lg overflow-hidden bg-gray-400 bg-clip-padding bg-opacity-0 z-30">

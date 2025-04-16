@@ -18,7 +18,7 @@ const searchOptions = [
   {
     label: "Find Products",
     icon: <ShoppingBag size={28} className="text-primary" />,
-    route: "/products",
+    route: "/product",
   },
   // Add more options here if needed
 ];
