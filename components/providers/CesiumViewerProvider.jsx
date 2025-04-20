@@ -8,7 +8,14 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { Viewer, Terrain, Ion, createWorldTerrainAsync } from "cesium";
+import {
+  Viewer,
+  Terrain,
+  Ion,
+  createWorldTerrainAsync,
+  IonWorldImageryStyle,
+  ImageryLayer,
+} from "cesium";
 
 const CesiumViewerContext = createContext(null);
 
@@ -26,10 +33,18 @@ export const CesiumViewerProvider = ({ children }) => {
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
         const cesiumViewer = new Viewer("cesiumContainer", {
           // terrain: Terrain.fromWorldTerrain(),
-          baseLayerPicker: false,
+          baseLayer: ImageryLayer.fromWorldImagery({
+            style: IonWorldImageryStyle.ROAD,
+          }),
+          baseLayerPicker: true,
         });
         // terrainProvider = createWorldTerrainAsync();
+        // cesiumViewer.imageryLayers.removeAll();
 
+        // Add your custom Cesium Ion imagery by assetId
+        // cesiumViewer.imageryLayers.addImageryProvider(
+        //   await IonImageryProvider.fromAssetId(4) // or replace 4 with your specific assetId
+        // );
         viewerRef.current = cesiumViewer;
         setViewerReady(true);
       } catch (error) {

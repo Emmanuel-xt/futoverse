@@ -11,7 +11,9 @@ import { IoMdArrowDropdown } from "react-icons/io";
 
 const levels = ["100", "200", "300", "400", "500"];
 
-const Users = () => {
+const Users = ({ params }) => {
+  const id = params.id.replace(/%20/g, " ");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedFaculty, setSelectedFaculty] = useState("");
@@ -40,8 +42,8 @@ const Users = () => {
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
-        if (currentUserName) {
-          const users = await fetchUsersFriendList(currentUserName);
+        if (id) {
+          const users = await fetchUsersFriendList(id);
           console.log("Users", users);
           setUsers(users);
         }
@@ -53,7 +55,7 @@ const Users = () => {
 
     fetchUserFriends();
     // console.log("Users ---->", users);
-  }, [currentUserName]);
+  }, [id]);
 
   return (
     <div className="p-3 mb-14">
@@ -99,7 +101,10 @@ const Users = () => {
         <FiSearch className="font-bold text-xl" />
       </div>
 
-      <h5 className="font-semibold text-2xl mb-4">{users.length} Friends </h5>
+      <h5 className="font-semibold text-2xl mb-4">
+        {users.length}
+        {users.length > 1 ? " Friends" : " Friend"}{" "}
+      </h5>
 
       <div className="flex flex-col gap-3">
         {filteredUsers.map((user) => (

@@ -4,6 +4,7 @@ import {
   fetchPendingFriendRequests,
   rejectFriendRequest,
 } from "@lib/actions/connect.prisma";
+import { createSystemUser } from "@lib/actions/user.prisma";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -101,7 +102,7 @@ const FriendRequests = () => {
     };
 
     fetchFriendRequest();
-  }, [session]);
+  }, []);
 
   const [acceptFriendRequestLoad, setAcceptFriendRequestLoad] = useState(false);
 
@@ -158,7 +159,9 @@ const FriendRequests = () => {
             <div className="flex flex-col  w-full">
               <h5 className="">{request.sender.name}</h5>
               <h6 className="text-slate-500">
-                {request.department?.name} ({request.level?.name}lvl)
+                {request.sender?.department?.initial} (
+                {request?.sender.level?.name}
+                lvl)
               </h6>
               <div className="flex gap-2">
                 <button

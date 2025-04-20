@@ -15,6 +15,7 @@ import {
   fetchUsersFriendCount,
   sendFriendRequest,
 } from "@lib/actions/connect.prisma";
+import { LuMessageSquareText } from "react-icons/lu";
 import { toast } from "sonner";
 
 const Profile = ({ params }) => {
@@ -53,23 +54,6 @@ const Profile = ({ params }) => {
     };
 
     fetchUserData();
-  }, [id]);
-
-  const [userFriendListCount, setUserFriendListCount] = useState(0);
-
-  useEffect(() => {
-    const fetchFriendListCount = async () => {
-      if (id) {
-        try {
-          const count = await fetchUsersFriendCount(id);
-          setUserFriendListCount(count);
-        } catch (error) {
-        } finally {
-        }
-      }
-    };
-
-    fetchFriendListCount();
   }, [id]);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -208,6 +192,11 @@ const Profile = ({ params }) => {
         >
           Connect
         </button>
+
+        <div className="border border-2 p-1 flex flex-col items-center rounded">
+          <LuMessageSquareText className="text-2xl " />
+          <p className="text-[10px]">Message</p>
+        </div>
       </div>
 
       <div className="mt-6 w-full max-w-md bg-white p-6 shadow-lg rounded-lg">

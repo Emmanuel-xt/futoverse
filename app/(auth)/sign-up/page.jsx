@@ -74,10 +74,15 @@ const SignUp = () => {
 
     setIsSubmitting(true);
     setSubmitError("");
-    const success = await createUser(form);
     // const success = createUser(form);
-
+    const sanitizedForm = {
+      ...form,
+      username: form.username.trim(),
+      email: form.email.trim().toLowerCase(), // optional but helpful
+      fullName: form.fullName.trim(), // optional
+    };
     try {
+      const success = await createUser(sanitizedForm);
       if (success) {
         router.push("/profile");
       } else {

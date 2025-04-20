@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { User, Store, ShoppingBag } from "lucide-react"; // example icons
 import React from "react";
+import Link from "next/link";
 
 const searchOptions = [
   {
@@ -34,14 +35,15 @@ const FindPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
         {searchOptions.map((option, index) => (
-          <div
+          <Link
             key={index}
-            onClick={() => router.push(option.route)}
+            href={option.route}
+            // onClick={() => router.push(option.route)}
             className="flex items-center gap-4 p-4 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer bg-white"
           >
             <div className="p-2 bg-primary/10 rounded-full">{option.icon}</div>
             <span className="font-medium text-gray-800">{option.label}</span>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

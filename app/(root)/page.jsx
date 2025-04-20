@@ -65,7 +65,7 @@ const page = () => {
           {/* <button className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl">
             Launch the App
           </button> */}
-          <InstallPWAButton />
+          {/* <InstallPWAButton /> */}
           <Link
             href={"/sign-up"}
             className="bg-transparent text-black border border-black py-2 px-3 font-semibold rounded-3xl"

@@ -1,21 +1,23 @@
-// hooks/useInstallPrompt.ts
-import { useEffect, useState } from "react";
+// // hooks/useInstallPrompt.ts
+// import { useEffect, useState } from "react";
 
-export function useInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+// export function useInstallPrompt() {
 
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setIsInstallable(true);
-    };
+//   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
 
-    window.addEventListener("beforeinstallprompt", handler);
+//   const [isInstallable, setIsInstallable] = useState(false);
 
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+//   useEffect(() => {
+//     const handler = (e: Event) => {
+//       e.preventDefault();
+//       setDeferredPrompt(e);
+//       setIsInstallable(true);
+//     };
 
-  return { deferredPrompt, isInstallable };
-}
+//     window.addEventListener("beforeinstallprompt", handler);
+
+//     return () => window.removeEventListener("beforeinstallprompt", handler);
+//   }, []);
+
+//   return { deferredPrompt, isInstallable };
+// }

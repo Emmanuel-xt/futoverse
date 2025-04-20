@@ -13,6 +13,7 @@ import {
   Transforms,
   Matrix4,
   HeadingPitchRoll,
+  Rectangle,
 } from "cesium";
 
 import "cesium/Build/Cesium/Widgets/widgets.css";
@@ -97,8 +98,17 @@ const CesiumMapB = () => {
           },
         });
 
-        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // Minimum zoom level (higher value = less zoom-in)
-        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1000;
+        const futoBounds = Rectangle.fromDegrees(
+          6.963329954924063, // west (min lon)
+          5.350024989233731, // south (min lat)
+          7.024059572143244, // east (max lon)
+          5.410862571178967 // north (max lat)
+        );
+
+        // viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // Minimum zoom level (higher value = less zoom-in)
+        // viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1000;
+
+        viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
         const flyToLocationFromURL = () => {
           const urlParams = new URLSearchParams(window.location.search);

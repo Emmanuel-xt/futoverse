@@ -76,7 +76,7 @@ const Profile = () => {
       }
     };
 
-    // fetchFriendListCount();
+    fetchFriendListCount();
   }, [session]);
 
   const router = useRouter();
