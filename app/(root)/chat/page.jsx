@@ -3,6 +3,7 @@
 import MessageContainer from "@components/components/messages/MessageContainer";
 import Sidebar from "@components/components/sidebar/Sidebar";
 import { getUserForConversation } from "@lib/actions/Chat.prisma";
+import useGlobalMessageListener from "hooks/useGlobalMessageListener";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -10,11 +11,14 @@ import React, { useEffect } from "react";
 import { toast } from "sonner";
 import useConversation from "zustand/useConversation";
 
-const ChatPage = () => {
+const ChatPage = ({ params }) => {
+  console.log("PRAMAMAM", params);
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const receiverId = searchParams.get("receiverId");
   const { selectedConversation, setSelectedConversation } = useConversation();
+
+  useGlobalMessageListener();
 
   useEffect(() => {
     if (!receiverId || !session) {

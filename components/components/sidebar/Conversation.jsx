@@ -119,7 +119,7 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
                   {session?.user.id != conversation?.lastMessage?.senderId && (
                     <>
                       {!conversation?.lastMessage?.isRead && (
-                        <div className="bg-blue-700 rounded-full p-1"></div>
+                        <span className="bg-blue-700 rounded-full p-1"></span>
                       )}
                     </>
                   )}

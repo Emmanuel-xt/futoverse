@@ -3,14 +3,15 @@ import { openDatabase } from "@lib/indexedDB";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useSidebarConversations from "zustand/useSidebarConversations";
 
 const useGetConversations = () => {
   const [loading, setLoading] = useState(false);
-  const [conversations, setConversations] = useState([]);
+  const { conversations, setConversations } = useSidebarConversations();
   const { data: session } = useSession();
   const userId = parseFloat(session?.user.id);
 
-  // Load cached conversations
+  // Load cached conversations from IndexedDB
   const loadCachedConversations = async () => {
     try {
       const db = await openDatabase();
@@ -24,14 +25,10 @@ const useGetConversations = () => {
       const tx = db.transaction("conversations", "readonly");
       const store = tx.objectStore("conversations");
       const cachedData = await store.getAll();
+      cachedData.sort((a, b) => a.sortOrder - b.sortOrder);
 
-      console.log("Cached data:", cachedData);
-
-      if (cachedData.length > 0) {
-        setConversations(cachedData);
-      }
-
-      return cachedData; // ✅ Return cached data
+      console.log("Loaded cached conversations:", cachedData);
+      return cachedData;
     } catch (error) {
       console.error("Error loading cached conversations:", error);
       return [];
@@ -40,6 +37,7 @@ const useGetConversations = () => {
 
   // Save or update conversations in IndexedDB
   const saveConversationsToDB = async (newConversations) => {
+    console.log("About to save cached data ", newConversations);
     try {
       const db = await openDatabase();
       if (!db) return;
@@ -52,21 +50,21 @@ const useGetConversations = () => {
       const tx = db.transaction("conversations", "readwrite");
       const store = tx.objectStore("conversations");
 
-      // Get existing data first
-      const existingData = await store.getAll();
-      const existingIds = new Set(existingData.map((conv) => conv.id)); // Assume each conversation has a unique "id"
+      // Clear all existing conversations
+      await store.clear();
 
-      // Find new conversations that are NOT in IndexedDB
-      const newEntries = newConversations.filter(
-        (conv) => !existingIds.has(conv.id)
-      );
+      // Add or overwrite all new conversations
+      newConversations.forEach((conv, index) => {
+        const payload = { ...conv, sortOrder: index };
+        // console.log("Saving to DB:", payload);
+        store.put(payload);
+        // store.put({
+        //   ...conv,
+        //   sortOrder: index, // preserve original order from backend
+        // });
+      });
 
-      if (newEntries.length > 0) {
-        console.log("Adding new conversations to IndexedDB:", newEntries);
-        newEntries.forEach((item) => store.put(item));
-      } else {
-        console.log("No new conversations to add.");
-      }
+      console.log("All conversations have been saved or overwritten.");
     } catch (error) {
       console.error("Error saving conversations to IndexedDB:", error);
     }
@@ -74,21 +72,24 @@ const useGetConversations = () => {
 
   useEffect(() => {
     const getConversations = async () => {
-      await openDatabase(); // Ensure DB is initialized
-
-      // const cachedConversations = await loadCachedConversations(); // Load cached data first
+      const cachedConversations = await loadCachedConversations(); // Load cached data first
+      setConversations(cachedConversations);
 
       if (navigator.onLine) {
+        // Fetch from live data if online
         setLoading(true);
         try {
           if (session) {
             const fetchedConversations = await getUsersForSidebar(userId);
-            console.log("Fetched conversations:", fetchedConversations);
+            console.log("Fetched new conversations:", fetchedConversations);
 
             if (fetchedConversations.length > 0) {
               setConversations(fetchedConversations);
-              await saveConversationsToDB(fetchedConversations); // ✅ Only add new ones
+              await saveConversationsToDB(fetchedConversations); // Save new ones to DB
+              console.log("fetched converstions saved to db");
             }
+          } else {
+            console.log("No session available");
           }
         } catch (error) {
           console.error("Error fetching conversations:", error);
@@ -100,43 +101,9 @@ const useGetConversations = () => {
     };
 
     getConversations();
-  }, [session]);
+  }, []);
 
   return { loading, conversations, setConversations };
 };
 
 export default useGetConversations;
-
-// useEffect(() => {
-//   const getConversations = async () => {
-//     await openDatabase(); // Ensure DB is initialized
-
-//     const cachedConversations = await loadCachedConversations(); // Load cached data first
-
-//     if (navigator.onLine) {
-//       setLoading(true);
-//       try {
-//         const fetchedConversations = await getUsersForSidebar();
-
-//         // 🔥 Prevent setting state if response is invalid
-//         if (!fetchedConversations || fetchedConversations.length === 0) {
-//           console.warn("Fetched data is empty or undefined. Keeping cached conversations.");
-//           return;
-//         }
-
-//         console.log("Fetched conversations:", fetchedConversations);
-
-//         setConversations(fetchedConversations); // ✅ Only update if data is valid
-//         await saveConversationsToDB(fetchedConversations); // ✅ Only save valid new data
-
-//       } catch (error) {
-//         console.error("Error fetching conversations:", error);
-//         toast.error("Network error! Showing cached conversations.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//   };
-
-//   getConversations();
-// }, []);

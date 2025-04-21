@@ -1,11 +1,19 @@
 import { getRandomEmoji } from "@constants/arrays";
 import useGetConversations from "hooks/useGetConversations";
 import Conversation from "./Conversation";
+import { useEffect } from "react";
 
 const Conversations = ({ searchResults }) => {
   const { conversations: allConversations, loading } = useGetConversations();
   const displayConversations = searchResults?.conversations || allConversations;
   const newUsers = searchResults?.users || [];
+
+  useEffect(() => {
+    console.log(
+      "Sidebar re-rendered with updated conversations",
+      allConversations
+    );
+  }, [allConversations]);
 
   return (
     <div className="py-2 flex flex-col overflow-auto">

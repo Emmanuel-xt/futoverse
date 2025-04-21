@@ -8,6 +8,7 @@ import useConversation from "zustand/useConversation";
 import Conversations from "./Conversations";
 import SearchInput from "./SearchInput";
 import { useState } from "react";
+import useGlobalMessageListener from "hooks/useGlobalMessageListener";
 
 const Sidebar = () => {
   const { setSelectedConversation, selectedConversation } = useConversation();
