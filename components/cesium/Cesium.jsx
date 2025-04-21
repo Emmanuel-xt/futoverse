@@ -105,8 +105,8 @@ const CesiumMapB = () => {
           5.410862571178967 // north (max lat)
         );
 
-        // viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // Minimum zoom level (higher value = less zoom-in)
-        // viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1000;
+        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // Minimum zoom level (higher value = less zoom-in)
+        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1000;
 
         viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
@@ -196,7 +196,7 @@ const CesiumMapB = () => {
 
         loadNewBuildingTileset(viewer);
 
-        callTHeCreateTIles(viewer);
+        // callTHeCreateTIles(viewer);
 
         const loadAllRealShops = async () => {
           const load = await fetchOnlyShops();

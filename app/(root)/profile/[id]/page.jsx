@@ -110,13 +110,6 @@ const Profile = ({ params }) => {
             ref={menuRef}
             className="absolute right-5 top-3 mt-2 w-40 bg-white shadow-md rounded-md "
           >
-            <Link
-              href={`/chat?receiverId=${user?.id}`}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Message
-            </Link>
-
             {isUserActive && (
               <Link
                 href="/map"
@@ -193,10 +186,13 @@ const Profile = ({ params }) => {
           Connect
         </button>
 
-        <div className="border border-2 p-1 flex flex-col items-center rounded">
+        <Link
+          href={`/chat?receiverId=${user?.id}`}
+          className="border-2 p-1 flex flex-col items-center rounded"
+        >
           <LuMessageSquareText className="text-2xl " />
           <p className="text-[10px]">Message</p>
-        </div>
+        </Link>
       </div>
 
       <div className="mt-6 w-full max-w-md bg-white p-6 shadow-lg rounded-lg">
