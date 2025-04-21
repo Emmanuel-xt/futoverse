@@ -86,55 +86,6 @@ const CartPage = () => {
       .toFixed(2);
   };
 
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      name: "Product Chair",
-      description: "White Color",
-      quantity: 3,
-      image: "/assets/IceHomeImage1.jpg",
-    },
-    {
-      id: 2,
-      name: "Product Table",
-      description: "Pepper Red",
-      quantity: 2,
-      image: "/assets/IceHomeImage1.jpg",
-    },
-    {
-      id: 3,
-      name: "Product Gun",
-      description: "AR15",
-      quantity: 1,
-      image: "/assets/IceHomeImage1.jpg",
-    },
-  ]);
-
-  // const [cart, setCart] = useState([
-  //   {
-  //     id: 1,
-  //     name: "Product Machine",
-  //     description: "Nnewi machine",
-  //     price: 1000,
-  //     quantity: 2,
-  //     image: "/assets/IceHomeImage1.jpg",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Shawarma",
-  //     description: "chicken and beef",
-  //     price: 500,
-  //     quantity: 1,
-  //     image: "/assets/IceHomeImage1.jpg",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Bread",
-  //     description: "LoveBite company",
-  //     price: 800,
-  //     quantity: 3,
-  //     image: "/assets/IceHomeImage1.jpg",
-  //   },
   // ]);
 
   const handleTabChange = (tab) => {

@@ -115,7 +115,10 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
 
                 <p className=" flex  w-full items-center justify-between text-slate-600 text-xs">
                   {" "}
-                  {conversation?.lastMessage?.body}
+                  {/* {conversation?.lastMessage?.body} */}
+                  {conversation?.lastMessage?.body.length > 60
+                    ? conversation?.lastMessage?.body.substring(0, 50) + "..."
+                    : conversation?.lastMessage?.body}
                   {session?.user.id != conversation?.lastMessage?.senderId && (
                     <>
                       {!conversation?.lastMessage?.isRead && (

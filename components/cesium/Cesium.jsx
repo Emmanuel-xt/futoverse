@@ -356,7 +356,7 @@ const CesiumMapB = () => {
 
   return (
     <>
-      <motion.div
+      {/* <motion.div
         className="cesium-map-container"
         initial={{ opacity: 0, y: 100, zIndex: 1 }} // Start hidden and beneath
         animate={
@@ -366,75 +366,75 @@ const CesiumMapB = () => {
         } // Bring map on top and animate in
         transition={{ duration: 1, ease: "easeInOut" }} // Adjust timing as needed
         style={{ pointerEvents: isMapVisible ? "auto" : "none" }} // Disable pointer events when hidden
+      > */}
+      <div
+        id="cesiumContainer"
+        className="w-full h-[105vh] overflow-hidden relative border px-1"
       >
-        <div
-          id="cesiumContainer"
-          className="w-full h-screen overflow-hidden relative border "
-        >
-          {/* {viewer && (
+        {/* {viewer && (
             <TerrainPositioner viewer={viewer} modelUrl="/models/futo14.glb" />
           )} */}
-          {/* search/other basr */}
-          <MapFlyers
-            labelsVisible={labelsVisible}
-            setShowLabels={setLabelsVisible}
-            labelEntities={labelEntities}
-            findEntityModal={findEntityModal}
-            setFindEntityModal={setFindEntityModal}
-          />
+        {/* search/other basr */}
+        <MapFlyers
+          labelsVisible={labelsVisible}
+          setShowLabels={setLabelsVisible}
+          labelEntities={labelEntities}
+          findEntityModal={findEntityModal}
+          setFindEntityModal={setFindEntityModal}
+        />
 
-          <div
-            className="absolute z-20  top-5 left-5"
-            onClick={() => setMapVisible(false)}
-          >
-            <IoMdArrowBack className="text-white bg-dark-1 text-3xl rounded-full p-2" />
-            <p className="text-white text-[10px]"></p>
-          </div>
+        <div
+          className="absolute z-20  top-5 left-5"
+          onClick={() => setMapVisible(false)}
+        >
+          <IoMdArrowBack className="text-white bg-dark-1 text-3xl rounded-full p-2" />
+          <p className="text-white text-[10px]"></p>
         </div>
+      </div>
 
-        {/* Modal to display selected tile info */}
+      {/* Modal to display selected tile info */}
 
-        {showUserModal && (
-          <UserInfoModal
-            showModal={showUserModal}
-            setShowModal={setShowUserModal}
-            userInfo={userInfo}
+      {showUserModal && (
+        <UserInfoModal
+          showModal={showUserModal}
+          setShowModal={setShowUserModal}
+          userInfo={userInfo}
+        />
+      )}
+
+      {findEntityModal && (
+        <FindEntityModal
+          showModal={findEntityModal}
+          setShowModal={setFindEntityModal}
+        />
+      )}
+
+      {showLabelModal && (
+        <LabelModal
+          showModal={showLabelModal}
+          setShowModal={setShowLabelModal}
+          labelInfo={labelInfo}
+        />
+      )}
+
+      {/* {showModal && ( */}
+      <>
+        {isOccupied ? (
+          <OccupiedTile
+            showModal={showModal}
+            setShowModal={setShowModal}
+            tileInfo={tileInfo}
+            tileDetails={occupiedTileDetails}
+          />
+        ) : (
+          <TileModal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            tileInfo={tileInfo}
           />
         )}
-
-        {findEntityModal && (
-          <FindEntityModal
-            showModal={findEntityModal}
-            setShowModal={setFindEntityModal}
-          />
-        )}
-
-        {showLabelModal && (
-          <LabelModal
-            showModal={showLabelModal}
-            setShowModal={setShowLabelModal}
-            labelInfo={labelInfo}
-          />
-        )}
-
-        {/* {showModal && ( */}
-        <>
-          {isOccupied ? (
-            <OccupiedTile
-              showModal={showModal}
-              setShowModal={setShowModal}
-              tileInfo={tileInfo}
-              tileDetails={occupiedTileDetails}
-            />
-          ) : (
-            <TileModal
-              showModal={showModal}
-              setShowModal={setShowModal}
-              tileInfo={tileInfo}
-            />
-          )}
-        </>
-      </motion.div>
+      </>
+      {/* </motion.div> */}
     </>
   );
 };

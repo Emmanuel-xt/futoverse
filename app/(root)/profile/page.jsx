@@ -21,6 +21,7 @@ import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
 import { FiMenu } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa6";
+import { IoMdCart } from "react-icons/io";
 
 const Profile = () => {
   const { data: session, status } = useSession();
@@ -136,7 +137,10 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 mb-10 flex flex-col items-center">
-      <div className="flex gap-4 absolute top-5 right-5 ">
+      <div className="flex border items-center gap-4 absolute top-5 right-5 ">
+        <Link href="/cart">
+          <IoMdCart className="text-3xl cursor-pointer" />
+        </Link>
         <Link href="/profile/friend-requests">
           <FaUserPlus className="rounded-full text-3xl cursor-pointer" />
         </Link>
