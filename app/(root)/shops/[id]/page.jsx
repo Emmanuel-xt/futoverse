@@ -159,7 +159,7 @@ const ShopDynamicPage = ({ params }) => {
         }`}
         style={{
           backgroundImage: shop?.coverImage
-            ? `url("/assets/IceHomeImage1.jpg")`
+            ? `url(${shop.coverImage})`
             : // ? `url(${shop.coverImage})`
               undefined,
         }}
@@ -176,11 +176,11 @@ const ShopDynamicPage = ({ params }) => {
           }`}
         >
           <Image
-            src={shop?.image || "/assets/IceHomeImage1.jpg"}
+            src={shop?.image || "/images/noProfile.png"}
             alt="Profile"
-            width={80}
-            height={80}
-            className="rounded-full w-24 h-24 border-4 "
+            width={100}
+            height={100}
+            className="rounded-full w-24 h-24 border-4 object-cover "
             onClick={() => shop?.statuses.length > 0 && setShowDrawer(true)}
           />
           {isShopActive && (
@@ -251,13 +251,15 @@ const ShopDynamicPage = ({ params }) => {
         />
       )}
 
-      <div className="flex flex-col items-center justify-center mt-5 ">
+      <div className="flex flex-col items-center justify-center mt-5 px-3 ">
         <h2 className="text-lg font-bold">{shopId}</h2>
-        <p className="text-sm text-slate-500">{shop?.description}</p>
+        <p className="text-sm text-slate-500 text-center">
+          {shop?.description}
+        </p>
       </div>
 
-      <div className="mt-5 px-4">
-        <div className="flex w-full justify-around mb-4 border-b">
+      <div className="mt-2 px-4">
+        <div className="flex w-full justify-around mb-2 border-b">
           <button
             className={`p-2 ${
               activeTab === "product"
@@ -301,7 +303,7 @@ const ShopDynamicPage = ({ params }) => {
         <div className="p-4">
           <div className="">
             {filteredItems.length !== 0 ? (
-              <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+              <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
                 {filteredItems.map((product, index) => (
                   <Link
                     href={`/product/${product.id}`}

@@ -125,10 +125,12 @@ model Shop {
   requestedOrder String?
   size           Float         @default(0.0007)
   userId         Int
-  kingdom        String
   latitude       Float
   longitude      Float
+  locationDesc   String?
   image          String?
+  coverImage     String?
+  model          String?
   orders         Order[]
   user           User          @relation(fields: [userId], references: [id])
   shopItems      ShopItem[]

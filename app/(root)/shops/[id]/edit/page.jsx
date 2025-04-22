@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import {
+  fetchShopForEditing,
   fetchUserShopById,
   updateShopDetails,
 } from "@lib/actions/shops.prisma";
@@ -24,8 +25,9 @@ import {
   CommandList,
 } from "@components/ui/command";
 import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group";
+import { IoCameraReverseOutline } from "react-icons/io5";
 
-const EditProfile = ({ params }) => {
+const EditStoreProfile = ({ params }) => {
   const router = useRouter();
   const shopId = params.id.replace(/%20/g, " ");
   const [shop, setShop] = useState(null);
@@ -33,11 +35,15 @@ const EditProfile = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [loadingShop, setLoadingShop] = useState(true); // Initial loading state set to true
   const [open, setOpen] = useState(false);
+  const [wasNewUpload, setWasNewUpload] = useState({
+    image: false,
+    coverImage: false,
+  });
 
   useEffect(() => {
     const fetchUserShop = async () => {
       try {
-        const fetchedShop = await fetchUserShopById(shopId);
+        const fetchedShop = await fetchShopForEditing(shopId);
         setShop(fetchedShop);
         setForm((prevForm) => ({
           ...prevForm,
@@ -45,6 +51,9 @@ const EditProfile = ({ params }) => {
           desc: fetchedShop?.description || "",
           image: fetchedShop?.image || "",
           category: fetchedShop?.category || "",
+          locationDesc: fetchedShop?.locationDesc || "",
+          coverImage: fetchedShop?.coverImage || "",
+          model: fetchedShop?.model || "",
         }));
       } catch (error) {
         console.error("Error fetching shop:", error);
@@ -59,7 +68,10 @@ const EditProfile = ({ params }) => {
     name: shop?.name || "",
     image: shop?.image || "",
     desc: shop?.description || "",
-    category: "",
+    category: shop?.description || "",
+    locationDesc: shop?.locationDesc || "",
+    coverImage: shop?.coverImage || "",
+    model: shop?.model || "",
   });
 
   const handleChange = (field, value) => {
@@ -78,70 +90,64 @@ const EditProfile = ({ params }) => {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
-      let updatedImageUrl = form.image; // Default to existing form image
 
-      if (wasNewImageUploaded) {
-        // Cloudinary upload
-        const response = await fetch("/api/cloudinary", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: form.image }),
-        });
-        const data = await response.json();
+      const uploadedFields = {};
 
-        if (!response.ok) {
-          console.error("Image upload error:", data.error);
-          return; // Exit if upload fails
+      // Upload images only if changed
+      for (const key of ["image", "coverImage"]) {
+        if (wasNewUpload[key]) {
+          const response = await fetch("/api/cloudinary", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: form[key] }), // Sending the base64 for upload
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            console.error(`${key} upload failed:`, data.error);
+            setLoading(false);
+            return;
+          }
+          uploadedFields[key] = data.url; // Get Cloudinary URL
+        } else {
+          uploadedFields[key] = form[key]; // Use existing value (URL)
         }
-
-        // Update form with the Cloudinary URL
-        updatedImageUrl = data.url;
-        setForm((prev) => ({
-          ...prev,
-          image: updatedImageUrl,
-        }));
       }
 
-      // Save to the database with the Cloudinary URL
+      // Update shop details with Cloudinary URL
       const wasShopUpdated = await updateShopDetails(shopId, {
         name: form.name,
-        image: updatedImageUrl, // Use updated Cloudinary URL here
+        image: uploadedFields.image,
+        coverImage: uploadedFields.coverImage,
         desc: form.desc,
         category: form.category,
+        locationDesc: form.locationDesc,
       });
+
       setLoading(false);
       router.back();
-
-      //   console.log("Shop updated:", wasShopUpdated);
     } catch (error) {
       console.error("Error updating shop:", error);
+      setLoading(false);
     }
   };
 
   const [error, setError] = useState(null);
 
   // Only preview image on selection; actual upload happens on submit
-  const handleFileChange = async (event) => {
-    setWasNewImageUploaded(true);
-    console.log("wasNewImageUploaded", wasNewImageUploaded);
-    console.error("file change triggerd");
+  const handleFileChange = async (event, field) => {
     const file = event.target.files[0];
-    console.log("Selected file:", file);
-
-    // Check if the file is valid
     if (file && file instanceof Blob) {
       try {
-        // Convert the file to base64 for preview
         const base64 = await convertToBase64(file);
-        console.error("about to convert");
-
-        setForm((prev) => ({ ...prev, image: base64 })); // Preview image immediately
-        console.error("converted");
+        setForm((prev) => ({ ...prev, [field]: base64 }));
+        setWasNewUpload((prev) => ({ ...prev, [field]: true }));
       } catch (uploadError) {
-        console.error("Error while converting image to base64:", uploadError);
+        console.error("Error converting to base64:", uploadError);
+        setError("Failed to preview image.");
       }
     } else {
       setError("Please select a valid image file");
@@ -149,90 +155,118 @@ const EditProfile = ({ params }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center px-4 py-6 mb-10">
-      <div className="relative w-full max-w-2xl">
-        <h1 className="text-center text-2xl font-bold text-gray-800">
-          Customize Your Store
-        </h1>
-      </div>
-
-      <div className="mt-6">
-        <div className="rounded-full w-32 h-32 border a flex justify-center items-center cursor-pointer">
-          {/* Hidden file input */}
+    <div className="min-h-screen bg-gray-50 px-4 py-6 flex flex-col items-center">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg overflow-hidden">
+        {/* Cover Image */}
+        <div className="relative h-48 w-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
           <input
             type="file"
             accept="image/*"
-            onChange={handleFileChange}
             className="hidden"
-            id="file-input"
+            id="cover-upload"
+            onChange={(e) => handleFileChange(e, "coverImage")}
           />
-
-          {/* Camera icon button to trigger file input */}
-          <label htmlFor="file-input" className="absolute cursor-pointer">
-            <FaCamera className="text-3xl text-gray-600" />
+          <label
+            htmlFor="cover-upload"
+            className="absolute z-10 bottom-2 right-2 cursor-pointer"
+          >
+            <div className="bg-white p-2 rounded-full">
+              <IoCameraReverseOutline className="text-2xl text-black" />
+            </div>
           </label>
+          {form?.coverImage ? (
+            <Image
+              src={form.coverImage}
+              alt="Cover"
+              layout="fill"
+              className="object-cover"
+            />
+          ) : (
+            <p className="text-white font-semibold text-xl">No Cover Image</p>
+          )}
+        </div>
 
-          {/* Display the selected image */}
-          {form.image && (
+        {/* Profile Image */}
+        <div className="relative w-32 h-32  -mt-16 mx-auto border-4 border-white rounded-full bg-white overflow-">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="profile-upload"
+            onChange={(e) => handleFileChange(e, "image")}
+          />
+          <label
+            htmlFor="profile-upload"
+            className="absolute  -right-3 bottom-2 inset- cursor-pointer z-20 flex items-center justify-center "
+          >
+            <div className="bg-white p-2 rounded-full border">
+              <IoCameraReverseOutline className="text-2xl text-black" />
+            </div>
+          </label>
+          {form.image ? (
             <Image
               src={form.image}
-              alt="Profile_image"
-              width={100}
-              height={100}
-              className="rounded-full w-full h-full object-cover"
+              alt="Profile"
+              fill
+              className="object-cover rounded-full"
+            />
+          ) : (
+            <Image
+              src="/images/noProfile.png"
+              alt="No profile"
+              fill
+              className="object-cover"
             />
           )}
         </div>
-      </div>
 
-      <div className="mt-8 w-full max-w-md bg-white p-6 shadow-lg rounded-lg">
-        <form>
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Name
+        {/* Form */}
+        <form className="p-6 space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block font-medium text-gray-700">
+              Store Name
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter Store Name"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
+              className="w-full mt-1 border px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-gray-700 font-medium mb-2"
-            >
+          <div>
+            <label className="block font-medium text-gray-700">
               Description
             </label>
             <textarea
-              id="description"
-              rows="4"
-              name="description"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Brief Description of what you do"
               value={form.desc}
               onChange={(e) => handleChange("desc", e.target.value)}
-            ></textarea>
+              rows={3}
+              className="w-full mt-1 border px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-400"
+              placeholder="Brief description of what you do"
+            />
           </div>
 
-          <div className="w-full">
-            <label htmlFor="category" className="text-sm text-slate-700">
-              Category
+          <div>
+            <label className="block font-medium text-gray-700">
+              Location Description
             </label>
+            <textarea
+              value={form.locationDesc}
+              onChange={(e) => handleChange("locationDesc", e.target.value)}
+              rows={2}
+              className="w-full mt-1 border px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-400"
+              placeholder="e.g., Beside Student Center, Opposite Library"
+            />
+          </div>
 
+          <div>
+            <label className="block font-medium text-gray-700">Category</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <button
-                  aria-expanded={open}
-                  className="w-full justify-between flex items-center border p-2 rounded-md"
+                  type="button"
+                  className="w-full justify-between flex items-center border px-4 py-2 rounded-md"
                 >
                   {form.category || "Select Business Category"}
                   <ChevronsUpDown className="opacity-50 ml-auto" />
@@ -240,19 +274,16 @@ const EditProfile = ({ params }) => {
               </PopoverTrigger>
               <PopoverContent className="w-full p-0">
                 <Command>
-                  <CommandInput placeholder="Search department..." />
+                  <CommandInput placeholder="Search category..." />
                   <CommandList>
-                    <CommandEmpty>Department Not Found.</CommandEmpty>
+                    <CommandEmpty>No Category Found</CommandEmpty>
                     <CommandGroup>
                       {shopCategories.map((category) => (
                         <CommandItem
                           key={category}
                           value={category}
                           onSelect={() => {
-                            setForm((prev) => ({
-                              ...prev,
-                              category: category,
-                            }));
+                            handleChange("category", category);
                             setOpen(false);
                           }}
                         >
@@ -276,13 +307,12 @@ const EditProfile = ({ params }) => {
 
           <button
             disabled={loading}
-            onClick={handleSubmit}
             type="submit"
-            className={`w-full mt-4 bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              loading && "cursor-wait"
+            className={`w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 ${
+              loading && "cursor-wait opacity-70"
             }`}
           >
-            {loading ? "Saving ..." : "Save Changes"}
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>
@@ -290,4 +320,4 @@ const EditProfile = ({ params }) => {
   );
 };
 
-export default EditProfile;
+export default EditStoreProfile;
