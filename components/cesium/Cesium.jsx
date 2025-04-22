@@ -282,17 +282,17 @@ const CesiumMapB = () => {
               handleTileClick(pickedObject.id);
               console.log("selscted tile value", selectedTile);
 
-              // if (selectedTile) {
-              //   selectedTile.rectangle.material = new ColorMaterialProperty(
-              //     Color.GREEN.withAlpha(0.1)
-              //   );
-              //   console.log("there is a selscted tile o", selectedTile);
-              // } else {
-              //   console.log("nothing like selscted tile o");
-              //   pickedObject.id.rectangle.material = new ColorMaterialProperty(
-              //     Color.BLUE.withAlpha(1)
-              //   );
-              // }
+              if (selectedTile) {
+                selectedTile.rectangle.material = new ColorMaterialProperty(
+                  Color.GREEN.withAlpha(0.1)
+                );
+                console.log("there is a selscted tile o", selectedTile);
+              } else {
+                console.log("nothing like selscted tile o");
+                pickedObject.id.rectangle.material = new ColorMaterialProperty(
+                  Color.BLUE.withAlpha(0.1)
+                );
+              }
 
               setSelectedTile(pickedObject.id);
 

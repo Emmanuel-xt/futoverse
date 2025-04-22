@@ -1,5 +1,6 @@
 "use client";
 import {
+  acceptFriendRequest,
   acceptFrientRequest,
   fetchPendingFriendRequests,
   rejectFriendRequest,
@@ -104,34 +105,38 @@ const FriendRequests = () => {
     fetchFriendRequest();
   }, []);
 
-  const [acceptFriendRequestLoad, setAcceptFriendRequestLoad] = useState(false);
+  const [acceptFriendRequestLoad, setAcceptFriendRequestLoad] = useState(null);
+  const [rejectFriendRequestLoad, setRejectFriendRequestLoad] = useState(null);
 
   const handleAcceptFrientRequest = async (id, name) => {
     try {
-      setAcceptFriendRequestLoad(true);
-      const send = await acceptFrientRequest(currentUserId, id);
+      setAcceptFriendRequestLoad(id);
+      const send = await acceptFriendRequest(currentUserId, id);
       if (send) {
-        toast(`You are now Friends with ${name} `);
+        toast(`You are now Friends with ${name}`);
+        setRequests((prev) => prev.filter((req) => req.sender.id !== id));
       }
     } catch (error) {
       toast("Failed to Accept Request");
-      console.log("Error sending friend request", error);
+      console.log("Error accepting friend request", error);
     } finally {
-      setAcceptFriendRequestLoad(false);
+      setAcceptFriendRequestLoad(null);
     }
   };
+
   const handleDeclineFrientRequest = async (id, name) => {
     try {
-      setAcceptFriendRequestLoad(true);
+      setRejectFriendRequestLoad(id);
       const send = await rejectFriendRequest(currentUserId, id);
       if (send) {
-        toast(`Friend Reqquest Rejected`);
+        toast(`Friend Request Rejected`);
+        setRequests((prev) => prev.filter((req) => req.sender.id !== id));
       }
     } catch (error) {
-      toast("Failed to Update Request");
-      console.log("Error sending friend request", error);
+      toast("Failed to Decline Request");
+      console.log("Error declining friend request", error);
     } finally {
-      setAcceptFriendRequestLoad(false);
+      setRejectFriendRequestLoad(null);
     }
   };
 
@@ -166,6 +171,7 @@ const FriendRequests = () => {
               <div className="flex gap-2">
                 <button
                   type="button"
+                  disabled={acceptFriendRequestLoad === request.sender.id}
                   onClick={() =>
                     handleAcceptFrientRequest(
                       request.sender.id,
@@ -174,10 +180,13 @@ const FriendRequests = () => {
                   }
                   className="bg-primary text-white font-semibold w-full rounded-lg p-1"
                 >
-                  Accept
+                  {acceptFriendRequestLoad === request.sender.id
+                    ? "Acepting..."
+                    : "Accept"}
                 </button>
                 <button
                   type="button"
+                  disabled={rejectFriendRequestLoad === request.sender.id}
                   onClick={() =>
                     handleDeclineFrientRequest(
                       request.sender.id,
@@ -186,7 +195,9 @@ const FriendRequests = () => {
                   }
                   className="bg-slate-200 text-black font-semibold w-full rounded-lg p-1"
                 >
-                  Decline
+                  {rejectFriendRequestLoad === request.sender.id
+                    ? "Declining..."
+                    : "Decline"}
                 </button>
               </div>
             </div>

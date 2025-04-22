@@ -12,7 +12,11 @@ import { useRouter } from "next/navigation";
 import { generateProfileLink } from "@constants/functions";
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
 import {
+  areFriends,
+  cancelFriendRequest,
+  disconnectFriends,
   fetchUsersFriendCount,
+  hasSentFriendRequest,
   sendFriendRequest,
 } from "@lib/actions/connect.prisma";
 import { LuMessageSquareText } from "react-icons/lu";
@@ -30,22 +34,29 @@ const Profile = ({ params }) => {
   const { data: session } = useSession();
   const currentUserId = parseFloat(session?.user?.id);
 
-  // const [posts, setPosts] = useState([]);
-  // const { viewer, viewerReady, setMapVisible } = useCesiumViewer();
-  // const onlineUsers = useOnlineUsers();
-  // const isOnline = Object.values(onlineUsers).some(
-  //   (user) => user.username === session?.user?.username
-  // );
+  const [friendRequestSent, setFriendRequestSent] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+
+  const [alreadyFriends, setAlreadyFriends] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       // socket.emit("set_user_online", session.user.username);
       // console.log({ isOnline });
-      if (id) {
+      if (id && currentUserId) {
         try {
           setStatus("loading");
           const fetchedUser = await fetchUserByUsername(id);
           setUser(fetchedUser);
+
+          const requestStatus = await hasSentFriendRequest(
+            currentUserId,
+            fetchedUser.id
+          );
+          setFriendRequestSent(requestStatus);
+
+          const isFriend = await areFriends(currentUserId, fetchedUser.id);
+          setAlreadyFriends(isFriend);
         } catch (error) {
         } finally {
           setStatus("");
@@ -54,7 +65,7 @@ const Profile = ({ params }) => {
     };
 
     fetchUserData();
-  }, [id]);
+  }, [id, currentUserId]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -79,9 +90,45 @@ const Profile = ({ params }) => {
       const send = await sendFriendRequest(currentUserId, id);
       if (send) {
         toast("Connection Request Sent");
+        setRequestSent(true);
       }
     } catch (error) {
       toast("Failed to Send Request");
+      console.log("Error sending friend request", error);
+    } finally {
+      setfriendRequestLoad(false);
+    }
+  };
+  const handleCancelFriendRequest = async (id) => {
+    try {
+      setfriendRequestLoad(true);
+      const cancel = await cancelFriendRequest(currentUserId, id);
+      if (cancel.success) {
+        // toast("Connection Request Sent");
+        setRequestSent(false);
+        setFriendRequestSent(false);
+        alreadyFriends(false);
+      }
+    } catch (error) {
+      toast("Failed to Unfliend");
+      console.log("Error sending friend request", error);
+    } finally {
+      setfriendRequestLoad(false);
+    }
+  };
+  const handleDisconnectFriendship = async (id) => {
+    try {
+      setfriendRequestLoad(true);
+      const disconnect = await disconnectFriends(currentUserId, id);
+      if (disconnect.success) {
+        // toast("Connection Request Sent");
+        setRequestSent(false);
+        setAlreadyFriends(false);
+        setRequestSent(false);
+        toast("You are no longer Friends");
+      }
+    } catch (error) {
+      toast("Failed to Cancel");
       console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
@@ -175,16 +222,41 @@ const Profile = ({ params }) => {
         </div>
       </div>
       <div className="flex gap-3 items-center mt-2">
-        <button
-          type="button"
-          onClick={() => handleSendFriendRequest(user.id)}
-          className={`bg-blue-500 ${
-            friendRequestLoad && "bg-blue-400"
-          } text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-          disabled={friendRequestLoad}
-        >
-          Connect
-        </button>
+        {session?.user?.id !== user?.id && (
+          <>
+            {alreadyFriends ? (
+              <button
+                type="button"
+                onClick={() => {
+                  // TODO: Add disconnect friend logic here
+                  handleDisconnectFriendship(user.id);
+                }}
+                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Disconnect
+              </button>
+            ) : friendRequestSent || requestSent ? (
+              <button
+                type="button"
+                onClick={() => handleCancelFriendRequest(user.id)}
+                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                {friendRequestLoad ? "Canceling..." : "Cancel Request"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleSendFriendRequest(user.id)}
+                className={`bg-blue-500 ${
+                  friendRequestLoad ? "bg-blue-400" : ""
+                } text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                disabled={friendRequestLoad}
+              >
+                {friendRequestLoad ? "Sending..." : "Connect"}
+              </button>
+            )}
+          </>
+        )}
 
         <Link
           href={`/chat?receiverId=${user?.id}`}
