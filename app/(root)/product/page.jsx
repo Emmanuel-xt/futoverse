@@ -1,45 +1,117 @@
-// "use client";
-// import { useState } from "react";
+import Image from "next/image";
+import { Star, MessageCircle, Flame, Tag, Search, ChevronDown, MapPin } from "lucide-react";
 
-// const dummyProducts = [
-//   { id: 1, title: "MacBook Pro 14", price: "AED4,500", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 2, title: "Mercedes Benz C200", price: "AED30,000", image: "/assets/logo.svg" },
-//   { id: 3, title: "Samsung Galaxy S23", price: "AED2,500", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 4, title: "Electric Bike", price: "AED800", image: "/assets/logo.svg" },
-//   { id: 5, title: "55-inch OLED TV", price: "AED3,200", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 6, title: "Convertible Sports Car", price: "AED60,000", image: "/assets/logo.svg" },
-// ];
+const products = [
+  {
+    id: 1,
+    name: "New Laptop HP Omen 16 32GB Intel Core i9 SSD",
+    price: "\u20a63,054,000",
+    location: "Lagos, Ikeja",
+    condition: "Brand New",
+    rating: 5,
+    isPopular: true,
+    image: "/assets/IceHomeImage1.jpg"
+  },
+  {
+    id: 2,
+    name: "Laptop Razer Blade 16GB Intel Core i7 SSD 512GB",
+    price: "\u20a6860,000",
+    location: "Lagos, Ikeja",
+    condition: "Used",
+    rating: 5,
+    isPopular: true,
+    image: "/assets/IceHomeImage1.jpg"
+  },
+  {
+    id: 3,
+    name: "Toshiba Intel Core i5",
+    price: "\u20a6350,000",
+    location: "Lagos, Ikeja",
+    condition: "Used",
+    rating: 4,
+    isPopular: true,
+    image: "/assets/IceHomeImage1.jpg"
+  },
+  {
+    id: 4,
+    name: "Dell Latitude 7490 8GB RAM",
+    price: "\u20a6560,000",
+    location: "Lagos, Ikeja",
+    condition: "Used",
+    rating: 4,
+    isPopular: true,
+    image: "/assets/IceHomeImage1.jpg"
+  }
+];
 
-// const Marketplace = () => {
-//   const [products, setProducts] = useState(dummyProducts);
+export default function ProductPage() {
+  return (
+    <div className="p-2 bg-white min-h-screen">
+      <div className="flex items-center gap-2 border rounded-full px-4 py-2 mb-4">
+        <Search size={20} />
+        <input
+          type="text"
+          placeholder="Search in Laptops & Computers"
+          className="flex-1 outline-none"
+        />
+      </div>
 
-//   return (
-//     <div className="min-h-screen bg-gray-100 p-4">
-//       <div className="flex justify-between items-center mb-4">
-//         <h2 className="text-xl font-bold">Marketplace</h2>
-//         <button className="text-gray-600 text-lg">🔍</button>
-//       </div>
-//       <div className="grid grid-cols-2 gap-4">
-//         {products.map((product) => (
-//           <div key={product.id} className="bg-white cursor-pointer rounded-lg overflow-hidden shadow">
-//             <img src={product.image} alt={product.title} className="w-full h-40 object-cover" />
-//             <div className="p-2">
-//               <p className="font-bold">{product.price}</p>
-//               <p className="text-sm text-gray-700 truncate">{product.title}</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
+      <div className="flex gap-2 overflow-x-auto mb-4 whitespace-nowrap text-sm">
+        <button className="border px-3 py-1 rounded-full flex items-center gap-1">
+          All filters <ChevronDown size={14} />
+        </button>
+        <button className="border px-3 py-1 rounded-full flex items-center gap-1">
+          Region <ChevronDown size={14} />
+        </button>
+        <button className="border px-3 py-1 rounded-full flex items-center gap-1">
+          Price, \u20a6 <ChevronDown size={14} />
+        </button>
+        <button className="border px-3 py-1 rounded-full flex items-center gap-1">
+          Type <ChevronDown size={14} />
+        </button>
+      </div>
 
-// export default Marketplace;
+      <div className="grid grid-cols-2 gap-3">
+        {products.map((item) => (
+          <div
+            key={item.id}
+            className="border rounded-lg p-2 relative shadow-sm"
+          >
+            {item.isPopular && (
+              <div className="absolute top-2 right-2 text-xs bg-white px-2 py-1 rounded-full border flex items-center gap-1 shadow">
+                <Flame size={12} className="text-orange-500" />
+                POPULAR
+              </div>
+            )}
 
-import React from "react";
+            <Image
+              src={item.image}
+              alt={item.name}
+              width={200}
+              height={150}
+              className="w-full h-32 object-cover rounded"
+            />
 
-const page = () => {
-  return <div>Coming soonest</div>;
-};
+            <div className="text-green-600 font-semibold mt-2">{item.price}</div>
+            <div className="text-sm font-medium line-clamp-2">{item.name}</div>
 
-export default page;
+            <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+              <MapPin size={14} /> {item.location}
+            </div>
+            <div className="inline-block mt-1 text-xs border px-2 py-1 rounded-full bg-gray-100">
+              {item.condition}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <nav className="fixed bottom-0 left-0 w-full bg-white border-t grid grid-cols-5 text-xs text-center py-2">
+        <div>Home</div>
+        <div>Saved</div>
+        <div>Sell</div>
+        <div>Messages</div>
+        <div>Profile</div>
+      </nav>
+    </div>
+  );
+}
