@@ -23,7 +23,7 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
     longitude: lon,
     latitude: lat,
   };
-  console.log(labelInfo);
+  console.log("Pointer Modal Suppose dey show", labelInfo);
   return (
     <Modal
       open={showModal}
@@ -39,18 +39,20 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
       <div className="flex flex-wrap gap-5 justify-center mt-2 p-1">
         <p
           className="flex flex-col gap-1 items-center text-sm"
-          onClick={() =>
-            drawLineBetweenPoints(viewer, userLocation, endLocation)
-          }
+          onClick={() => {
+            if (userLocation) {
+              drawLineBetweenPoints(viewer, () => userLocation, endLocation);
+            } else {
+              console.warn("User location not available.");
+            }
+          }}
         >
           <FaDirections className="text-primary text-3xl bg-white rounded-full p-1" />
           Directions
         </p>
         <p
           className="flex flex-col gap-1 items-center text-sm"
-          onClick={() =>
-            generateLocationLink(lon, lat)
-          }
+          onClick={() => generateLocationLink(lon, lat)}
         >
           <FaShareFromSquare className="text-primary text-3xl bg-white rounded-full p-1" />
           Share

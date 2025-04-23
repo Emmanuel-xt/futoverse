@@ -30,6 +30,7 @@ import {
   Cartographic,
   Matrix4,
   PolylineOutlineMaterialProperty,
+  CallbackProperty,
 } from "cesium";
 import { concatPlaces, groupedPlaces, places } from "./places";
 import { toast } from "sonner";
@@ -214,34 +215,34 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
   }
 };
 
-export const createTileWithProperties = (
-  cesiumViewer,
-  x,
-  y,
-  size,
-  properties,
-  color = Color.GREEN.withAlpha(0.5)
-) => {
-  return cesiumViewer.entities.add({
-    position: Cartesian3.fromDegrees(x, y, 0),
+const material = new ColorMaterialProperty(Color.GREEN.withAlpha(0.1));
+export const createTileWithProperties = (viewer, x, y, size, properties) => {
+  return viewer.entities.add({
+    name: `Tile_${x}_${y}`,
+    position: Cartesian3.fromDegrees(x + size / 2, y + size / 2),
     rectangle: {
       coordinates: Rectangle.fromDegrees(x, y, x + size, y + size),
-      material: new ColorMaterialProperty(color),
-      extrudedHeight: 0,
+      material: material,
       heightReference: HeightReference.CLAMP_TO_GROUND,
+      extrudedHeight: 0,
       outline: true,
       outlineColor: Color.BLACK,
-      outlineWidth: 2.0,
+      outlineWidth: 1.0,
     },
-    properties: properties,
+    properties,
   });
 };
 
 export const callTHeCreateTIles = (cesiumViewer) => {
-  const west = 6.984172042631101;
-  const south = 5.357306567461418;
-  const east = 7.024156834792838;
-  const north = 5.413929176525564;
+  // const west = 6.984172042631101;
+  // const south = 5.357306567461418;
+  // const east = 7.024156834792838;
+  // const north = 5.413929176525564;
+
+  const west = 6.993498287022618;
+  const south = 5.3600319870711814;
+  const east = 7.012325243502062;
+  const north = 5.394281689328309;
 
   const tileSize = 0.0007; // Adjusted size of each tile in degrees
 
@@ -292,7 +293,7 @@ export const addPlacesToViewer = async (viewer) => {
           minDist,
           maxDist
         ),
-        show: true, // Default visibility
+        show: false, // Default visibility
       },
     });
     labelEntities.push(entity);
@@ -421,7 +422,7 @@ export const load3DModelForShop = async (
 export const checkIfTileOccupied = (tileId, shops) => {
   // console.log("tile Id gotten @ occupied tile checker", tileId);
   // console.log("shops gotten from occupied checker", shops);
-  const occupiedTile = shops.find((shop) => {
+  const occupiedTile = shops?.find((shop) => {
     return shop.id == tileId;
   });
 
@@ -435,96 +436,101 @@ export const checkIfTileOccupied = (tileId, shops) => {
 
 export const drawLineBetweenPoints = async (
   viewer,
-  startLocation,
+  getCurrentPosition, // <-- function that returns live position
   endLocation
 ) => {
-  const startPoint = Cartesian3.fromDegrees(
-    startLocation.longitude,
-    startLocation.latitude
-  );
-  const endPoint = Cartesian3.fromDegrees(
-    endLocation.longitude,
-    endLocation.latitude
-  );
-  const waypoints = await getMapboxDirections(
-    startLocation.longitude,
-    startLocation.latitude,
-    endLocation.longitude,
-    endLocation.latitude
-  );
-
-  const positions =
-    waypoints && waypoints.length > 0
-      ? waypoints.map(([longitude, latitude]) =>
-          Cartesian3.fromDegrees(longitude, latitude, 5)
-        )
-      : [startPoint, endPoint];
-
-  viewer.entities.add({
-    polyline: {
-      positions: positions,
-      width: 10, // thicker line
-      material: new PolylineOutlineMaterialProperty({
-        color: Color.BLUE.withAlpha(0.9),
-        outlineColor: Color.BLUE.withAlpha(0.6),
-        outlineWidth: 2,
-      }),
-    },
-  });
-
-  if (waypoints && waypoints.length > 0) {
-    const [destinationLon, destinationLat] = waypoints[waypoints.length - 1];
-    viewer.camera.flyToBoundingSphere(
-      new BoundingSphere(
-        Cartesian3.fromDegrees(destinationLon, destinationLat, 0),
-        500
-      ),
-      {
-        duration: 2,
-        offset: new HeadingPitchRange(0, Math.toRadians(-30), 500),
-      }
+  try {
+    const waypoints = await getMapboxDirections(
+      getCurrentPosition().longitude,
+      getCurrentPosition().latitude,
+      endLocation.longitude,
+      endLocation.latitude
     );
+    const positions = new CallbackProperty(() => {
+      const current = getCurrentPosition();
+      const updatedStart = Cartesian3.fromDegrees(
+        current.longitude,
+        current.latitude,
+        5
+      );
+      const updatedEnd = Cartesian3.fromDegrees(
+        endLocation.longitude,
+        endLocation.latitude,
+        5
+      );
+      return [
+        updatedStart,
+        ...waypoints.map(([lon, lat]) => Cartesian3.fromDegrees(lon, lat, 5)),
+        updatedEnd,
+      ];
+    }, false);
+
+    const existingEntity = viewer.entities.getById("direction-line");
+    if (existingEntity) viewer.entities.remove(existingEntity);
+
+    viewer.entities.add({
+      id: "direction-line",
+      polyline: {
+        positions,
+        width: 5,
+        material: new PolylineOutlineMaterialProperty({
+          color: Color.BLUE.withAlpha(0.9),
+          outlineColor: Color.BLUE.withAlpha(0.6),
+          outlineWidth: 2,
+        }),
+      },
+    });
+  } catch (error) {
+    console.log("Error getting directions", error);
   }
 };
 
 // function to log and see view orientations
 
+// Hold the pointer entity outside the function (only one at a time)
+
 export const flytoDestination = (viewer, lon, lat) => {
-  // Fly to the bounding sphere at the specified longitude and latitude
+  // Fly to the bounding sphere at the specified location
   viewer.camera.flyToBoundingSphere(
-    new BoundingSphere(Cartesian3.fromDegrees(lon, lat, 0), 500), // 500 meters offset from the object
+    new BoundingSphere(Cartesian3.fromDegrees(lon, lat, 0), 500),
     {
-      duration: 2, // Fly duration in seconds
-      offset: new HeadingPitchRange(0, Math.toRadians(-30), 500), // Adjust the range to maintain the object in the center
+      duration: 2,
+      offset: new HeadingPitchRange(0, Math.toRadians(-30), 500),
     }
   );
 
-  // Add a 3D model entity that "hangs" in the air above the target location
-  const pointerHeightOffset = 40; // Adjust the height above the 3D object (in meters)
+  const pointerHeightOffset = 40;
   const position = Cartesian3.fromDegrees(lon, lat, pointerHeightOffset);
 
-  // Define the model's rotation (Heading, Pitch, Roll)
-  const heading = Math.toRadians(50); // Heading (rotation around the vertical axis)
-  const pitch = Math.toRadians(0); // Pitch (tilt up/down)
-  const roll = Math.toRadians(0); // Roll (rotation around the forward axis)
-  const hpr = new HeadingPitchRoll(heading, pitch, roll);
+  const orientation = Transforms.headingPitchRollQuaternion(
+    position,
+    new HeadingPitchRoll(Math.toRadians(50), 0, 0)
+  );
 
-  // Compute the quaternion for the orientation based on position
-  const orientation = Transforms.headingPitchRollQuaternion(position, hpr);
+  const existingEntity = viewer.entities.getById("pointer1");
+  if (existingEntity) {
+    existingEntity.position = position;
+  } else {
+    // Add new pointer
+    viewer.entities.add({
+      position,
+      orientation,
+      id: `pointer1`, // Unique ID for this tile
+      properties: {
+        type: "pointer",
+        coordinates: { longitude: lon, latitude: lat },
+      },
+      model: {
+        uri: "/models/pointer.glb",
+        scale: 5.0,
+        minimumPixelSize: 64,
+        maximumScale: 200,
+      },
+    });
+  }
 
-  const pointerEntity = viewer.entities.add({
-    position: Cartesian3.fromDegrees(lon, lat, pointerHeightOffset), // Add a height offset
-    orientation: orientation, // Set the orientation
-    model: {
-      uri: "/models/pointer.glb", // Path or URL to your 3D model file
-      scale: 5.0, // Scale the model if needed
-      minimumPixelSize: 64, // Ensures the model is visible even at lower zoom levels
-      maximumScale: 200, // Optional: to limit scaling at higher zoom
-    },
-  });
-
-  // Optionally, zoom to the new entity
-  // viewer.zoomTo(pointerEntity);
+  // Optional: fly to the pointer
+  // viewer.zoomTo(currentPointerEntity);
 };
 
 export const userModelAdd = (viewer, long, lat) => {

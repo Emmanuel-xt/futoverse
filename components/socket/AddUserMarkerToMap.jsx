@@ -1,7 +1,14 @@
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import { useLocation } from "@components/providers/LocationProvider";
 import { useSocket } from "@components/providers/SocketProvider";
-import { Cartesian3, Color } from "cesium";
+import {
+  Cartesian2,
+  Cartesian3,
+  Color,
+  DistanceDisplayCondition,
+  HeightReference,
+  VerticalOrigin,
+} from "cesium";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef } from "react";
 
@@ -36,7 +43,7 @@ export const AddUserMarkerToMap = () => {
         existingEntity.position = position;
       } else {
         viewer.entities.add({
-          id: fallbackId,
+          id: `user-${username}`,
           name: `User: ${username}`,
           position: position,
           properties: {
@@ -44,7 +51,20 @@ export const AddUserMarkerToMap = () => {
             type: "user",
             coordinates: { longitude, latitude },
           },
-          point: { pixelSize: 20, color: Color.RED },
+          model: {
+            uri: "/models/boy.glb",
+            scale: 9.0,
+            minimumPixelSize: 100,
+            maximumScale: 9.0,
+            heightReference: HeightReference.CLAMP_TO_GROUND,
+          },
+          billboard: {
+            image: "/images/red-triangle.png", // Triangle hovering above
+            verticalOrigin: VerticalOrigin.BOTTOM,
+            pixelOffset: new Cartesian2(0, 30), // Adjust to sit on top of the head
+            scale: 0.4,
+            distanceDisplayCondition: new DistanceDisplayCondition(0.0, 1e7), // Always visible
+          },
         });
       }
 
@@ -111,15 +131,31 @@ export const DisplayAllUserMarkers = () => {
               existingEntity.position = position;
             } else {
               viewer.entities.add({
-                id: `user-${username}`, // Use socket ID as the unique identifier
+                id: `user-${username}`,
                 name: `User: ${username}`,
-                position: position,
+                position,
                 properties: {
                   username,
                   type: "user",
                   coordinates: { longitude, latitude },
                 },
-                point: { pixelSize: 30, color: Color.BLUE },
+                model: {
+                  uri: "/models/boy.glb",
+                  scale: 9.0,
+                  minimumPixelSize: 100,
+                  maximumScale: 9.0,
+                  heightReference: HeightReference.CLAMP_TO_GROUND,
+                },
+                billboard: {
+                  image: "/images/blue-triangle.png", // Triangle hovering above
+                  verticalOrigin: VerticalOrigin.BOTTOM,
+                  pixelOffset: new Cartesian2(0, 30), // Adjust to sit on top of the head
+                  scale: 0.4,
+                  distanceDisplayCondition: new DistanceDisplayCondition(
+                    0.0,
+                    1e7
+                  ), // Always visible
+                },
               });
             }
           }

@@ -47,6 +47,7 @@ import { useSocket } from "@components/providers/SocketProvider";
 import FindEntityModal from "@components/modals/FindEntityModal";
 import LabelModal from "@components/modals/LabelModal";
 import TerrainPositioner from "./TerrainPositioner";
+import PointerModal from "@components/modals/PointerModal";
 // import { useSocket } from "@components/socket/Socket";
 
 const CesiumMapB = () => {
@@ -56,10 +57,12 @@ const CesiumMapB = () => {
   const [showModal, setShowModal] = useState(false); // Modal visibility state
   const [showUserModal, setShowUserModal] = useState(false); // Modal visibility state
   const [showLabelModal, setShowLabelModal] = useState(false); // Modal visibility state
+  const [showPointer, setShowPointer] = useState(false); // Modal visibility state
   const [findEntityModal, setFindEntityModal] = useState(false);
   const [tileInfo, setTileInfo] = useState({}); // Store tile data (longitude, latitude, ID)
   const [userInfo, setUserInfo] = useState({}); // Store tile data (longitude, latitude, ID)
   const [labelInfo, setLabelInfo] = useState({}); // Store tile data (longitude, latitude, ID)
+  const [pointerInfo, setPointerInfo] = useState({}); // Store tile data (longitude, latitude, ID)
   const [occupiedTileDetails, setOccupiedTileDetails] = useState({});
 
   const [isOccupied, setIsOccupied] = useState(false); // State to check tile status
@@ -258,6 +261,11 @@ const CesiumMapB = () => {
           // setShowModal(true); // Open modal when tile is clicked
           setShowLabelModal(true);
         };
+        const handlePointerClick = () => {
+          console.log("handlePointerClick called");
+          // setShowModal(true); // Open modal when tile is clicked
+          setShowPointer(true);
+        };
 
         // Click handler for picking tiles
         const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -265,7 +273,7 @@ const CesiumMapB = () => {
           const pickedObject = viewer.scene.pick(movement.position);
           console.log("Picked Object full:", { pickedObject });
           if (defined(pickedObject) && defined(pickedObject.id)) {
-            const properties = pickedObject.id.properties.getValue(
+            const properties = pickedObject.id.properties?.getValue(
               JulianDate.now()
             );
 
@@ -284,13 +292,13 @@ const CesiumMapB = () => {
 
               if (selectedTile) {
                 selectedTile.rectangle.material = new ColorMaterialProperty(
-                  Color.GREEN.withAlpha(0.1)
+                  Color.CHOCOLATE.withAlpha(0.2)
                 );
                 console.log("there is a selscted tile o", selectedTile);
               } else {
                 console.log("nothing like selscted tile o");
                 pickedObject.id.rectangle.material = new ColorMaterialProperty(
-                  Color.BLUE.withAlpha(0.1)
+                  Color.GREEN.withAlpha(0.2)
                 );
               }
 
@@ -340,6 +348,17 @@ const CesiumMapB = () => {
               });
               setShowLabelModal(true);
               console.log("show label state =", showUserModal);
+            }
+
+            if (properties.type === "pointer") {
+              handlePointerClick();
+              console.log("its a Pointer entity");
+              setPointerInfo({
+                // placename: properties.name,
+                location: properties.coordinates,
+              });
+              setShowPointer(true);
+              // console.log("show label state =", showUserModal);
             }
           }
         }, ScreenSpaceEventType.LEFT_CLICK);
@@ -414,6 +433,13 @@ const CesiumMapB = () => {
           showModal={showLabelModal}
           setShowModal={setShowLabelModal}
           labelInfo={labelInfo}
+        />
+      )}
+      {showPointer && (
+        <PointerModal
+          showModal={showPointer}
+          setShowModal={setShowPointer}
+          pointerInfo={pointerInfo}
         />
       )}
 

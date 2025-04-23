@@ -38,7 +38,7 @@ const MapFlyers = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPlace, setFilteredPlace] = useState([]);
   const [debounceTimer, setDebounceTimer] = useState(null);
-  const [openFlyers, setOpenFlyers] = useState(false);
+  const [openFlyers, setOpenFlyers] = useState(true);
   const { viewer, viewerReady } = useCesiumViewer();
   const { stableLocation, error } = useLocation();
   const [locationError, setLocationError] = useState("");
@@ -59,14 +59,14 @@ const MapFlyers = ({
     }
 
     const newTimer = setTimeout(async () => {
-      const onlineResults = await fetchFilteredPlace(term);
+      const onlineResults = [];
       const localResults = places.filter((place) =>
         place.placeName.toLowerCase().includes(term.toLowerCase())
       );
 
       const combinedResults = [...onlineResults, ...localResults];
       setFilteredPlace(combinedResults);
-    }, 2000);
+    }, 50);
 
     setDebounceTimer(newTimer);
   };
@@ -84,7 +84,7 @@ const MapFlyers = ({
         latitude: stableLocation.latitude,
       };
 
-      await drawLineBetweenPoints(viewer, userLocation, shopLocation);
+      // await drawLineBetweenPoints(viewer, userLocation, shopLocation);
     }
   };
 
@@ -117,12 +117,21 @@ const MapFlyers = ({
             className="text-black text-sm outline-none border rounded-lg p-1 w-full"
           />
           {filteredPlace.length > 0 && (
-            <ul className="absolute text-sm bg-white text-black w-full max-h-40 overflow-y-scroll mt-1 p-1 cursor-pointer">
+            <ul className="absolute text-sm bg-white text-black w-full max-h-40 overflow-y-scroll mt-1 p-1 cursor-pointer z-50">
               {filteredPlace.map((place, index) => (
                 <li
                   key={index}
-                  className="hover:bg-slate-300"
-                  onClick={() => handleFly(place.longitude, place.latitude)}
+                  className="hover:bg-slate-300 p-1"
+                  onClick={() => {
+                    // Autofill the input with the clicked place name
+                    setSearchTerm(place.placeName);
+
+                    // Trigger your fly logic
+                    handleFly(place.longitude, place.latitude);
+
+                    // Optionally clear the filtered results so the dropdown disappears
+                    setFilteredPlace([]);
+                  }}
                 >
                   {place.placeName}
                 </li>
