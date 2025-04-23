@@ -4,17 +4,17 @@ import { Star, MessageCircle, Flame, Tag, Search, ChevronDown, MapPin } from "lu
 const products = [
   {
     id: 1,
-    name: "New Laptop HP Omen 16 32GB Intel Core i9 SSD",
+    name: "Lexus ES 2019",
     price: "\u20a63,054,000",
     location: "Lagos, Ikeja",
     condition: "Brand New",
     rating: 5,
-    isPopular: true,
+    isPopular: false,
     image: "/assets/IceHomeImage1.jpg"
   },
   {
     id: 2,
-    name: "Laptop Razer Blade 16GB Intel Core i7 SSD 512GB",
+    name: "Rolls Royce Phantom",
     price: "\u20a6860,000",
     location: "Lagos, Ikeja",
     condition: "Used",
@@ -24,7 +24,7 @@ const products = [
   },
   {
     id: 3,
-    name: "Toshiba Intel Core i5",
+    name: "Mercedes-Benz C-Class AMG",
     price: "\u20a6350,000",
     location: "Lagos, Ikeja",
     condition: "Used",
@@ -34,7 +34,7 @@ const products = [
   },
   {
     id: 4,
-    name: "Dell Latitude 7490 8GB RAM",
+    name: "Lamborghini Aventador SVJ",
     price: "\u20a6560,000",
     location: "Lagos, Ikeja",
     condition: "Used",
