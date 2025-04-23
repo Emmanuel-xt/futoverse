@@ -61,7 +61,7 @@ export const AddUserMarkerToMap = () => {
           billboard: {
             image: "/images/red-triangle.png", // Triangle hovering above
             verticalOrigin: VerticalOrigin.BOTTOM,
-            pixelOffset: new Cartesian2(0, 30), // Adjust to sit on top of the head
+            pixelOffset: new Cartesian2(0, -30), // Adjust to sit on top of the head
             scale: 0.4,
             distanceDisplayCondition: new DistanceDisplayCondition(0.0, 1e7), // Always visible
           },
@@ -149,7 +149,7 @@ export const DisplayAllUserMarkers = () => {
                 billboard: {
                   image: "/images/blue-triangle.png", // Triangle hovering above
                   verticalOrigin: VerticalOrigin.BOTTOM,
-                  pixelOffset: new Cartesian2(0, 30), // Adjust to sit on top of the head
+                  pixelOffset: new Cartesian2(0, -30), // Adjust to sit on top of the head
                   scale: 0.4,
                   distanceDisplayCondition: new DistanceDisplayCondition(
                     0.0,

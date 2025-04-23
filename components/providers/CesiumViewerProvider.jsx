@@ -15,6 +15,8 @@ import {
   createWorldTerrainAsync,
   IonWorldImageryStyle,
   ImageryLayer,
+  TileMapServiceImageryProvider,
+  buildModuleUrl,
 } from "cesium";
 
 const CesiumViewerContext = createContext(null);
@@ -32,11 +34,7 @@ export const CesiumViewerProvider = ({ children }) => {
         Ion.defaultAccessToken =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
         const cesiumViewer = new Viewer("cesiumContainer", {
-          // terrain: Terrain.fromWorldTerrain(),
-          baseLayer: ImageryLayer.fromWorldImagery({
-            style: IonWorldImageryStyle.ROAD,
-          }),
-          baseLayerPicker: true,
+          baseLayerPicker: false,
         });
         // terrainProvider = createWorldTerrainAsync();
         // cesiumViewer.imageryLayers.removeAll();

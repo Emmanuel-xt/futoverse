@@ -39,3 +39,7 @@
   background-image: url("/public/images/ichie.jpg");
   background-size: cover;
 }
+
+.cesium-credit {
+  display: none !important;
+}
