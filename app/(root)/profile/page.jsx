@@ -70,7 +70,7 @@ const Profile = () => {
           const count = await fetchUsersFriendCount(session.user.username);
           setUserFriendListCount(count);
         } catch (error) {
-          console.log("Error fetching count", error);
+          // console.log("Error fetching count", error);
           return 0;
         } finally {
         }
@@ -85,13 +85,13 @@ const Profile = () => {
     try {
       // Clear IndexedDB
       await deleteDB("chatDB");
-      console.log("IndexedDB cleared successfully.");
+      // console.log("IndexedDB cleared successfully.");
 
       // Sign out and redirect
       await signOut();
       router.push("/login");
     } catch (error) {
-      console.error("Error during sign out:", error);
+      // console.error("Error during sign out:", error);
     }
   };
 

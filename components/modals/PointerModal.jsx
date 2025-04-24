@@ -20,8 +20,8 @@ const PointerModal = ({ showModal, setShowModal, pointerInfo }) => {
     latitude,
   };
 
-  console.log("New direction requested to:", endLocation);
-  console.log("Current user position:", currentPosition);
+  // console.log("New direction requested to:", endLocation);
+  // console.log("Current user position:", currentPosition);
 
   return (
     <Modal

@@ -58,7 +58,7 @@ const AddProductPage = ({ params }) => {
   };
 
   const handleSubmit = async () => {
-    console.log("Product form", product);
+    // console.log("Product form", product);
 
     // console.log("Submitting data:", dataToSubmit);
     try {
@@ -68,7 +68,7 @@ const AddProductPage = ({ params }) => {
         router.back();
       }
     } catch (error) {
-      console.error("Error submmiting data :", error);
+      // console.error("Error submmiting data :", error);
     }
   };
 
@@ -90,7 +90,7 @@ const AddProductPage = ({ params }) => {
 
       try {
         const base = await convertToBase64(file);
-        console.log("base =", base);
+        // console.log("base =", base);
 
         const response = await fetch("/api/cloudinary", {
           method: "POST",
@@ -105,10 +105,10 @@ const AddProductPage = ({ params }) => {
           image: data.url,
         }));
       } catch (error) {
-        console.error("Error uploading image:", error);
+        // console.error("Error uploading image:", error);
       }
     } else {
-      console.log("no form data");
+      // console.log("no form data");
     }
   };
 

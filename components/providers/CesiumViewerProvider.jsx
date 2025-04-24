@@ -28,6 +28,8 @@ export const CesiumViewerProvider = ({ children }) => {
   const [viewerReady, setViewerReady] = useState(false);
   const [isMapVisible, setMapVisible] = useState(false); // Add map visibility state
 
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const initializeViewer = async () => {
       try {
@@ -46,7 +48,8 @@ export const CesiumViewerProvider = ({ children }) => {
         viewerRef.current = cesiumViewer;
         setViewerReady(true);
       } catch (error) {
-        console.log("Error initialzing vesium", error);
+        // console.log("Error initialzing vesium", error);
+        setError("Failed to load Map");
       }
     };
 
@@ -58,6 +61,18 @@ export const CesiumViewerProvider = ({ children }) => {
       }
     };
   }, []);
+
+  if (error) {
+    return (
+      <div className="text-center">
+        <h2 className="text-red-600 font-bold text-xl">
+          An Error Occured while trying to load the Map on Your Device , Please
+          Refresh the Page
+        </h2>
+        <p className="text-sm text-gray-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <CesiumViewerContext.Provider

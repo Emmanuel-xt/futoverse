@@ -23,7 +23,7 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
     longitude: lon,
     latitude: lat,
   };
-  console.log("Pointer Modal Suppose dey show", labelInfo);
+  // console.log("Pointer Modal Suppose dey show", labelInfo);
   return (
     <Modal
       open={showModal}
@@ -43,7 +43,7 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
             if (userLocation) {
               drawLineBetweenPoints(viewer, () => userLocation, endLocation);
             } else {
-              console.warn("User location not available.");
+              // console.warn("User location not available.");
             }
           }}
         >

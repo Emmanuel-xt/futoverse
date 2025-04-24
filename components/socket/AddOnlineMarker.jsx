@@ -28,7 +28,7 @@ export const AddOnlineMarker = () => {
                 5000
               ),
             };
-            console.log("Bill Board added");
+            // console.log("Bill Board added");
           }
         } else {
           if (entity.billboard) {

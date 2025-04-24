@@ -46,7 +46,7 @@ const EditProfile = () => {
       if (session?.user) {
         const id = session.user.username;
         const fetchedUser = await fetchUserByUsername(id);
-        console.log("user", fetchedUser);
+        // console.log("user", fetchedUser);
         setUser(fetchedUser);
       }
     };
@@ -100,7 +100,7 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Submitting ", form);
+    // console.log("Submitting ", form);
     const id = parseFloat(session?.user.id);
 
     try {
@@ -118,7 +118,7 @@ const EditProfile = () => {
         });
         const data = await response.json();
         if (!response.ok) {
-          console.error("Image upload error:", data.error);
+          // console.error("Image upload error:", data.error);
         }
         // Update form with the Cloudinary URL
         updatedImageUrl = data.url;
@@ -144,7 +144,7 @@ const EditProfile = () => {
 
       success && router.push("/profile");
     } catch (error) {
-      console.log("error updating user on client", error);
+      // console.log("error updating user on client", error);
     } finally {
       setLoading(false);
     }
@@ -163,7 +163,7 @@ const EditProfile = () => {
         const base = await convertToBase64(file);
         setForm((prev) => ({ ...prev, img: base })); // Preview image immediately
       } catch (uploadError) {
-        console.error("Error while converting image to base64:", uploadError);
+        // console.error("Error while converting image to base64:", uploadError);
       }
     } else {
       setError("Please select a valid image file");

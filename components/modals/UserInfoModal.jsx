@@ -23,21 +23,21 @@ const UserInfoModal = ({ showModal, setShowModal, userInfo }) => {
     const fetchUserInfo = async () => {
       try {
         setLoading(true);
-        console.log("userinfo", userInfo);
+        // console.log("userinfo", userInfo);
         const user = await fetchOnlyUserInfo(userInfo.username);
         if (!user) {
           setMessage("user does not exist");
         }
         setUser(user);
       } catch (error) {
-        console.log("Error fetching user", error);
+        // console.log("Error fetching user", error);
       } finally {
         setLoading(false);
       }
     };
-    console.log("fetch info useEffect ran");
+    // console.log("fetch info useEffect ran");
     fetchUserInfo();
-    console.log("user", user);
+    // console.log("user", user);
   }, []);
 
   const cartesian = userInfo.position;
@@ -78,23 +78,26 @@ const UserInfoModal = ({ showModal, setShowModal, userInfo }) => {
             <p className="">{user?.department?.name}</p>
             <p className="">{user?.level?.name} Level</p>
             <div className="flex flex-col gap-2">
-              <Link
-                href={`/profile/${user?.username}`}
-                className="bg-primary text-sm text-white p-1 rounded-lg px-4 "
-                // onClick={handleEnterShop}
-              >
-                View Profile
-              </Link>
-
-              <div className="flex gap-2">
+              {user?.username && (
                 <Link
-                  href={`/chat?receiverId=${user?.id}`}
-                  className="bg-primary-500 flex items-center flex-col text- p-1 rounded-lg px-4 "
+                  href={`/profile/${user?.username}`}
+                  className="bg-primary text-sm text-white p-1 rounded-lg px-4 "
                   // onClick={handleEnterShop}
                 >
-                  <FaRegEnvelope className="text-2xl text-primary" />
-                  Message
+                  View Profile
                 </Link>
+              )}
+              <div className="flex gap-2">
+                {user?.id && (
+                  <Link
+                    href={`/chat?receiverId=${user?.id}`}
+                    className="bg-primary-500 flex items-center flex-col text- p-1 rounded-lg px-4 "
+                    // onClick={handleEnterShop}
+                  >
+                    <FaRegEnvelope className="text-2xl text-primary" />
+                    Message
+                  </Link>
+                )}
                 <p
                   className="flex flex-col gap-1 items-center text-sm"
                   onClick={() =>

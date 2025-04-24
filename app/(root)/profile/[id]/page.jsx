@@ -94,7 +94,7 @@ const Profile = ({ params }) => {
       }
     } catch (error) {
       toast("Failed to Send Request");
-      console.log("Error sending friend request", error);
+      // console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
     }
@@ -111,7 +111,7 @@ const Profile = ({ params }) => {
       }
     } catch (error) {
       toast("Failed to Unfliend");
-      console.log("Error sending friend request", error);
+      // console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
     }
@@ -129,7 +129,7 @@ const Profile = ({ params }) => {
       }
     } catch (error) {
       toast("Failed to Cancel");
-      console.log("Error sending friend request", error);
+      // console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
     }

@@ -28,14 +28,14 @@ export const LocationProvider = ({ children }) => {
           setError(null); // Clear any previous errors
         },
         (err) => {
-          console.error("Error fetching stable location:", err);
+          // console.error("Error fetching stable location:", err);
           setError(err.message); // Store error message
         },
         { enableHighAccuracy: true }
       );
     } else {
-      console.error("Geolocation is not supported by this browser.");
-      setError("Geolocation is not supported by this browser.");
+      // console.error("Geolocation is not supported by this browser.");
+      // setError("Geolocation is not supported by this browser.");
     }
   };
 
@@ -49,13 +49,13 @@ export const LocationProvider = ({ children }) => {
           setError(null); // Clear any previous errors
         },
         (err) => {
-          console.error("Error watching position:", err);
+          // console.error("Error watching position:", err);
           setError(err.message); // Store error message
         },
         { enableHighAccuracy: true }
       );
     } else {
-      console.error("Geolocation is not supported by this browser.");
+      // console.error("Geolocation is not supported by this browser.");
       setError("Geolocation is not supported by this browser.");
     }
   };

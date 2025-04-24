@@ -77,9 +77,9 @@ export const AddUserMarkerToMap = () => {
           longitude,
         });
       } else {
-        console.log(
-          "My location updates wasnt sent because socket is not connected "
-        );
+        // console.log(
+        //   "My location updates wasnt sent because socket is not connected "
+        // );
       }
     }
   }, [currentPosition, session, viewer]);

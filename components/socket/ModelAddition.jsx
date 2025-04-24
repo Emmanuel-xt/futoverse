@@ -24,16 +24,16 @@ export const ModelRelocation = () => {
     if (viewer && viewerReady) {
       const entityToRelocate = viewer.entities.getById(id);
       if (!entityToRelocate) {
-        console.log(
-          "why you dey trigger socket to relocate tile wey no dey exist?"
-        );
+        // console.log(
+        //   "why you dey trigger socket to relocate tile wey no dey exist?"
+        // );
       }
       entityToRelocate.position = Cartesian3.fromDegrees(longitude, latitude);
-      console.log(
-        "shop wey another person relocated from some where don move to new locaton , you bad !!"
-      );
+      // console.log(
+      //   "shop wey another person relocated from some where don move to new locaton , you bad !!"
+      // );
     } else {
-      console.log("i dont know why but somehow , viewer no dey ");
+      // console.log("i dont know why but somehow , viewer no dey ");
     }
   });
 };
@@ -45,16 +45,16 @@ export const NewShopCreation = () => {
 
   useEffect(() => {
     socket.on("update_shopEntites", (data) => {
-      console.log("shop update fired from swerver", data);
+      // console.log("shop update fired from swerver", data);
       const { name, longitude, latitude, id } = data;
       if (viewer) {
         const entityToAdd = viewer.entities.getById(`tile-${id}`);
         if (entityToAdd) {
-          console.log("Dont worryy , entity is alreafy there");
+          // console.log("Dont worryy , entity is alreafy there");
           return null;
         }
         load3DModel(viewer, name, longitude, latitude, id);
-        console.log("shop updates was triggered and model loaded successfully");
+        // console.log("shop updates was triggered and model loaded successfully");
       }
     });
   }, [socket, viewer]);

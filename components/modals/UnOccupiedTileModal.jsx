@@ -48,7 +48,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
   const [nameOfShopToBeRelocated, setNameOfShopToBeRelocated] = useState(null);
 
   const handleBookMark = () => {
-    console.log("Bookmarked Tile:", tileInfo.id);
+    // console.log("Bookmarked Tile:", tileInfo.id);
     setShowModal(false); // Close the modal after bookmarking
   };
 
@@ -60,7 +60,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
           const shopCount = await shopCouter(parseFloat(session.user.id));
           setNumberOfShops(shopCount); // Update the state with the shop count
         } catch (error) {
-          console.error("Failed to fetch shop count:", error);
+          // console.error("Failed to fetch shop count:", error);
         }
       }
     };
@@ -68,10 +68,10 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
   }, [session]);
 
   const handlePitch = () => {
-    console.log("handle pitch was striked");
+    // console.log("handle pitch was striked");
     if (session) {
       setShowPitchModal(true); // Open the pitch modal
-      console.log("Pitched modal supposed don dey show");
+      // console.log("Pitched modal supposed don dey show");
     } else {
       setShowModal(false); // Close the modal after bookmarking
       setShowNoUserModal(true);
@@ -80,7 +80,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
 
   const relocateLogic = async (storeId, storeName) => {
     setRelocationModal(false);
-    console.log("about to relocate store with the Id", storeId);
+    // console.log("about to relocate store with the Id", storeId);
     setIdOfShopToBeRelocated(storeId);
     setNameOfShopToBeRelocated(storeName);
     setRelocationConfirmationModal(true);
@@ -97,7 +97,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
       `tile-${idOfShopToBeRelocated}`
     );
     if (!entityToRelocate) {
-      console.log("we no see any store like that oo");
+      // console.log("we no see any store like that oo");
     }
     const wasPositionChanged = (entityToRelocate.position =
       Cartesian3.fromDegrees(tileInfo.longitude, tileInfo.latitude));
@@ -108,8 +108,8 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
     });
     // const isRemoved = viewer.entities.remove(entityToRelocate); // Remove from current position
     // load3DModel(viewer, "new relocated", tileInfo.longitude, tileInfo.latitude);
-    console.log("shop suppose don dey show for new location");
-    console.log("wasPositionChanged", wasPositionChanged);
+    // console.log("shop suppose don dey show for new location");
+    // console.log("wasPositionChanged", wasPositionChanged);
     const success = await updateShopTileId({
       storeName: nameOfShopToBeRelocated,
       newTileId: tileInfo.id,
@@ -206,17 +206,17 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
   const handleConfirm = async () => {
     setShowPitchModal(false); // Open the pitch modal
     setShowConfirmationModal(false); // Close the confirmation modal
-    console.log("FORM ==", form);
+    // console.log("FORM ==", form);
     if (session) {
-      console.log("There is a session ==", session);
-      console.log(
-        "There is a passing ==",
-        tileInfo.id,
-        tileInfo.longitude,
-        tileInfo.latitude,
-        form.category,
-        form.desc
-      );
+      // console.log("There is a session ==", session);
+      // console.log(
+      //   "There is a passing ==",
+      //   tileInfo.id,
+      //   tileInfo.longitude,
+      //   tileInfo.latitude,
+      //   form.category,
+      //   form.desc
+      // );
       const created = await createShop({
         id: parseFloat(tileInfo.id),
         name: form.name,
@@ -228,7 +228,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
         userId: parseFloat(session.user.id),
       });
 
-      console.log("Shop Creation", created);
+      // console.log("Shop Creation", created);
       created &&
         (load3DModel(
           viewer,

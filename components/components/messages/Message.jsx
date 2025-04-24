@@ -36,7 +36,7 @@ const Message = ({ message }) => {
         <div className="w-6 md:w-10 rounded-full">
           <Image
             alt="profile"
-            src={img || "https://randomuser.me/api/portraits/men/1.jpg"}
+            src={img || `/images/noProfile.png`}
             width={20}
             height={20}
           />

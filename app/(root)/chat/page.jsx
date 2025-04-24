@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import useConversation from "zustand/useConversation";
 
 const ChatPage = ({ params }) => {
-  console.log("PRAMAMAM", params);
+  // console.log("PRAMAMAM", params);
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const receiverId = searchParams.get("receiverId");
@@ -34,11 +34,11 @@ const ChatPage = ({ params }) => {
         if (data) {
           setSelectedConversation(data);
         } else {
-          toast("These two users haven't chatted before.");
+          // toast("These two users haven't chatted before.");
           setSelectedConversation(null);
         }
       } catch (error) {
-        console.error("Error fetching conversation:", error);
+        // console.error("Error fetching conversation:", error);
       }
     };
 

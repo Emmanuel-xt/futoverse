@@ -51,7 +51,7 @@ const alignTilesetBaseToGround = async (tileset) => {
   const baseHeight = cartographic.height - radius;
 
   // Log the current base height for debugging
-  console.log(`Original base height of tileset: ${baseHeight}`);
+  // console.log(`Original base height of tileset: ${baseHeight}`);
 
   // Set the base height to 0 (flat ground)
   const heightOffset = -baseHeight; // Offset to bring the base to 0
@@ -72,7 +72,7 @@ const alignTilesetBaseToGround = async (tileset) => {
   const newModelMatrix = Matrix4.fromTranslation(translation);
   tileset.modelMatrix = newModelMatrix;
 
-  console.log("Tileset base aligned to ground successfully!");
+  // console.log("Tileset base aligned to ground successfully!");
 };
 // Example usage
 const loadAndAlignTileset = async (viewer, assetId) => {
@@ -83,9 +83,9 @@ const loadAndAlignTileset = async (viewer, assetId) => {
 export const loadNewBuildingTileset = async (cesiumViewer) => {
   // Array of tileset IDs and corresponding names for better debugging
   const tilesets = [
-    { id: 3278963, name: "map" },
-    // { id: 3268940, name: "map" },
-    { id: 2593928, name: "senate" },
+    // { id: 3278963, name: "map" },
+    { id: 3268940, name: "map" },
+    // { id: 2593928, name: "senate" },
     { id: 2593447, name: "roundabout" },
     { id: 2975229, name: "NDDC" },
     { id: 2975246, name: "tetFunds" },
@@ -203,7 +203,7 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
 
       // Wait for the tileset to be ready before proceeding
       await tileset.readyPromise;
-      console.log(`Successfully loaded tileset: ${name}`);
+      // console.log(`Successfully loaded tileset: ${name}`);
       // await alignTilesetBaseToGround(tileset);
 
       // Adjust height offset
@@ -211,7 +211,7 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
 
     console.log("All tilesets loaded successfully!");
   } catch (error) {
-    console.error("An error occurred while loading tilesets:", error);
+    // console.error("An error occurred while loading tilesets:", error);
   }
 };
 
@@ -310,7 +310,7 @@ export const load3DModel = async (cesiumViewer, shopName, lon, lat, tileId) => {
   const position = Cartesian3.fromDegrees(lon, lat);
   const modelMatrix = Transforms.eastNorthUpToFixedFrame(position);
 
-  console.log("ell entities =", cesiumViewer.entities);
+  // console.log("ell entities =", cesiumViewer.entities);
   cesiumViewer.entities.add({
     id: `shop-${tileId}`, // Unique ID for this tile
     name: `shop ${tileId}`,
@@ -340,7 +340,7 @@ export const load3DModel = async (cesiumViewer, shopName, lon, lat, tileId) => {
       distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400.0), // Display label within a certain distance
     },
   });
-  console.log("SHop 3d model addded");
+  // console.log("SHop 3d model addded");
 };
 
 export const load3DModelForShop = async (
@@ -352,9 +352,9 @@ export const load3DModelForShop = async (
   category
 ) => {
   if (isNaN(lon) || isNaN(lat)) {
-    console.error(
-      `Invalid coordinates for ${shopName}: longitude=${lon}, latitude=${lat}`
-    );
+    // console.error(
+    //   `Invalid coordinates for ${shopName}: longitude=${lon}, latitude=${lat}`
+    // );
     return;
   }
 
@@ -426,7 +426,7 @@ export const checkIfTileOccupied = (tileId, shops) => {
     return shop.id == tileId;
   });
 
-  console.log("Occupied Tile Object", occupiedTile);
+  // console.log("Occupied Tile Object", occupiedTile);
 
   // If the tile is occupied, return an object with occupied status and the shop.user
   return occupiedTile
@@ -481,7 +481,7 @@ export const drawLineBetweenPoints = async (
       },
     });
   } catch (error) {
-    console.log("Error getting directions", error);
+    // console.log("Error getting directions", error);
   }
 };
 
@@ -556,18 +556,18 @@ export const getMapboxDirections = async (
   const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&access_token=${accessToken}`;
 
   try {
-    console.log("sending this url to mapbox", url);
+    // console.log("sending this url to mapbox", url);
     const response = await fetch(url);
     const data = await response.json();
-    console.log("got", data);
+    // console.log("got", data);
 
     if (data.code === "Ok") {
       return data.routes[0].geometry.coordinates; // Returns an array of [longitude, latitude] waypoints
     } else {
-      console.error("Mapbox Directions request failed:", data.message);
+      // console.error("Mapbox Directions request failed:", data.message);
     }
   } catch (error) {
-    console.error("Error fetching directions:", error);
+    // console.error("Error fetching directions:", error);
   }
 
   return null; // Return null if there's an error
