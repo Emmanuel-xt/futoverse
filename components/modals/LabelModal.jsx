@@ -12,7 +12,7 @@ import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import { userLocation } from "@constants/userDat";
 
 const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
-  const { stableLocation, error } = useLocation();
+  const { stableLocation, currentLocation, error } = useLocation();
 
   const { lon, lat } = labelInfo.location;
   const { viewer, viewerReady } = useCesiumViewer();
@@ -40,8 +40,8 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
         <p
           className="flex flex-col gap-1 items-center text-sm"
           onClick={() => {
-            if (userLocation) {
-              drawLineBetweenPoints(viewer, () => userLocation, endLocation);
+            if (stableLocation) {
+              drawLineBetweenPoints(viewer, () => stableLocation, endLocation);
             } else {
               // console.warn("User location not available.");
             }

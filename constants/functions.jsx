@@ -83,8 +83,8 @@ const loadAndAlignTileset = async (viewer, assetId) => {
 export const loadNewBuildingTileset = async (cesiumViewer) => {
   // Array of tileset IDs and corresponding names for better debugging
   const tilesets = [
-    // { id: 3278963, name: "map" },
-    { id: 3268940, name: "map" },
+    { id: 3278963, name: "map" },
+    // { id: 3268940, name: "map" },
     // { id: 2593928, name: "senate" },
     { id: 2593447, name: "roundabout" },
     { id: 2975229, name: "NDDC" },
@@ -613,6 +613,14 @@ export const generateLocationLink = (longitude, latitude) => {
 };
 export const generateProfileLink = () => {
   const baseUrl = window.location.origin + window.location.pathname;
+
+  navigator.clipboard
+    .writeText(baseUrl)
+    .then(() => toast("Link copied! Share it with others."))
+    .catch((err) => console.error("Failed to copy link:", err));
+};
+export const generateMyProfileLink = (username) => {
+  const baseUrl = window.location.origin + window.location.pathname + username;
 
   navigator.clipboard
     .writeText(baseUrl)

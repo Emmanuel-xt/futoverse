@@ -98,7 +98,7 @@ export const AddUserMarkerToMap = () => {
       // Update the entity's ID in Cesium
       const existingEntity = viewer.entities.getById(oldMarkerId);
       if (existingEntity) {
-        console.log("we wanted to change to entity id , but it wasnt possible");
+        // console.log("we wanted to change to entity id , but it wasnt possible");
         // existingEntity.id = newMarkerId;
       }
     }
@@ -115,8 +115,8 @@ export const DisplayAllUserMarkers = () => {
 
   useEffect(() => {
     const handleUpdateEntities = (data) => {
-      console.log("connected clients =", data);
-      console.log("useRef =", userEntitiesRef);
+      // console.log("connected clients =", data);
+      // console.log("useRef =", userEntitiesRef);
       userEntitiesRef.current = data;
 
       if (viewer && viewerReady) {

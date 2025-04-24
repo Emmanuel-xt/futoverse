@@ -137,37 +137,6 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
     category: "",
   });
 
-  // const convertToBase64 = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-  // };
-
-  // const handleFileChange = async (event) => {
-  //   console.error("file change triggerd");
-  //   const file = event.target.files[0];
-  //   console.log("Selected file:", file);
-
-  //   // Check if the file is valid
-  //   if (file && file instanceof Blob) {
-  //     try {
-  //       // Convert the file to base64 for preview
-  //       const base64 = await convertToBase64(file);
-  //       console.error("about to convert");
-
-  //       setForm((prev) => ({ ...prev, image: base64 })); // Preview image immediately
-  //       console.error("converted");
-  //     } catch (uploadError) {
-  //       console.error("Error while converting image to base64:", uploadError);
-  //     }
-  //   } else {
-  //     setError("Please select a valid image file");
-  //   }
-  // };
-
   const handleChange = (field, value) => {
     setForm((prevForm) => ({
       ...prevForm,
@@ -175,75 +144,47 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
     }));
   };
 
-  // const handleSubmit = async () => {
-  //   console.log("Submitting with values:", form);
-  //   try {
-  //     const response = await fetch("/api/cloudinary", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ image: form.image }),
-  //     });
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       console.error("Image upload error:", data.error);
-  //     } else {
-  //       const wasShopUpdated = await updateShopDetails(shopId, {
-  //         name: form.name,
-  //         image: data.url,
-  //         desc: form.desc,
-  //         category: form.category,
-  //       });
-  //       console.log("wasShopUpdated", wasShopUpdated);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const handleConfirm = async () => {
-    setShowPitchModal(false); // Open the pitch modal
-    setShowConfirmationModal(false); // Close the confirmation modal
-    // console.log("FORM ==", form);
+    const trimmedName = form.name.trim();
+    const trimmedDesc = form.desc.trim();
+
+    if (!trimmedName || !trimmedDesc || !form.category) {
+      alert("Please fill in all the fields before submitting.");
+      return;
+    }
+
+    setShowPitchModal(false);
+    setShowConfirmationModal(false);
+
     if (session) {
-      // console.log("There is a session ==", session);
-      // console.log(
-      //   "There is a passing ==",
-      //   tileInfo.id,
-      //   tileInfo.longitude,
-      //   tileInfo.latitude,
-      //   form.category,
-      //   form.desc
-      // );
       const created = await createShop({
         id: parseFloat(tileInfo.id),
-        name: form.name,
-        description: form.desc,
+        name: trimmedName,
+        description: trimmedDesc,
         longitude: tileInfo.longitude,
         latitude: tileInfo.latitude,
-        kingdom: "shopForm.kingdom",
+        kingdom: "shopForm.kingdom", // Assuming this is placeholder
         category: form.category,
         userId: parseFloat(session.user.id),
       });
 
-      // console.log("Shop Creation", created);
-      created &&
-        (load3DModel(
+      if (created) {
+        load3DModel(
           viewer,
-          form.name,
+          trimmedName,
           tileInfo.longitude,
           tileInfo.latitude,
           tileInfo.id
-        ),
+        );
         socket.emit("shop_creation", {
-          name: form.name,
+          name: trimmedName,
           longitude: tileInfo.longitude,
           latitude: tileInfo.latitude,
           id: tileInfo.id,
-        }));
-      setShowModal(false); // Close the initial modal
+        });
+
+        setShowModal(false);
+      }
     }
   };
 
@@ -297,7 +238,7 @@ const TileModal = ({ showModal, setShowModal, tileInfo }) => {
       {/* Second Modal for Pitching */}
       <Modal
         open={showPitchModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => setShowPitchModal(false)}
         width="400px"
         height="fit"
       >

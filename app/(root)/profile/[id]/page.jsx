@@ -47,7 +47,12 @@ const Profile = ({ params }) => {
         try {
           setStatus("loading");
           const fetchedUser = await fetchUserByUsername(id);
+          if (!fetchedUser) {
+            setStatus("not-found");
+            return;
+          }
           setUser(fetchedUser);
+          setStatus("");
 
           const requestStatus = await hasSentFriendRequest(
             currentUserId,
@@ -59,7 +64,8 @@ const Profile = ({ params }) => {
           setAlreadyFriends(isFriend);
         } catch (error) {
         } finally {
-          setStatus("");
+          // if (user) {
+          // }
         }
       }
     };
@@ -89,11 +95,11 @@ const Profile = ({ params }) => {
       setfriendRequestLoad(true);
       const send = await sendFriendRequest(currentUserId, id);
       if (send) {
-        toast("Connection Request Sent");
+        toast("Request Sent");
         setRequestSent(true);
       }
     } catch (error) {
-      toast("Failed to Send Request");
+      toast("Request not Sent");
       // console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
@@ -110,7 +116,7 @@ const Profile = ({ params }) => {
         alreadyFriends(false);
       }
     } catch (error) {
-      toast("Failed to Unfliend");
+      toast("Failed to Unfriend");
       // console.log("Error sending friend request", error);
     } finally {
       setfriendRequestLoad(false);
@@ -144,18 +150,26 @@ const Profile = ({ params }) => {
     );
   }
 
+  if (status === "not-found") {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl text-red-500">User not found</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 flex flex-col items-center">
       <div className="flex fixed top-5 right-5 ">
         <HiDotsVertical
-          className="rounded-full text-3xl cursor-pointer"
+          className="rounded-full text-3xl cursor-pointer "
           onClick={() => setMenuOpen(!menuOpen)}
         />
 
         {menuOpen && (
           <div
             ref={menuRef}
-            className="absolute right-5 top-3 mt-2 w-40 bg-white shadow-md rounded-md "
+            className="absolute right-5 top-3 mt-2 w-40 z-[999] bg-white shadow-md rounded-md "
           >
             {isUserActive && (
               <Link
@@ -171,15 +185,15 @@ const Profile = ({ params }) => {
             >
               Share Profile
             </button>
-            <button className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
+            <button className="block text-sm px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
               Report User (N/A)
             </button>
           </div>
         )}
       </div>
-      <div className="w-32 h-32 mb-4 relative border-white">
+      <div className="w-32 h-32 mb-4 z-10  border-2  rounded-full">
         <Image
-          src={user?.picture || "/assets/logo.svg"}
+          src={user?.picture || "/images/noProfile.png"}
           alt="Profile Picture"
           width={200}
           height={200}

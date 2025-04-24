@@ -22,11 +22,16 @@ import { FiMenu } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa6";
 import { IoMdCart } from "react-icons/io";
+import {
+  generateMyProfileLink,
+  generateProfileLink,
+} from "@constants/functions";
 
 const Profile = () => {
   const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
   const [openLogOutModal, setOpenLogOutModal] = useState(false);
+  const [createStoreModal, setCreateStoreModal] = useState(false);
   // const [posts, setPosts] = useState([]);
   // const { viewer, viewerReady, setMapVisible } = useCesiumViewer();
   // const onlineUsers = useOnlineUsers();
@@ -161,23 +166,27 @@ const Profile = () => {
               Edit Profile
             </Link>
             {/* <Link
-              href="/profile/friend-requests"
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Connection Requests
-            </Link> */}
-            <Link
               href="/profile/settings"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               Settings
-            </Link>
-            <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left">
+            </Link> */}
+            <button
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+              onClick={() => generateMyProfileLink(session?.user?.username)}
+            >
               Share Profile
             </button>
-            <button className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
-              Report User
+            <button
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+              onClick={() => setCreateStoreModal(true)}
+            >
+              Create Store
             </button>
+            {/* <button className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
+              Report User
+
+            </button> */}
             <button
               className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
               onClick={() => setOpenLogOutModal(true)}
@@ -189,7 +198,7 @@ const Profile = () => {
       </div>
       <div className="w-32 h-32 mb-4 mt-5">
         <Image
-          src={session?.user?.image || "/assets/logo.svg"}
+          src={session?.user?.image || "/images/noProfile.png"}
           alt="Profile Picture"
           width={200}
           height={200}
@@ -293,6 +302,44 @@ const Profile = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+      {createStoreModal && (
+        <Modal
+          open={createStoreModal}
+          onClose={() => setCreateStoreModal(false)}
+          width="350px"
+          height="fit"
+          className="border rounded-xl p-4"
+        >
+          <div className="flex flex-col gap-4 text-center">
+            <h6 className="text-xl font-semibold">How to Create a Store</h6>
+            <ul className="text-sm text-slate-700 text-left list-decimal list-inside space-y-2">
+              <li>
+                Go to the <strong>Map</strong> page.
+              </li>
+              <li>
+                Find the tile that represents your store's physical location.
+              </li>
+              <li>Click on the tile to bring up the store creation form.</li>
+              <li>
+                Fill in your store details (name, category, description, etc).
+              </li>
+              <li>
+                Click <strong>Submit</strong> and your store will be created!
+              </li>
+            </ul>
+
+            <button
+              onClick={() => {
+                setCreateStoreModal(false);
+                router.push("/map"); // Make sure router is imported from next/navigation or next/router
+              }}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition"
+            >
+              Go to Map Page
+            </button>
           </div>
         </Modal>
       )}
