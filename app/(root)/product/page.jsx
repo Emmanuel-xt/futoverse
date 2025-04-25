@@ -3,11 +3,11 @@
 
 // const dummyProducts = [
 //   { id: 1, title: "MacBook Pro 14", price: "AED4,500", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 2, title: "Mercedes Benz C200", price: "AED30,000", image: "/assets/logo.svg" },
+//   { id: 2, title: "Mercedes Benz C200", price: "AED30,000", image: "/images/noProfile.png" },
 //   { id: 3, title: "Samsung Galaxy S23", price: "AED2,500", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 4, title: "Electric Bike", price: "AED800", image: "/assets/logo.svg" },
+//   { id: 4, title: "Electric Bike", price: "AED800", image: "/images/noProfile.png" },
 //   { id: 5, title: "55-inch OLED TV", price: "AED3,200", image: "/assets/IceHomeImage1.jpg" },
-//   { id: 6, title: "Convertible Sports Car", price: "AED60,000", image: "/assets/logo.svg" },
+//   { id: 6, title: "Convertible Sports Car", price: "AED60,000", image: "/images/noProfile.png" },
 // ];
 
 // const Marketplace = () => {

@@ -34,7 +34,7 @@ const AddMediaStatusDrawer = ({ open, openChange, shopId }) => {
         setMedia(base);
         setOpenMediaStatusModal(true); // Open the drawer only after a valid file is selected
       } catch (error) {
-        console.error("Error converting file to base64:", error);
+        // console.error("Error converting file to base64:", error);
       }
     } else {
       setError("Please select a valid image file");
@@ -67,12 +67,12 @@ const AddMediaStatusDrawer = ({ open, openChange, shopId }) => {
         body: JSON.stringify({ image: media }),
       });
       const data = await response.json();
-      console.log(" cloud data = ", data);
+      // console.log(" cloud data = ", data);
       if (data) {
         // console.log('data from cloud' , data)
         const form = { text, media: data.url };
         const postedStatus = await createStoreStatus(shopId, form);
-        console.log("Status posted successfully:", postedStatus);
+        // console.log("Status posted successfully:", postedStatus);
 
         // Clear inputs and close the drawer
         setText("");
@@ -80,7 +80,7 @@ const AddMediaStatusDrawer = ({ open, openChange, shopId }) => {
         setOpenMediaStatusModal(false);
       }
     } catch (error) {
-      console.error("Error posting status:", error);
+      // console.error("Error posting status:", error);
     }
   };
 

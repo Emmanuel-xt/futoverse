@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa6";
+import { toast } from "sonner";
 
 const AddProductPage = ({ params }) => {
   const { data: session } = useSession();
@@ -17,6 +18,9 @@ const AddProductPage = ({ params }) => {
 
   const shopId = params.id.replace(/%20/g, " ");
   const [shop, setShop] = useState({});
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const [wasNewImageUploaded, setWasNewImageUploaded] = useState(false);
   const [product, setProduct] = useState({
@@ -58,17 +62,32 @@ const AddProductPage = ({ params }) => {
   };
 
   const handleSubmit = async () => {
-    console.log("Product form", product);
+    if (!product.image) {
+      toast("Please provide at least a product image");
+    }
+    if (!product.name) {
+      toast("Please provide at least a product name");
+      return;
+    }
+    if (!product.price) {
+      toast("Please provide at least a product price");
+      return;
+    }
 
-    // console.log("Submitting data:", dataToSubmit);
+    setIsUploading(true);
+
     try {
       const result = await addShopItemsToShopId(shopId, product, userId);
-      // console.log("items added successfully" , result)
       if (result.success) {
         router.back();
+      } else {
+        toast("Something went wrong while uploading the product.");
       }
     } catch (error) {
-      console.error("Error submmiting data :", error);
+      console.error("Error submitting data:", error);
+      toast("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -81,16 +100,13 @@ const AddProductPage = ({ params }) => {
     });
   };
 
-  const handleFileChange = async (event, formId) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file && file instanceof Blob) {
-      // const formData = new FormData();
-      // formData.append("file", file);
-      // // formData.append("upload_preset", "your_preset");
-
       try {
+        setIsImageUploading(true); // show spinner
+
         const base = await convertToBase64(file);
-        console.log("base =", base);
 
         const response = await fetch("/api/cloudinary", {
           method: "POST",
@@ -99,25 +115,29 @@ const AddProductPage = ({ params }) => {
           },
           body: JSON.stringify({ image: base }),
         });
+
         const data = await response.json();
+
         setProduct((prev) => ({
           ...prev,
           image: data.url,
         }));
       } catch (error) {
         console.error("Error uploading image:", error);
+        alert("Image upload failed.");
+      } finally {
+        setIsImageUploading(false); // hide spinner
       }
-    } else {
-      console.log("no form data");
     }
   };
 
   if (shop.userId != session.user.id) {
     return (
       <p className="text-2xl">
-        Are you sure you are the owner of the shop you want to add Product to ,
+        {/* Are you sure you are the owner of the shop you want to add Product to ,
         We found out what you were trying to do , and we strongly advise you
-        dont try it again
+        dont try it again */}
+        Make sure you are the owner of this store
       </p>
     );
   }
@@ -128,7 +148,7 @@ const AddProductPage = ({ params }) => {
         <BackNav />
       </div>
 
-      <div className="w-24 h-24 bg-gray-200 flex items-center justify-center rounded-3xl cursor-pointer mb-4 relative">
+      <div className="w-full h-[30vh] bg-gray-200 flex items-center justify-center rounded-3xl cursor-pointer mb-4 relative">
         {/* <div className="mt-6"> */}
         {/* <div className="flex justify-center items-center cursor-pointer"> */}
         {/* Hidden file input */}
@@ -146,16 +166,18 @@ const AddProductPage = ({ params }) => {
         </label>
 
         {/* Display the selected image */}
-        {product.image && (
+        {isImageUploading ? (
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="animate-spin rounded-full h-14 w-14 border-t-2 border-b-2 border-gray-500"></div>
+          </div>
+        ) : product.image ? (
           <Image
             src={product.image}
-            alt="Profile_image"
+            alt="Product Image"
             layout="fill"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-3xl"
           />
-        )}
-        {/* </div> */}
-        {/* </div> */}
+        ) : null}
       </div>
 
       <input
@@ -189,20 +211,23 @@ const AddProductPage = ({ params }) => {
         placeholder="#Price"
         className="w-full p-2 border rounded mb-2"
       />
-      <input
+      {/* <input
         type="text"
         name="category"
         value={product.category}
         onChange={handleChange}
         placeholder="Category"
         className="w-full p-2 border rounded mb-4"
-      />
+      /> */}
 
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className={`bg-blue-500 text-white px-4 py-2 rounded ${
+          isUploading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={handleSubmit}
+        disabled={isUploading}
       >
-        Upload Product
+        {isUploading ? "Uploading..." : "Upload Product"}
       </button>
     </div>
   );

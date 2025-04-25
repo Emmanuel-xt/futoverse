@@ -27,7 +27,7 @@ const OccupiedTile = ({
 
   const router = useRouter();
 
-  console.log("tileuser =", tileDetails.user.username);
+  // console.log("tileuser =", tileDetails.user.username);
 
   const handleViewProfile = () => {
     setMapVisible(false);
@@ -45,12 +45,12 @@ const OccupiedTile = ({
       const success = await deleteStore(storeName);
       if (success) {
         const isRemoved = viewer.entities.remove(entityToRelocate);
-        console.log("is removed ", isRemoved);
+        // console.log("is removed ", isRemoved);
         setopenDeleteModal(false);
       }
     } catch (error) {
       setDeleteError("something went wrong");
-      console.log("Error Deleting store", error);
+      // console.log("Error Deleting store", error);
     }
   };
   return (
@@ -92,10 +92,7 @@ const OccupiedTile = ({
           </div>
           <div className="flex gap-2">
             <Image
-              src={
-                tileDetails.image ||
-                "https://randomuser.me/api/portraits/men/1.jpg"
-              }
+              src={tileDetails.image || `/images/noProfile.png`}
               alt={tileDetails.name}
               width={100}
               height={100}
@@ -108,12 +105,13 @@ const OccupiedTile = ({
           </div>
           <div className="flex flex-col gap-2 ">
             {/* <div className=""> */}
-            <button
+            <Link
               className="bg-primary text-sm text-white p-1 rounded-lg px-4 "
-              onClick={handleEnterShop}
+              // onClick={handleEnterShop}
+              href={`/shops/${tileDetails.name}`}
             >
-              Enter Shop
-            </button>
+              Enter Store
+            </Link>
             {/* </div> */}
             <div className="flex gap-2 ">
               {/* <Button Label="View Profile" handleClick={handleViewProfile} /> */}

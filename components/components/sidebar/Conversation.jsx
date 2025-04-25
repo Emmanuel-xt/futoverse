@@ -23,7 +23,7 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
   );
   const router = useRouter();
   const handleOpenDM = async (conversation) => {
-    console.log("CONVERSATIO", conversation);
+    // console.log("CONVERSATIO", conversation);
     router.push(`/chat?receiverId=${conversation?.id}`);
     // setSelectedConversation(conversation);
     markMessagesAsRead(
@@ -70,10 +70,7 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
         <div className={`avatar ${isUserActive ? "online" : ""}`}>
           <div className="w-14 h-14 md:w-12 rounded-full relative">
             <Image
-              src={
-                conversation.picture ||
-                "https://randomuser.me/api/portraits/men/1.jpg"
-              }
+              src={conversation.picture || `/images/noProfile.png`}
               alt="dp"
               width={20}
               height={20}

@@ -63,10 +63,7 @@ const MessageContainer = () => {
             <div className="w-10 h-10 border rounded-full relative">
               <Image
                 alt="profile"
-                src={
-                  selectedConversation.picture ||
-                  "https://randomuser.me/api/portraits/men/1.jpg"
-                }
+                src={selectedConversation.picture || `/images/noProfile.png`}
                 width={20}
                 height={20}
                 className="w-10 h-10  rounded-full"

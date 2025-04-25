@@ -56,7 +56,7 @@ const EditStoreProfile = ({ params }) => {
           model: fetchedShop?.model || "",
         }));
       } catch (error) {
-        console.error("Error fetching shop:", error);
+        // console.error("Error fetching shop:", error);
       } finally {
         setLoadingShop(false); // Set loading to false after fetching is complete
       }
@@ -107,7 +107,7 @@ const EditStoreProfile = ({ params }) => {
           });
           const data = await response.json();
           if (!response.ok) {
-            console.error(`${key} upload failed:`, data.error);
+            // console.error(`${key} upload failed:`, data.error);
             setLoading(false);
             return;
           }
@@ -130,7 +130,7 @@ const EditStoreProfile = ({ params }) => {
       setLoading(false);
       router.back();
     } catch (error) {
-      console.error("Error updating shop:", error);
+      // console.error("Error updating shop:", error);
       setLoading(false);
     }
   };
@@ -146,7 +146,7 @@ const EditStoreProfile = ({ params }) => {
         setForm((prev) => ({ ...prev, [field]: base64 }));
         setWasNewUpload((prev) => ({ ...prev, [field]: true }));
       } catch (uploadError) {
-        console.error("Error converting to base64:", uploadError);
+        // console.error("Error converting to base64:", uploadError);
         setError("Failed to preview image.");
       }
     } else {
@@ -215,7 +215,7 @@ const EditStoreProfile = ({ params }) => {
               src="/images/noProfile.png"
               alt="No profile"
               fill
-              className="object-cover"
+              className="object-cover rounded-full border border-"
             />
           )}
         </div>

@@ -14,7 +14,7 @@ const saveConversationsToDB = async (conversations) => {
       store.put({ ...conv, sortOrder: index });
     });
   } catch (err) {
-    console.error("Error saving to IndexedDB:", err);
+    // console.error("Error saving to IndexedDB:", err);
   }
 };
 
@@ -23,31 +23,22 @@ const useSidebarConversations = create((set, get) => ({
   setConversations: (data) => set({ conversations: data }),
 
   updateConversations: (newMessage) => {
-    console.log("📥 Called updateConversations with:", newMessage);
+    // console.log("📥 Called updateConversations with:", newMessage);
 
     const updated = [...get().conversations];
     const newMessageConvoId = newMessage.message.conversationId;
 
-    console.log("🧠 ID to match:", newMessageConvoId);
-    console.log(
-      "This was the conversation gotten from indexedDb or fetched Data",
-      updated
-    );
-
-    updated.forEach((c) => {
-      console.log(
-        "🔍 Checking id match:",
-        c.conversationId,
-        "vs",
-        newMessageConvoId
-      );
-    });
+    // console.log("🧠 ID to match:", newMessageConvoId);
+    // console.log(
+    //   "This was the conversation gotten from indexedDb or fetched Data",
+    //   updated
+    // );
 
     const convoIndex = updated.findIndex(
       (c) => c.conversationId === newMessageConvoId
     );
 
-    console.log("➡️ About to update position, found index:", convoIndex);
+    // console.log("➡️ About to update position, found index:", convoIndex);
 
     if (convoIndex !== -1) {
       const convo = updated[convoIndex];
@@ -61,19 +52,19 @@ const useSidebarConversations = create((set, get) => ({
       // Move to top
       updated.splice(convoIndex, 1);
       updated.unshift(convo);
-      console.log("✅ Moved convo to top:", convo);
+      // console.log("✅ Moved convo to top:", convo);
     } else {
-      console.warn(
-        "❗️Couldn't find conversation to update with ID:",
-        newMessageConvoId
-      );
+      // console.warn(
+      //   "❗️Couldn't find conversation to update with ID:",
+      //   newMessageConvoId
+      // );
     }
 
-    console.log("💾 Saving updated conversations to IndexedDB...");
+    // console.log("💾 Saving updated conversations to IndexedDB...");
     saveConversationsToDB(updated);
 
     set({ conversations: updated });
-    console.log("✅ Conversations updated in Zustand store");
+    // console.log("✅ Conversations updated in Zustand store");
   },
 }));
 

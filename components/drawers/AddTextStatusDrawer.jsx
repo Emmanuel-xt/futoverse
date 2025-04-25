@@ -34,18 +34,18 @@ const AddTextStatusDrawer = ({ open, openChange, shopId }) => {
 
   const handleSubmit = async () => {
     if (!text.trim()) {
-      console.log("Status cannot be empty!");
+      // console.log("Status cannot be empty!");
       return;
     }
 
     try {
       const form = { text, media: null }; // Adjust `media` if you need file input
       const postedStatus = await createStoreStatus(shopId, form);
-      console.log("Status posted successfully:", postedStatus);
+      // console.log("Status posted successfully:", postedStatus);
       setText(""); // Clear the input after successful submission
       openChange(false); // Close the drawer
     } catch (error) {
-      console.error("Error posting status:", error);
+      // console.error("Error posting status:", error);
     }
   };
 

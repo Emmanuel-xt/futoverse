@@ -10,7 +10,7 @@ const useListenMessages = () => {
 
   useEffect(() => {
     socket.on("newMessage", async (newMessage) => {
-      console.log("USE LISTENER MESSAGE", newMessage);
+      // console.log("USE LISTENER MESSAGE", newMessage);
       const isCurrentConversation =
         selectedConversation?.conversationId ===
         newMessage?.message.conversationId;

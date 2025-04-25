@@ -12,7 +12,7 @@ export const OnlineUsersProvider = ({ children }) => {
   useEffect(() => {
     const handleOnlineUsersUpdate = (users) => {
       setOnlineUsers(users);
-      console.log("online users at context =", users);
+      // console.log("online users at context =", users);
       // const flattenedShops = users.flatMap((usersData) => usersData.shops || []);
     };
 

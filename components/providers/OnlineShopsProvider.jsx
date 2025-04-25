@@ -14,7 +14,7 @@ export const OnlineShopsProvider = ({ children }) => {
       // Flatten and transform the array of shop objects
       const flattenedShops = shops.flatMap((shopData) => shopData.shops || []);
       setOnlineShops(flattenedShops);
-      console.log("online shops =", shops);
+      // console.log("online shops =", shops);
     };
 
     socket.on("update_online_shops", handleOnlineShopsUpdate);

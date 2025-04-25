@@ -32,7 +32,7 @@ const useSendMessage = () => {
       // ✅ Update messages UI immediately
       setMessages([...messages, data]);
 
-      console.log("data from server", data);
+      // console.log("data from server", data);
       // ✅ Raise conversation to the top
 
       const newMessage = {

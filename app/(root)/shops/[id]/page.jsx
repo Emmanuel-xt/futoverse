@@ -47,7 +47,7 @@ const ShopDynamicPage = ({ params }) => {
   const isShopMyOwn = shop?.userId == userId;
   const isShopActive = onlineShops.some((shop) => shop.name === shopId);
 
-  console.log("Is shop my own ", shop);
+  // console.log("Is shop my own ", shop);
 
   const [activeTab, setActiveTab] = useState("product");
   const [orders, setOrders] = useState([]);
@@ -63,7 +63,7 @@ const ShopDynamicPage = ({ params }) => {
         setShop(fetchedShop);
         // console.log("fetched shop to check if shop is min ", fetchedShop);
       } catch (error) {
-        console.error("Error fetching shop:", error);
+        // console.error("Error fetching shop:", error);
       } finally {
         setLoadingShop(false); // Set loading to false after fetching is complete
       }

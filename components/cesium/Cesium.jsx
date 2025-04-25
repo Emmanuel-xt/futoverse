@@ -79,7 +79,7 @@ const CesiumMapB = () => {
 
   useEffect(() => {
     socket.on("client_id", (clientId) => {
-      console.log("Connected Client ID:", clientId);
+      // console.log("Connected Client ID:", clientId);
       setmyId(clientId);
     });
   }, []);
@@ -191,9 +191,9 @@ const CesiumMapB = () => {
                 },
               });
 
-              console.log("Model loaded successfully");
+              // console.log("Model loaded successfully");
             } catch (error) {
-              console.error("Failed to load terrain model:", error);
+              // console.error("Failed to load terrain model:", error);
             }
           };
 
@@ -210,7 +210,7 @@ const CesiumMapB = () => {
 
             // Check if the fetch was successful and if `shops` exists
             if (!load.success || !Array.isArray(load.shops)) {
-              console.error("Failed to load shops:", load.message);
+              // console.error("Failed to load shops:", load.message);
               return; // Stop execution if fetching shops failed
             }
 
@@ -255,17 +255,17 @@ const CesiumMapB = () => {
           };
 
           const handleUserClick = () => {
-            console.log("handleUserClick called");
+            // console.log("handleUserClick called");
             // setShowModal(true); // Open modal when tile is clicked
             setShowUserModal(true);
           };
           const handleLabelClick = () => {
-            console.log("handleLabelClick called");
+            // console.log("handleLabelClick called");
             // setShowModal(true); // Open modal when tile is clicked
             setShowLabelModal(true);
           };
           const handlePointerClick = () => {
-            console.log("handlePointerClick called");
+            // console.log("handlePointerClick called");
             // setShowModal(true); // Open modal when tile is clicked
             setShowPointer(true);
           };
@@ -274,7 +274,7 @@ const CesiumMapB = () => {
           const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
           handler.setInputAction((movement) => {
             const pickedObject = viewer.scene.pick(movement.position);
-            console.log("Picked Object full:", { pickedObject });
+            // console.log("Picked Object full:", { pickedObject });
             if (defined(pickedObject) && defined(pickedObject.id)) {
               const properties = pickedObject.id.properties?.getValue(
                 JulianDate.now()
@@ -291,15 +291,15 @@ const CesiumMapB = () => {
 
               if (properties.type === "tile") {
                 handleTileClick(pickedObject.id);
-                console.log("selscted tile value", selectedTile);
+                // console.log("selscted tile value", selectedTile);
 
                 if (selectedTile) {
                   selectedTile.rectangle.material = new ColorMaterialProperty(
                     Color.CHOCOLATE.withAlpha(0.2)
                   );
-                  console.log("there is a selscted tile o", selectedTile);
+                  // console.log("there is a selscted tile o", selectedTile);
                 } else {
-                  console.log("nothing like selscted tile o");
+                  // console.log("nothing like selscted tile o");
                   pickedObject.id.rectangle.material =
                     new ColorMaterialProperty(Color.GREEN.withAlpha(0.2));
                 }
@@ -332,29 +332,29 @@ const CesiumMapB = () => {
 
               if (properties.type === "user") {
                 handleUserClick();
-                console.log("its a user entity");
+                // console.log("its a user entity");
                 setUserInfo({
                   username: properties.username,
                   position: pickedObject.id.position.getValue(JulianDate.now()),
                 });
                 setShowUserModal(true);
-                console.log("show modal state =", showUserModal);
+                // console.log("show modal state =", showUserModal);
               }
 
               if (properties.type === "label") {
                 handleLabelClick();
-                console.log("its a label entity");
+                // console.log("its a label entity");
                 setLabelInfo({
                   placename: properties.name,
                   location: properties.coordinates,
                 });
                 setShowLabelModal(true);
-                console.log("show label state =", showUserModal);
+                // console.log("show label state =", showUserModal);
               }
 
               if (properties.type === "pointer") {
                 handlePointerClick();
-                console.log("its a Pointer entity");
+                // console.log("its a Pointer entity");
                 setPointerInfo({
                   // placename: properties.name,
                   location: properties.coordinates,

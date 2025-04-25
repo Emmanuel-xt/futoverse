@@ -18,8 +18,8 @@ const media = [
     title: "Explore the Student Marketplace",
   },
   {
-    type: "video",
-    src: "/media/social.mp4",
+    type: "image",
+    src: "/images/socials.jpg",
     title: "Stay Social & Connected",
   },
 ];

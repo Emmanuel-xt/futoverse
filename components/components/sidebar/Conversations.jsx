@@ -9,10 +9,10 @@ const Conversations = ({ searchResults }) => {
   const newUsers = searchResults?.users || [];
 
   useEffect(() => {
-    console.log(
-      "Sidebar re-rendered with updated conversations",
-      allConversations
-    );
+    // console.log(
+    //   "Sidebar re-rendered with updated conversations",
+    //   allConversations
+    // );
   }, [allConversations]);
 
   return (

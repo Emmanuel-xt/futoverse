@@ -124,11 +124,11 @@ const LogIn = () => {
             )}
           </div>
 
-          <div className="flex justify-end mb-6">
+          {/* <div className="flex justify-end mb-6">
             <Link href="#" className="text-blue-500 text-sm">
               Forgot Password?
             </Link>
-          </div>
+          </div> */}
           {loginError && <p className="text-sm text-red-500">{loginError}</p>}
 
           <button
@@ -142,7 +142,7 @@ const LogIn = () => {
           </button>
         </form>
 
-        <div className="flex text-sm gap-2 mt-3">
+        <div className="flex flex-col text-sm gap-2 mt-3">
           <p>Don't have an account?</p>
           <Link
             href="/sign-up"

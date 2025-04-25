@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
-import { fetchUserByUsername } from "@lib/actions/user.prisma";
+import { fetchUserByUsername, updateOldUsers } from "@lib/actions/user.prisma";
 import Link from "next/link";
 import { CiEdit } from "react-icons/ci";
 import {
@@ -22,11 +22,16 @@ import { FiMenu } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa6";
 import { IoMdCart } from "react-icons/io";
+import {
+  generateMyProfileLink,
+  generateProfileLink,
+} from "@constants/functions";
 
 const Profile = () => {
   const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
   const [openLogOutModal, setOpenLogOutModal] = useState(false);
+  const [createStoreModal, setCreateStoreModal] = useState(false);
   // const [posts, setPosts] = useState([]);
   // const { viewer, viewerReady, setMapVisible } = useCesiumViewer();
   // const onlineUsers = useOnlineUsers();
@@ -39,6 +44,7 @@ const Profile = () => {
       // socket.emit("set_user_online", session.user.username);
       // console.log({ isOnline });
       if (session?.user) {
+        // await updateOldUsers();
         const fetchedUser = await fetchUserByUsername(session.user.username);
         setUser(fetchedUser);
       }
@@ -70,7 +76,7 @@ const Profile = () => {
           const count = await fetchUsersFriendCount(session.user.username);
           setUserFriendListCount(count);
         } catch (error) {
-          console.log("Error fetching count", error);
+          // console.log("Error fetching count", error);
           return 0;
         } finally {
         }
@@ -85,13 +91,13 @@ const Profile = () => {
     try {
       // Clear IndexedDB
       await deleteDB("chatDB");
-      console.log("IndexedDB cleared successfully.");
+      // console.log("IndexedDB cleared successfully.");
 
       // Sign out and redirect
       await signOut();
       router.push("/login");
     } catch (error) {
-      console.error("Error during sign out:", error);
+      // console.error("Error during sign out:", error);
     }
   };
 
@@ -109,27 +115,27 @@ const Profile = () => {
     return (
       <div className="">
         <div className="flex justify-between items-center p-3">
-          <div className="flex gap-2 items-center">
+          <div className="flex flex- text-xl gap-2 items-center">
             <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
-            <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+            <h6 className="text-primary text-sm  font-bold">FUTO-VERSE</h6>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2">
             <Link
               href={"/sign-up"}
-              className="bg-transperent border border-black text-black  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-transperent border border-black text-black  px-3 py-1 text-sm font-semibold rounded-3xl w-fit"
             >
               Create Account
             </Link>
             <Link
               href={"/login"}
-              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl text-sm w-fit"
             >
               Login
             </Link>
           </div>
         </div>
         <div className="flex justify-center items-center h-[90vh]">
-          <p className="text-xl">Login to View Your Profile</p>
+          <p className="text-xl">Login to Start Conversations</p>
         </div>
       </div>
     );
@@ -137,12 +143,17 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 mb-10 flex flex-col items-center">
-      <div className="flex border items-center gap-4 absolute top-5 right-5 ">
-        <Link href="/cart">
-          <IoMdCart className="text-3xl cursor-pointer" />
+      <div className="flex  items-center gap-4 absolute top-5 right-5 ">
+        <Link href="/cart" className="flex flex-col items-center">
+          <IoMdCart className="text-3xl  cursor-pointer" />
+          <p className="text-[10px]">Carts</p>
         </Link>
-        <Link href="/profile/friend-requests">
-          <FaUserPlus className="rounded-full text-3xl cursor-pointer" />
+        <Link
+          href="/profile/friend-requests"
+          className="flex flex-col items-center"
+        >
+          <FaUserPlus className="rounded-full flex flex-col items-center text-3xl cursor-pointer" />
+          <p className="text-[10px]">Requests</p>
         </Link>
         <FiMenu
           className="rounded-full text-3xl cursor-pointer"
@@ -161,23 +172,27 @@ const Profile = () => {
               Edit Profile
             </Link>
             {/* <Link
-              href="/profile/friend-requests"
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Connection Requests
-            </Link> */}
-            <Link
               href="/profile/settings"
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               Settings
-            </Link>
-            <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left">
+            </Link> */}
+            <button
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+              onClick={() => generateMyProfileLink(session?.user?.username)}
+            >
               Share Profile
             </button>
-            <button className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
-              Report User
+            <button
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+              onClick={() => setCreateStoreModal(true)}
+            >
+              Create Store
             </button>
+            {/* <button className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
+              Report User
+
+            </button> */}
             <button
               className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
               onClick={() => setOpenLogOutModal(true)}
@@ -189,7 +204,7 @@ const Profile = () => {
       </div>
       <div className="w-32 h-32 mb-4 mt-5">
         <Image
-          src={session?.user?.image || "/assets/logo.svg"}
+          src={session?.user?.image || "/images/noProfile.png"}
           alt="Profile Picture"
           width={200}
           height={200}
@@ -293,6 +308,44 @@ const Profile = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+      {createStoreModal && (
+        <Modal
+          open={createStoreModal}
+          onClose={() => setCreateStoreModal(false)}
+          width="350px"
+          height="fit"
+          className="border rounded-xl p-4"
+        >
+          <div className="flex flex-col gap-4 text-center">
+            <h6 className="text-xl font-semibold">How to Create a Store</h6>
+            <ul className="text-sm text-slate-700 text-left list-decimal list-inside space-y-2">
+              <li>
+                Go to the <strong>Map</strong> page.
+              </li>
+              <li>
+                Find the tile that represents your store's physical location.
+              </li>
+              <li>Click on the tile to bring up the store creation form.</li>
+              <li>
+                Fill in your store details (name, category, description, etc).
+              </li>
+              <li>
+                Click <strong>Submit</strong> and your store will be created!
+              </li>
+            </ul>
+
+            <button
+              onClick={() => {
+                setCreateStoreModal(false);
+                router.push("/map"); // Make sure router is imported from next/navigation or next/router
+              }}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition"
+            >
+              Go to Map Page
+            </button>
           </div>
         </Modal>
       )}

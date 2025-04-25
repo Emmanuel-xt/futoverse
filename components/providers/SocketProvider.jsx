@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
-  console.log("SocketProvider mounted");
+  // console.log("SocketProvider mounted");
   const { data: session } = useSession();
   const username = session?.user?.username;
   const userId = session?.user?.id ? parseFloat(session.user.id) : null;
@@ -17,7 +17,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (username && userId && !hasEmittedUserOnline.current) {
-      console.log("Emitting set_user_online with username:", username);
+      // console.log("Emitting set_user_online with username:", username);
       socket.emit("set_user_online", { userId, username });
       hasEmittedUserOnline.current = true; // Prevent duplicate emissions
     }
@@ -32,13 +32,13 @@ export const SocketProvider = ({ children }) => {
       try {
         const shops = await fetchUserShopByUserId(userId);
         if (isMounted && shops?.length) {
-          console.log("Fetched shops to be sent to socket server", shops);
+          // console.log("Fetched shops to be sent to socket server", shops);
           socket.emit("set_online_shops", { username, shops });
-          console.log("set_online_shops has been emitted successfully");
+          // console.log("set_online_shops has been emitted successfully");
           hasEmittedShops.current = true;
         }
       } catch (error) {
-        console.error("Error fetching shops:", error);
+        // console.error("Error fetching shops:", error);
       }
     };
 
@@ -51,38 +51,38 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const handleConnect = () => {
-      console.log("Socket connected:", socket.id);
+      // console.log("Socket connected:", socket.id);
       // Re-emit user status and shops when connection is re-established
       if (userId && username) {
         socket.emit("set_user_online", { userId, username });
         hasEmittedUserOnline.current = true;
-        console.log("Re-emitted set_user_online after reconnection");
+        // console.log("Re-emitted set_user_online after reconnection");
 
         fetchUserShopByUserId(userId).then((shops) => {
           if (shops?.length) {
             socket.emit("set_online_shops", { username, shops });
-            console.log("Re-emitted set_online_shops after reconnection");
+            // console.log("Re-emitted set_online_shops after reconnection");
           }
         });
       }
     };
 
     const handleDisconnect = (reason) => {
-      console.log(`Socket disconnected: ${reason}`);
+      // console.log(`Socket disconnected: ${reason}`);
       hasEmittedUserOnline.current = false; // Allow re-emission on reconnect
       hasEmittedShops.current = false;
     };
 
     const handleReconnectAttempt = (attemptNumber) => {
-      console.log(`Attempting to reconnect... Attempt #${attemptNumber}`);
+      // console.log(`Attempting to reconnect... Attempt #${attemptNumber}`);
     };
 
     const handleReconnectError = (error) => {
-      console.error("Reconnection error:", error);
+      // console.error("Reconnection error:", error);
     };
 
     const handleReconnectFailed = () => {
-      console.warn("Reconnection failed. Will not attempt further retries.");
+      // console.warn("Reconnection failed. Will not attempt further retries.");
     };
 
     socket.on("connect", handleConnect);
@@ -97,7 +97,7 @@ export const SocketProvider = ({ children }) => {
       socket.off("reconnect_attempt", handleReconnectAttempt);
       socket.off("reconnect_error", handleReconnectError);
       socket.off("reconnect_failed", handleReconnectFailed);
-      console.log("SocketProvider unmounted");
+      // console.log("SocketProvider unmounted");
     };
   }, [userId, username]);
 

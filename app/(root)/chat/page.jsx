@@ -5,6 +5,7 @@ import Sidebar from "@components/components/sidebar/Sidebar";
 import { getUserForConversation } from "@lib/actions/Chat.prisma";
 import useGlobalMessageListener from "hooks/useGlobalMessageListener";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -12,7 +13,7 @@ import { toast } from "sonner";
 import useConversation from "zustand/useConversation";
 
 const ChatPage = ({ params }) => {
-  console.log("PRAMAMAM", params);
+  // console.log("PRAMAMAM", params);
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const receiverId = searchParams.get("receiverId");
@@ -34,11 +35,11 @@ const ChatPage = ({ params }) => {
         if (data) {
           setSelectedConversation(data);
         } else {
-          toast("These two users haven't chatted before.");
+          // toast("These two users haven't chatted before.");
           setSelectedConversation(null);
         }
       } catch (error) {
-        console.error("Error fetching conversation:", error);
+        // console.error("Error fetching conversation:", error);
       }
     };
 
@@ -59,20 +60,20 @@ const ChatPage = ({ params }) => {
     return (
       <div className="">
         <div className="flex justify-between items-center p-3">
-          <div className="flex gap-2 items-center">
+          <div className="flex flex- text-xl gap-2 items-center">
             <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
-            <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+            <h6 className="text-primary text-sm  font-bold">FUTO-VERSE</h6>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2">
             <Link
               href={"/sign-up"}
-              className="bg-transperent border border-black text-black  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-transperent border border-black text-black  px-3 py-1 text-sm font-semibold rounded-3xl w-fit"
             >
               Create Account
             </Link>
             <Link
               href={"/login"}
-              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl text-sm w-fit"
             >
               Login
             </Link>

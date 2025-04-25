@@ -81,18 +81,18 @@ const useGetConversations = () => {
         try {
           if (session) {
             const fetchedConversations = await getUsersForSidebar(userId);
-            console.log("Fetched new conversations:", fetchedConversations);
+            // console.log("Fetched new conversations:", fetchedConversations);
 
             if (fetchedConversations.length > 0) {
               setConversations(fetchedConversations);
               await saveConversationsToDB(fetchedConversations); // Save new ones to DB
-              console.log("fetched converstions saved to db");
+              // console.log("fetched converstions saved to db");
             }
           } else {
-            console.log("No session available");
+            // console.log("No session available");
           }
         } catch (error) {
-          console.error("Error fetching conversations:", error);
+          // console.error("Error fetching conversations:", error);
           toast.error(error.message);
         } finally {
           setLoading(false);

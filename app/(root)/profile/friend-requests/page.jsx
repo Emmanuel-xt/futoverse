@@ -98,7 +98,7 @@ const FriendRequests = () => {
           setRequests(fetchedRequests);
         }
       } catch (error) {
-        console.log("Error fetching friend requests:", error);
+        // console.log("Error fetching friend requests:", error);
       }
     };
 
@@ -118,7 +118,7 @@ const FriendRequests = () => {
       }
     } catch (error) {
       toast("Failed to Accept Request");
-      console.log("Error accepting friend request", error);
+      // console.log("Error accepting friend request", error);
     } finally {
       setAcceptFriendRequestLoad(null);
     }
@@ -134,7 +134,7 @@ const FriendRequests = () => {
       }
     } catch (error) {
       toast("Failed to Decline Request");
-      console.log("Error declining friend request", error);
+      // console.log("Error declining friend request", error);
     } finally {
       setRejectFriendRequestLoad(null);
     }
@@ -151,10 +151,7 @@ const FriendRequests = () => {
           <div key={request.id} className="flex items- gap-2">
             <div className="w-24 h-24">
               <Image
-                src={
-                  request.sender.picture ||
-                  "https://randomuser.me/api/portraits/men/1.jpg"
-                }
+                src={request.sender.picture || `/images/noProfile.png`}
                 alt="Profile Picture"
                 width={100}
                 height={100}

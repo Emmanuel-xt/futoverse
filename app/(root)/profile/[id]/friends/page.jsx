@@ -44,12 +44,12 @@ const Users = ({ params }) => {
       try {
         if (id) {
           const users = await fetchUsersFriendList(id);
-          console.log("Users", users);
+          // console.log("Users", users);
           setUsers(users);
         }
       } catch (error) {
         seterrorMessage("Error fetching Users");
-        console.log("Error");
+        // console.log("Error");
       }
     };
 
@@ -115,10 +115,7 @@ const Users = ({ params }) => {
           >
             <div className="w-20 h-20">
               <Image
-                src={
-                  user.picture ||
-                  "https://randomuser.me/api/portraits/men/1.jpg"
-                }
+                src={user.picture || `/images/noProfile.png`}
                 alt="Profile Picture"
                 width={50}
                 height={50}

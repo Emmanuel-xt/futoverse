@@ -78,10 +78,7 @@ const Shops = () => {
               <div className="flex gap-3 items-center  -black  w-full">
                 <div className="w-16 h-16 relative rounded  border-black">
                   <Image
-                    src={
-                      shop?.image ||
-                      "https://randomuser.me/api/portraits/men/1.jpg"
-                    }
+                    src={shop?.image || `/images/noProfile.png`}
                     alt="brand image"
                     // layout="fill"
                     width={100}
