@@ -105,12 +105,13 @@ const OccupiedTile = ({
           </div>
           <div className="flex flex-col gap-2 ">
             {/* <div className=""> */}
-            <button
+            <Link
               className="bg-primary text-sm text-white p-1 rounded-lg px-4 "
-              onClick={handleEnterShop}
+              // onClick={handleEnterShop}
+              href={`/shops/${tileDetails.name}`}
             >
-              Enter Shop
-            </button>
+              Enter Store
+            </Link>
             {/* </div> */}
             <div className="flex gap-2 ">
               {/* <Button Label="View Profile" handleClick={handleViewProfile} /> */}

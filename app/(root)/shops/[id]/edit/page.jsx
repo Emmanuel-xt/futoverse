@@ -215,7 +215,7 @@ const EditStoreProfile = ({ params }) => {
               src="/images/noProfile.png"
               alt="No profile"
               fill
-              className="object-cover"
+              className="object-cover rounded-full border border-"
             />
           )}
         </div>

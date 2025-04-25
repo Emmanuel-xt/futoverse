@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
-import { fetchUserByUsername } from "@lib/actions/user.prisma";
+import { fetchUserByUsername, updateOldUsers } from "@lib/actions/user.prisma";
 import Link from "next/link";
 import { CiEdit } from "react-icons/ci";
 import {
@@ -44,6 +44,7 @@ const Profile = () => {
       // socket.emit("set_user_online", session.user.username);
       // console.log({ isOnline });
       if (session?.user) {
+        // await updateOldUsers();
         const fetchedUser = await fetchUserByUsername(session.user.username);
         setUser(fetchedUser);
       }
@@ -114,27 +115,27 @@ const Profile = () => {
     return (
       <div className="">
         <div className="flex justify-between items-center p-3">
-          <div className="flex gap-2 items-center">
+          <div className="flex flex- text-xl gap-2 items-center">
             <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
-            <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+            <h6 className="text-primary text-sm  font-bold">FUTO-VERSE</h6>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2">
             <Link
               href={"/sign-up"}
-              className="bg-transperent border border-black text-black  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-transperent border border-black text-black  px-3 py-1 text-sm font-semibold rounded-3xl w-fit"
             >
               Create Account
             </Link>
             <Link
               href={"/login"}
-              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl w-fit"
+              className="bg-primary text-white  px-3 py-1 font-semibold rounded-3xl text-sm w-fit"
             >
               Login
             </Link>
           </div>
         </div>
         <div className="flex justify-center items-center h-[90vh]">
-          <p className="text-xl">Login to View Your Profile</p>
+          <p className="text-xl">Login to Start Conversations</p>
         </div>
       </div>
     );
@@ -142,12 +143,17 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 mb-10 flex flex-col items-center">
-      <div className="flex border items-center gap-4 absolute top-5 right-5 ">
-        <Link href="/cart">
-          <IoMdCart className="text-3xl cursor-pointer" />
+      <div className="flex  items-center gap-4 absolute top-5 right-5 ">
+        <Link href="/cart" className="flex flex-col items-center">
+          <IoMdCart className="text-3xl  cursor-pointer" />
+          <p className="text-[10px]">Carts</p>
         </Link>
-        <Link href="/profile/friend-requests">
-          <FaUserPlus className="rounded-full text-3xl cursor-pointer" />
+        <Link
+          href="/profile/friend-requests"
+          className="flex flex-col items-center"
+        >
+          <FaUserPlus className="rounded-full flex flex-col items-center text-3xl cursor-pointer" />
+          <p className="text-[10px]">Requests</p>
         </Link>
         <FiMenu
           className="rounded-full text-3xl cursor-pointer"

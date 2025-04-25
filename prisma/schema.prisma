@@ -14,16 +14,11 @@ model User {
   departmentId Int?
   name         String?
   picture      String?
-  status       String?
   email        String       @unique
   password     String
   bio          String?
   gender       String?
   levelId      Int?
-  kingdom      String?
-  latitude     Float?
-  longitude    Float?
-  coverImage   String?
   comments     Comment[]
   orders       Order[]
   posts        Post[]
@@ -45,6 +40,9 @@ model User {
   // Friends
   friends  User[] @relation("Friendship")
   friendOf User[] @relation("Friendship")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model FriendRequest {
@@ -135,6 +133,9 @@ model Shop {
   user           User          @relation(fields: [userId], references: [id])
   shopItems      ShopItem[]
   statuses       StoreStatus[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model UserStatus {

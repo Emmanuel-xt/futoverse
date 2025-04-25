@@ -620,7 +620,8 @@ export const generateProfileLink = () => {
     .catch((err) => console.error("Failed to copy link:", err));
 };
 export const generateMyProfileLink = (username) => {
-  const baseUrl = window.location.origin + window.location.pathname + username;
+  const baseUrl =
+    window.location.origin + window.location.pathname + "/" + username;
 
   navigator.clipboard
     .writeText(baseUrl)
