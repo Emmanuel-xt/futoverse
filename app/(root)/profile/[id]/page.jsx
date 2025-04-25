@@ -161,10 +161,10 @@ const Profile = ({ params }) => {
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 flex flex-col items-center">
       <div className="flex fixed top-5 right-5 ">
-        <HiDotsVertical
+        {/* <HiDotsVertical
           className="rounded-full text-3xl cursor-pointer "
           onClick={() => setMenuOpen(!menuOpen)}
-        />
+        /> */}
 
         {menuOpen && (
           <div

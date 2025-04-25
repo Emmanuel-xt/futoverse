@@ -11,10 +11,12 @@ const useListenMessages = () => {
   useEffect(() => {
     socket.on("newMessage", async (newMessage) => {
       // console.log("USE LISTENER MESSAGE", newMessage);
-      const isCurrentConversation =
-        selectedConversation?.conversationId ===
-        newMessage?.message.conversationId;
 
+      console.log("selected conversation", selectedConversation.id);
+      console.log("newMessage", newMessage.message.senderId);
+
+      const isCurrentConversation =
+        selectedConversation?.id === newMessage?.message.senderId;
       if (!isCurrentConversation) return;
 
       // Update only messages state for currently selected conversation

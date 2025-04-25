@@ -46,7 +46,6 @@ const EditProfile = () => {
       if (session?.user) {
         const id = session.user.username;
         const fetchedUser = await fetchUserByUsername(id);
-        // console.log("user", fetchedUser);
         setUser(fetchedUser);
       }
     };
@@ -58,36 +57,26 @@ const EditProfile = () => {
     img: "",
     bio: "",
     about: "",
-    gender: "",
-    departmentName: "", // NEW
-    departmentInitial: "", // NEW
+    gender: "male",
+    departmentName: "",
+    departmentInitial: "",
     level: "",
-    latitude: "",
-    longitude: "",
-    kingdom: "",
   });
+
   useEffect(() => {
-    if (session) {
+    if (user) {
       setForm({
-        name: form.name || session.user.name || "",
-        img: form.img || session.user.image || "",
-        bio: form.bio || session.user.bio || "",
-        about: form.about || session.user.about || "",
-        gender: form.gender || session.user.gender || "male",
-        department: form.department || session.user.department || "",
-        level: form.level || session.user.level || "",
-        latitude:
-          form?.latitude ||
-          session.user?.location?.latitude ||
-          location?.longitude,
-        longitude:
-          form.longitude ||
-          session.user?.location?.longitude ||
-          location?.latitude,
-        kingdom: form.kingdom || session?.user?.kingdom || "",
+        name: user.name || "",
+        img: user.img || "",
+        bio: user.bio || "",
+        about: user.about || "",
+        gender: user.gender || "male", // Ensure default value is set
+        departmentName: user.departmentName || "", // Department name from user
+        departmentInitial: user.departmentInitial || "", // Department initial
+        level: user.level || "", // Level from user
       });
     }
-  }, [session?.user]);
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,15 +88,12 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // console.log("Submitting ", form);
     const id = parseFloat(session?.user.id);
 
     try {
       setLoading(true);
-      let updatedImageUrl = form.image;
+      let updatedImageUrl = form.img;
 
-      // If there is an image to upload
       if (wasNewImageUploaded) {
         const response = await fetch("/api/cloudinary", {
           method: "POST",
@@ -118,13 +104,12 @@ const EditProfile = () => {
         });
         const data = await response.json();
         if (!response.ok) {
-          // console.error("Image upload error:", data.error);
+          // Handle error
         }
-        // Update form with the Cloudinary URL
         updatedImageUrl = data.url;
         setForm((prev) => ({
           ...prev,
-          image: updatedImageUrl,
+          img: updatedImageUrl,
         }));
       }
 
@@ -136,41 +121,30 @@ const EditProfile = () => {
         departmentName: form.departmentName,
         departmentInitial: form.departmentInitial,
         levelName: form.level,
-        latitude: parseFloat(form.latitude),
-        longitude: parseFloat(form.longitude),
-        kingdom: form.kingdom,
-        img: updatedImageUrl, // Ensure image URL (uploaded) is included in update payload
+        img: updatedImageUrl,
       });
 
-      success && router.push("/profile");
+      if (success) router.push("/profile");
     } catch (error) {
-      // console.log("error updating user on client", error);
+      console.error("Error updating user profile:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const [error, setError] = useState(null);
-
-  // Only preview image on selection; actual upload happens on submit
   const handleFileChange = async (event) => {
     setWasNewImageUploaded(true);
     const file = event.target.files[0];
-    // Check if the file is valid
     if (file && file instanceof Blob) {
       try {
-        // Convert the file to base64 for preview
         const base = await convertToBase64(file);
-        setForm((prev) => ({ ...prev, img: base })); // Preview image immediately
+        setForm((prev) => ({ ...prev, img: base }));
       } catch (uploadError) {
-        // console.error("Error while converting image to base64:", uploadError);
+        console.error("Error while converting image to base64:", uploadError);
       }
-    } else {
-      setError("Please select a valid image file");
     }
   };
 
-  // Utility to convert file to base64
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -189,8 +163,7 @@ const EditProfile = () => {
       </div>
 
       <div className="mt-6">
-        <div className="rounded-full w-32 h-32 border a flex justify-center items-center cursor-pointer">
-          {/* Hidden file input */}
+        <div className="rounded-full w-32 h-32 border flex justify-center items-center cursor-pointer">
           <input
             type="file"
             accept="image/*"
@@ -198,13 +171,9 @@ const EditProfile = () => {
             className="hidden"
             id="file-input"
           />
-
-          {/* Camera icon button to trigger file input */}
           <label htmlFor="file-input" className="absolute cursor-pointer">
             <FaCamera className="text-3xl text-gray-600" />
           </label>
-
-          {/* Display the selected image */}
           {form.img && (
             <Image
               src={form.img}
@@ -237,24 +206,6 @@ const EditProfile = () => {
             />
           </div>
 
-          {/* <div className="mb-4">
-            <label
-              htmlFor="bio"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Bio
-            </label>
-            <input
-              type="text"
-              id="bio"
-              name="bio"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Write a short bio"
-              value={form.bio}
-              onChange={handleChange}
-            />
-          </div> */}
-
           <div className="mb-4">
             <label
               htmlFor="gender"
@@ -262,15 +213,14 @@ const EditProfile = () => {
             >
               Gender
             </label>
-
             <RadioGroup
               onValueChange={(value) =>
                 setForm((prev) => ({
                   ...prev,
-                  gender: value, // Ensure you're updating 'gender', not 'department'
+                  gender: value,
                 }))
               }
-              defaultValue={form.gender}
+              value={form.gender} // Ensuring gender value is correctly set
             >
               <div className="flex gap-6">
                 <div className="flex items-center space-x-2">
@@ -284,6 +234,7 @@ const EditProfile = () => {
               </div>
             </RadioGroup>
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="about"
@@ -302,11 +253,10 @@ const EditProfile = () => {
             ></textarea>
           </div>
 
-          <div className="w-full">
+          <div className="w-full mb-4">
             <label htmlFor="department" className="text-sm text-slate-700">
               Department
             </label>
-
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -354,7 +304,7 @@ const EditProfile = () => {
             </Popover>
           </div>
 
-          <div className="w-full">
+          <div className="w-full mb-4">
             <label htmlFor="level" className="text-sm text-slate-700">
               Level
             </label>
@@ -367,7 +317,7 @@ const EditProfile = () => {
               <SelectTrigger className="md:max-w-[50%] bg-dark-1 border-primary-500 outline-none">
                 <SelectValue placeholder="Level" />
               </SelectTrigger>
-              <SelectContent className=" border-primary-500">
+              <SelectContent className="border-primary-500">
                 {[
                   "100",
                   "200",

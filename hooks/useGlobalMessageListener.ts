@@ -13,8 +13,8 @@ const useGlobalMessageListener = () => {
             updateConversations(newMessage);
 
             // ✅ Optional UI effects
-            const sound = new Audio("/sounds/notification.mp3");
-            sound.play();
+            // const sound = new Audio("/sounds/notification.mp3");
+            // sound.play();
 
             // Optionally add .shouldShake etc.
         });

@@ -8,7 +8,7 @@ import { groupMessagesByDate } from "@constants/functions";
 
 const Messages = () => {
   const { loading, messages } = useGetMessages();
-  // useListenMessages();
+  useListenMessages();
 
   const ref = useChatScroll(messages);
 

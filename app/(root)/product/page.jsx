@@ -5,6 +5,9 @@ import { Search, ChevronDown, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchAllProductS } from "@lib/actions/product.prisma";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { flytoDestination } from "@constants/functions";
+import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 
 export default function ProductPage() {
   const [products, setProducts] = useState([]);
@@ -28,6 +31,14 @@ export default function ProductPage() {
   useEffect(() => {
     fetchAllProducts();
   }, []);
+
+  const router = useRouter();
+  const { viewer } = useCesiumViewer();
+
+  const pushToRelativeMap = (lon, lat) => {
+    router.push("/map");
+    flytoDestination(viewer, lon, lat);
+  };
 
   useEffect(() => {
     if (!searchTerm) {
@@ -61,29 +72,36 @@ export default function ProductPage() {
     return (
       <div className="grid grid-cols-2 gap-3">
         {products.map((product) => (
-          <Link
-            key={product.id}
-            href={`/product/${product.id}`}
-            className="border rounded-lg p-2 relative shadow-sm"
-          >
-            <Image
-              src={product.image || "/images/noProfile.png"}
-              alt={product.name}
-              width={200}
-              height={150}
-              className="w-full h-32 object-contain rounded"
-            />
+          <>
+            <Link
+              key={product.id}
+              href={`/product/${product.id}`}
+              className="border rounded-lg p-2 relative shadow-sm"
+            >
+              <Image
+                src={product.image || "/images/noProfile.png"}
+                alt={product.name}
+                width={200}
+                height={150}
+                className="w-full h-32 object-contain rounded"
+              />
 
-            <div className="text-green-600 font-semibold mt-2">
-              ₦{product.price}
-            </div>
-            <div className="text-sm font-medium line-clamp-2">
-              {product.name}
-            </div>
-            <div className="flex gap-1 item-center mt-1 text-xs border px-2 py-1 rounded-full bg-gray-100">
+              <div className="text-green-600 font-semibold mt-2">
+                ₦{product.price}
+              </div>
+              <div className="text-sm font-medium line-clamp-2">
+                {product.name}
+              </div>
+            </Link>
+            <div
+              className="flex gap-1 item-center mt-1 text-xs border px-2 py-1 rounded-full bg-gray-100"
+              onClick={() =>
+                pushToRelativeMap(product.shop.longitude, product.shop.latitude)
+              }
+            >
               <MapPin size={14} /> {"View Location"}
             </div>
-          </Link>
+          </>
         ))}
       </div>
     );

@@ -56,11 +56,11 @@ const Users = () => {
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="px-3 py-1 text-sm"
+            className="px-3 py-1 text-sm w-48"
           >
             <option value="">Department</option>
             {departments.map((dept, index) => (
-              <option key={index} value={dept.name}>
+              <option key={index} value={dept.name} className="text-sm">
                 {dept.name}
               </option>
             ))}
