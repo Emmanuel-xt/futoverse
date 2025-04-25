@@ -239,9 +239,12 @@ const ProductDynamicPage = ({ params }) => {
           >
             Add to Cart
           </button>
-          <button className="bg-blue-700 text-white px-4 py-2 rounded-lg w-full">
+          <Link
+            className="bg-blue-700 text-center text-white px-4 py-2 rounded-lg w-full"
+            href={`/chat?receiverId=${product?.userId}`}
+          >
             Buy Now
-          </button>
+          </Link>
         </div>
       </div>
 
