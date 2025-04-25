@@ -95,7 +95,7 @@ const CesiumMapB = () => {
             destination: Cartesian3.fromDegrees(
               6.99495977717274,
               5.383510261110621,
-              400
+              600
             ),
             orientation: {
               heading: 0,

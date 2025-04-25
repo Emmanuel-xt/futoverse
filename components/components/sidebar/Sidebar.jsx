@@ -21,7 +21,7 @@ const Sidebar = () => {
       }`}
     >
       <h2 className="text-2xl font-Semibold mb-4">Chat</h2>
-      <SearchInput setSearchResults={setSearchResults} />
+      {/* <SearchInput setSearchResults={setSearchResults} /> */}
       {/* <div className="divider px-3" /> */}
       <Conversations searchResults={searchResults} />
       {/* <LogoutButton /> */}

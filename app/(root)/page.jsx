@@ -5,6 +5,8 @@ import ButtomNav from "@components/ButtomNav"; // Assuming you have this
 import Link from "next/link";
 import Image from "next/image";
 import InstallPWAButton from "@components/InstallPWAButton";
+import { useSession } from "next-auth/react";
+import Modal from "@components/modals/Modal";
 
 const media = [
   {
@@ -37,6 +39,10 @@ const page = () => {
 
   const current = media[activeIndex];
 
+  const { data: session } = useSession();
+
+  const [launchAppModal, setlaunchAppModal] = useState(false);
+
   return (
     <div className="p-3 mb-14 home-bg">
       {/* Hero Content */}
@@ -46,12 +52,14 @@ const page = () => {
           <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
         </div>
 
-        <Link
-          href={"/login"}
-          className="bg-primary text-white  px-3 font-semibold rounded-3xl w-fit"
-        >
-          Login
-        </Link>
+        {!session?.user && (
+          <Link
+            href={"/login"}
+            className="bg-primary text-white  px-3 font-semibold rounded-3xl w-fit"
+          >
+            Login
+          </Link>
+        )}
       </div>
       <div className="flex flex-col gap-3 items-center justify-center mt-10">
         <h6 className="font-bold text-2xl text-center text-black">
@@ -62,16 +70,22 @@ const page = () => {
           Connection.
         </p>
         <div className="flex gap-3 mt-3">
-          {/* <button className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl">
-            Launch the App
-          </button> */}
-          {/* <InstallPWAButton /> */}
-          <Link
-            href={"/sign-up"}
-            className="bg-transparent text-black border border-black py-2 px-3 font-semibold rounded-3xl"
+          <button
+            className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl"
+            onClick={() => setlaunchAppModal(true)}
           >
-            Sign Up
-          </Link>
+            Launch the App
+          </button>
+          {/* <InstallPWAButton /> */}
+
+          {!session?.user && (
+            <Link
+              href={"/sign-up"}
+              className="bg-transparent text-black border border-black py-2 px-3 font-semibold rounded-3xl"
+            >
+              Sign Up
+            </Link>
+          )}
         </div>
       </div>
 
@@ -98,7 +112,6 @@ const page = () => {
           </div>
         </div>
 
-        {/* Carousel Controls */}
         <div className="flex gap-4 mt-4">
           <button
             onClick={goPrev}
@@ -115,7 +128,7 @@ const page = () => {
         </div>
       </div>
 
-      <div className="">
+      {/* <div className="">
         <div className="relative  max-w-md h-60 w-full rounded-xl overflow-hidden bg-black shadow-lg mt-10">
           <video
             src={"current.src"}
@@ -141,9 +154,9 @@ const page = () => {
             View Map
           </Link>
         </div>
-      </div>
+      </div> */}
 
-      <div className="">
+      {/* <div className="">
         <div className="relative  max-w-md h-60 w-full rounded-xl overflow-hidden bg-black shadow-lg mt-10">
           <video
             src={"current.src"}
@@ -169,10 +182,10 @@ const page = () => {
             Explore the Marketplace
           </Link>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col justify-center items-center gap-2 w-full bg-slate-200 p-4 mt-20 rounded-lg">
-        <h5 className="text-2xl font-bold text-center">
+        <h5 className="text-xl font-bold text-center">
           Ready to Experience Your Campus like Never Before ?
         </h5>
         <p className="text-slate-600 text-center">
@@ -185,7 +198,7 @@ const page = () => {
           href={"https://chat.whatsapp.com/DyXwnogPabiLaUwgaT8L22"}
           className="bg-primary border border-white text-white py-2 px-3 font-semibold rounded-3xl w-fit"
         >
-          Join our out Whatsapp Community
+          Join our Whatsapp Community
         </Link>
       </div>
 
@@ -198,15 +211,15 @@ const page = () => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <Link href={"/sign-up"} className="text-slate-500">
+          {/* <Link href={"/sign-up"} className="text-slate-500">
             Sign Up
-          </Link>
+          </Link> */}
           <Link href={"https://wa.me/2348163810804"} className="text-slate-500">
             Contact Us
           </Link>
-          <Link href={"https://wa.me/2348163810804"} className="text-slate-500">
+          {/* <Link href={"https://wa.me/2348163810804"} className="text-slate-500">
             Join our Team
-          </Link>
+          </Link> */}
           {/* <Link href={"/sign-up"} className="text-slate-500">
             Sign Up
           </Link> */}
@@ -216,6 +229,48 @@ const page = () => {
       {/* <div className="bg-slate-300 text-slate-600">
         Built by students, for students.
       </div> */}
+
+      {launchAppModal && (
+        <Modal
+          open={launchAppModal}
+          onClose={() => setlaunchAppModal(false)}
+          width="350px"
+          height="fit"
+          className="border rounded-xl p-4"
+        >
+          <div className="flex flex-col gap-4 text-center">
+            <h6 className="text-xl font-semibold">
+              How to Install the App on Your Phone
+            </h6>
+            <ul className="text-sm text-slate-700 text-left list-decimal list-inside space-y-2">
+              <li>
+                On <strong>Android (Chrome)</strong>, tap the{" "}
+                <strong>three-dot menu</strong> in the top-right corner.
+              </li>
+              <li>
+                Select <strong>"Add to Home screen"</strong> from the menu
+                options.
+              </li>
+              <li>
+                On <strong>iPhone (Safari)</strong>, tap the{" "}
+                <strong>share icon</strong> (square with an arrow) at the
+                bottom.
+              </li>
+              <li>
+                Scroll down and tap <strong>"Add to Home Screen"</strong>.
+              </li>
+              <li>Confirm the prompt.</li>
+            </ul>
+
+            <button
+              onClick={() => setlaunchAppModal(false)}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition"
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

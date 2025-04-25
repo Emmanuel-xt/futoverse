@@ -171,23 +171,23 @@ const Profile = ({ params }) => {
             ref={menuRef}
             className="absolute right-5 top-3 mt-2 w-40 z-[999] bg-white shadow-md rounded-md "
           >
-            {isUserActive && (
+            {/* {isUserActive && (
               <Link
                 href="/map"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 View in Map(N/A)
               </Link>
-            )}
+            )} */}
             <button
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
               onClick={() => generateProfileLink()}
             >
               Share Profile
             </button>
-            <button className="block text-sm px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
+            {/* <button className="block text-sm px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left">
               Report User (N/A)
-            </button>
+            </button> */}
           </div>
         )}
       </div>
@@ -289,10 +289,10 @@ const Profile = ({ params }) => {
           </div>
         )}
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <h3 className="text-lg font-bold text-gray-800">Email Address</h3>
           <p className="mt-1 text-gray-600">{user?.email}</p>
-        </div>
+        </div> */}
 
         {user?.gender && (
           <div className="mb-4">

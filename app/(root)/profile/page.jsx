@@ -202,7 +202,7 @@ const Profile = () => {
           </div>
         )}
       </div>
-      <div className="w-32 h-32 mb-4 mt-5">
+      <div className="w-32 h-32 mb-4 mt-14">
         <Image
           src={session?.user?.image || "/images/noProfile.png"}
           alt="Profile Picture"

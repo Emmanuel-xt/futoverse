@@ -145,7 +145,12 @@ const MapFlyers = ({
           className="text-black cursor-pointer"
           onClick={() =>
             viewer.camera.flyTo({
-              destination: Cartesian3.fromDegrees(6.987165, 5.394837, 500),
+              destination: Cartesian3.fromDegrees(
+                6.99495977717274,
+                5.383510261110621,
+                600
+              ),
+
               orientation: { heading: 0, pitch: -Math.PI / 3, roll: 0 },
             })
           }
