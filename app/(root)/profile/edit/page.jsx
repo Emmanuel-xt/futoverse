@@ -51,6 +51,7 @@ const EditProfile = () => {
     };
     fetchUserFxn();
   }, [session?.user?.id]);
+  console.log("Image iMAGES", user);
 
   const [form, setForm] = useState({
     name: "",
@@ -67,7 +68,7 @@ const EditProfile = () => {
     if (user) {
       setForm({
         name: user.name || "",
-        img: user.img || "",
+        img: user.picture || "",
         bio: user.bio || "",
         about: user.about || "",
         gender: user.gender || "male", // Ensure default value is set

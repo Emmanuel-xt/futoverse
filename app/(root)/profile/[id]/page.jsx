@@ -204,8 +204,12 @@ const Profile = ({ params }) => {
         )}
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-800">{user?.name || ""}</h1>
-      <h6 className="text-sm font-light text-gray-500">{user?.username}</h6>
+      <h1 className="text-2xl text-center font-bold text-gray-800">
+        {user?.name || ""}
+      </h1>
+      <h6 className="text-sm text-center font-light text-gray-500">
+        {user?.username}
+      </h6>
       {/* <p className="text-gray-600 mt-2">
         {" "}
         {user?.bio || (
