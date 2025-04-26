@@ -43,3 +43,7 @@
 .cesium-credit {
   display: none !important;
 }
+
+.cesium-widget-errorPanel {
+  display: none !important;
+}

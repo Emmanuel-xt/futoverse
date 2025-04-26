@@ -45,6 +45,22 @@ export const CesiumViewerProvider = ({ children }) => {
         // cesiumViewer.imageryLayers.addImageryProvider(
         //   await IonImageryProvider.fromAssetId(4) // or replace 4 with your specific assetId
         // );
+        cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(
+          (tilesRemaining) => {
+            if (
+              tilesRemaining > 0 &&
+              cesiumViewer.scene.globe._surface?.tileProvider?.errorEvent
+            ) {
+              cesiumViewer.scene.globe._surface.tileProvider.errorEvent.addEventListener(
+                (tileProviderError) => {
+                  tileProviderError.retry = false;
+                  setError("Failed to load Map");
+                  console.error("Tile provider error:", tileProviderError);
+                }
+              );
+            }
+          }
+        );
         viewerRef.current = cesiumViewer;
         setViewerReady(true);
       } catch (error) {
