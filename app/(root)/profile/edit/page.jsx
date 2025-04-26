@@ -31,6 +31,7 @@ import {
   CommandList,
 } from "@components/ui/command";
 import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group";
+import { toast } from "sonner";
 
 const EditProfile = () => {
   const { data: session } = useSession();
@@ -91,6 +92,21 @@ const EditProfile = () => {
     e.preventDefault();
     const id = parseFloat(session?.user.id);
 
+    const requiredFields = {
+      "Full name": form.name,
+      About: form.about,
+      Department: form.departmentName,
+      Level: form.level,
+    };
+
+    // Check for any missing field
+    for (const [label, value] of Object.entries(requiredFields)) {
+      if (!value || value.trim() === "") {
+        toast(`${label} is required`);
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       let updatedImageUrl = form.img;
@@ -98,20 +114,14 @@ const EditProfile = () => {
       if (wasNewImageUploaded) {
         const response = await fetch("/api/cloudinary", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: form.img }),
         });
+
         const data = await response.json();
-        if (!response.ok) {
-          // Handle error
-        }
+        if (!response.ok) throw new Error("Image upload failed");
         updatedImageUrl = data.url;
-        setForm((prev) => ({
-          ...prev,
-          img: updatedImageUrl,
-        }));
+        setForm((prev) => ({ ...prev, img: updatedImageUrl }));
       }
 
       const success = await updateUser(id, {
@@ -128,6 +138,7 @@ const EditProfile = () => {
       if (success) router.push("/profile");
     } catch (error) {
       console.error("Error updating user profile:", error);
+      toast.error("Failed to update profile.");
     } finally {
       setLoading(false);
     }
