@@ -19,11 +19,11 @@ const media = [
     src: "/images/marketplace.png",
     title: "Explore the Student Marketplace",
   },
-  {
-    type: "image",
-    src: "/images/socials.jpg",
-    title: "Stay Social & Connected",
-  },
+  // {
+  //   type: "image",
+  //   src: "/images/socials.jpg",
+  //   title: "Stay Social & Connected",
+  // },
 ];
 
 const page = () => {
@@ -52,12 +52,19 @@ const page = () => {
           <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
         </div>
 
-        {!session?.user && (
+        {!session?.user ? (
           <Link
             href={"/login"}
             className="bg-primary text-white  px-3 font-semibold rounded-3xl w-fit"
           >
             Login
+          </Link>
+        ) : (
+          <Link
+            href={"/login"}
+            className="bg-primary text-white  px-3 font-semibold rounded-3xl w-fit"
+          >
+            Join Community
           </Link>
         )}
       </div>
@@ -74,7 +81,7 @@ const page = () => {
             className="bg-primary text-white py-2 px-3 font-semibold rounded-3xl"
             onClick={() => setlaunchAppModal(true)}
           >
-            Launch the App
+            Install App
           </button>
           {/* <InstallPWAButton /> */}
 
@@ -242,6 +249,7 @@ const page = () => {
             <h6 className="text-xl font-semibold">
               How to Install the App on Your Phone
             </h6>
+            <p className="text-[10px]">Less than 1MB Storage space</p>
             <ul className="text-sm text-slate-700 text-left list-decimal list-inside space-y-2">
               <li>
                 On <strong>Android (Chrome)</strong>, tap the{" "}

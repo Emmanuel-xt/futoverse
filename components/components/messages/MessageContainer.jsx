@@ -88,9 +88,9 @@ const MessageContainer = () => {
                 ref={menuRef}
                 className="absolute right-5 top-3 mt-2 w-40 bg-white shadow-md rounded-md z-50 "
               >
-                <button className="block px-4 py-2 hover:bg-gray-100 w-full text-left">
+                {/* <button className="block px-4 py-2 hover:bg-gray-100 w-full text-left">
                   Search (N/A)
-                </button>
+                </button> */}
                 <Link
                   href={`/profile/${selectedConversation?.username}`}
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -98,14 +98,14 @@ const MessageContainer = () => {
                   View Profile
                 </Link>
 
-                {isUserActive && (
+                {/* {isUserActive && (
                   <Link
                     href="/map"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
                     View in Map(N/A)
                   </Link>
-                )}
+                )} */}
                 {/* <button
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
                   onClick={() => generateProfileLink()}
@@ -141,7 +141,7 @@ const NoChatSelected = () => {
   return (
     <div className="md:flex items-center justify-center w-full h-full hidden">
       <div className="px-4 text-center sm:text-lg md:text-xl text-gray-200 font-semibold flex flex-col items-center gap-2">
-        <p>Welcome 👋 {authUser?.fullName} ❄</p>
+        <p>Welcome 👋 ❄</p>
         <p>Select a chat to start messaging</p>
         <MessageCircle className="text-3xl md:text-6xl text-center" />
       </div>

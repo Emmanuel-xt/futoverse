@@ -146,8 +146,8 @@ const MapFlyers = ({
           onClick={() =>
             viewer.camera.flyTo({
               destination: Cartesian3.fromDegrees(
-                6.99495977717274,
-                5.383510261110621,
+                6.996121931660761,
+                5.383035004589935,
                 600
               ),
 

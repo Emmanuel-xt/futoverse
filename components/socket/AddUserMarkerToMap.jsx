@@ -150,7 +150,8 @@ export const DisplayAllUserMarkers = () => {
                   image: "/images/blue-triangle.png", // Triangle hovering above
                   verticalOrigin: VerticalOrigin.BOTTOM,
                   pixelOffset: new Cartesian2(0, -30), // Adjust to sit on top of the head
-                  scale: 0.4,
+                  scale: 0.3,
+                  maximumScale: 0.4,
                   distanceDisplayCondition: new DistanceDisplayCondition(
                     0.0,
                     1e7

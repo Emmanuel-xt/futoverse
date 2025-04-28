@@ -48,7 +48,7 @@ const Message = ({ message }) => {
         }`}
       >
         <p
-          className={`rounded-xl px-3 py-2 ${bubbleBg} ${shakeClass} ${
+          className={`rounded-xl px-3 py-2 ${bubbleBg} ${
             fromMe ? "text-white" : "text-black"
           } text-sm md:text-md w-fit leading-tight break-words whitespace-pre-wrap`}
         >

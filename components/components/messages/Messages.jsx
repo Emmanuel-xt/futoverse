@@ -16,7 +16,7 @@ const Messages = () => {
 
   return (
     <div className="px-4 flex-1 overflow-auto z-30 bg-white" ref={ref}>
-      {loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
+      {/* {loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)} */}
 
       {!loading &&
         Object.entries(grouped).map(([date, msgs]) => (

@@ -72,8 +72,8 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
             <Image
               src={conversation.picture || `/images/noProfile.png`}
               alt="dp"
-              width={20}
-              height={20}
+              width={100}
+              height={100}
               className="w-14 h-14 rounded-full"
             />
             {isUserActive && (

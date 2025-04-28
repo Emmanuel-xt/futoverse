@@ -93,8 +93,8 @@ const CesiumMapB = () => {
         if (viewerReady && viewer) {
           viewer.camera.flyTo({
             destination: Cartesian3.fromDegrees(
-              6.99495977717274,
-              5.383510261110621,
+              6.996121931660761,
+              5.383035004589935,
               600
             ),
             orientation: {
@@ -156,16 +156,16 @@ const CesiumMapB = () => {
 
           const loadTerrain = async () => {
             try {
-              const modelUrl = "/models/futo14.glb"; // Ensure this path is correct
+              const modelUrl = "/models/futo20.glb"; // Ensure this path is correct
 
               // Define model properties
-              const longitude = 6.9955297993;
-              const latitude = 5.3823293861;
-              const height = 0;
+              const longitude = 6.9952911009;
+              const latitude = 5.3823475094;
+              const height = 0.3;
               const heading = 90; // Adjust to rotate the model
               const pitch = 0;
               const roll = 0;
-              const scale = 1;
+              const scale = 2.0419514503;
 
               // Convert position & rotation
               const position = Cartesian3.fromDegrees(
@@ -187,7 +187,7 @@ const CesiumMapB = () => {
                 model: {
                   uri: modelUrl,
                   scale: scale,
-                  minimumPixelSize: 128,
+                  // minimumPixelSize: 128,
                 },
               });
 
@@ -198,7 +198,7 @@ const CesiumMapB = () => {
           };
 
           // Call the function
-          // await loadTerrain();
+          await loadTerrain();
 
           loadNewBuildingTileset(viewer);
 
@@ -285,9 +285,9 @@ const CesiumMapB = () => {
               // console.log("properties", properties.id);
 
               const tileCenterLon =
-                properties.coordinates.lon + properties.coordinates.size / 2;
+                properties?.coordinates.lon + properties?.coordinates.size / 2;
               const tileCenterLat =
-                properties.coordinates.lat + properties.coordinates.size / 2;
+                properties?.coordinates.lat + properties?.coordinates.size / 2;
 
               if (properties.type === "tile") {
                 handleTileClick(pickedObject.id);
