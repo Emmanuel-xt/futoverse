@@ -154,51 +154,51 @@ const CesiumMapB = () => {
           // };
           // await loadTerrain();
 
-          const loadTerrain = async () => {
-            try {
-              const modelUrl = "/models/futo20.glb"; // Ensure this path is correct
+          // const loadTerrain = async () => {
+          //   try {
+          //     const modelUrl = "/models/futo20.glb"; // Ensure this path is correct
 
-              // Define model properties
-              const longitude = 6.9952911009;
-              const latitude = 5.3823475094;
-              const height = 0.3;
-              const heading = 90; // Adjust to rotate the model
-              const pitch = 0;
-              const roll = 0;
-              const scale = 2.0419514503;
+          //     // Define model properties
+          //     const longitude = 6.9952911009;
+          //     const latitude = 5.3823475094;
+          //     const height = 0.3;
+          //     const heading = 90; // Adjust to rotate the model
+          //     const pitch = 0;
+          //     const roll = 0;
+          //     const scale = 2.0419514503;
 
-              // Convert position & rotation
-              const position = Cartesian3.fromDegrees(
-                longitude,
-                latitude,
-                height
-              );
-              const hpr = HeadingPitchRoll.fromDegrees(heading, pitch, roll);
-              const rotation = Transforms.headingPitchRollQuaternion(
-                position,
-                hpr
-              );
+          //     // Convert position & rotation
+          //     const position = Cartesian3.fromDegrees(
+          //       longitude,
+          //       latitude,
+          //       height
+          //     );
+          //     const hpr = HeadingPitchRoll.fromDegrees(heading, pitch, roll);
+          //     const rotation = Transforms.headingPitchRollQuaternion(
+          //       position,
+          //       hpr
+          //     );
 
-              // Check if model already exists, update it; otherwise, create a new one
+          //     // Check if model already exists, update it; otherwise, create a new one
 
-              viewer.entities.add({
-                position: position,
-                orientation: rotation,
-                model: {
-                  uri: modelUrl,
-                  scale: scale,
-                  // minimumPixelSize: 128,
-                },
-              });
+          //     viewer.entities.add({
+          //       position: position,
+          //       orientation: rotation,
+          //       model: {
+          //         uri: modelUrl,
+          //         scale: scale,
+          //         // minimumPixelSize: 128,
+          //       },
+          //     });
 
-              // console.log("Model loaded successfully");
-            } catch (error) {
-              // console.error("Failed to load terrain model:", error);
-            }
-          };
+          //     // console.log("Model loaded successfully");
+          //   } catch (error) {
+          //     // console.error("Failed to load terrain model:", error);
+          //   }
+          // };
 
           // Call the function
-          await loadTerrain();
+          // await loadTerrain();
 
           loadNewBuildingTileset(viewer);
 
