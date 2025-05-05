@@ -1,11 +1,16 @@
 "use client";
 import { departments } from "@constants/arrays";
+import {
+  cancelFriendRequest,
+  sendFriendRequest,
+} from "@lib/actions/connect.prisma";
 import { fetchAllUsersForListing } from "@lib/actions/user.prisma";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { toast } from "sonner";
 
 const levels = ["100", "200", "300", "400", "500"];
 
@@ -16,6 +21,10 @@ const Users = () => {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [users, setUsers] = useState([]);
   const [errorMessage, seterrorMessage] = useState("");
+
+  const { data: session } = useSession();
+
+  const currentUserId = parseFloat(session?.user?.id);
 
   // Filter logic
   const filteredUsers = users.filter((user) => {
@@ -33,10 +42,50 @@ const Users = () => {
     return matchesSearchTerm && matchesDepartment && matchesLevel;
   });
 
+  const [friendRequestSent, setFriendRequestSent] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+
+  const [friendRequestLoad, setfriendRequestLoad] = useState(null);
+  const handleSendFriendRequest = async (id) => {
+    try {
+      setfriendRequestLoad(id);
+      const send = await sendFriendRequest(currentUserId, id);
+      if (send) {
+        toast("Request Sent");
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+        setRequestSent(true);
+      }
+    } catch (error) {
+      toast("Request not Sent");
+      // console.log("Error sending friend request", error);
+    } finally {
+      setfriendRequestLoad(null);
+    }
+  };
+  const handleCancelFriendRequest = async (id) => {
+    try {
+      setfriendRequestLoad(id);
+      const cancel = await cancelFriendRequest(currentUserId, id);
+      if (cancel.success) {
+        // toast("Connection Request Sent");
+        setRequestSent(false);
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+        // setFriendRequestSent(false);
+        // alreadyFriends(false);
+      }
+    } catch (error) {
+      toast("Failed to Unfriend");
+      // console.log("Error sending friend request", error);
+    } finally {
+      setfriendRequestLoad(null);
+    }
+  };
+
   useEffect(() => {
     const fetchALlUsers = async () => {
+      // if (session) {
       try {
-        const users = await fetchAllUsersForListing();
+        const users = await fetchAllUsersForListing(currentUserId);
         // console.log("Userssss", users);
         setUsers(users);
       } catch (error) {
@@ -44,10 +93,11 @@ const Users = () => {
         // console.log("Error");
       }
     };
+    // };
 
     fetchALlUsers();
     // console.log("Users ---->", users);
-  }, []);
+  }, [session]);
 
   return (
     <div className="p-3 mb-14">
@@ -99,29 +149,72 @@ const Users = () => {
         {filteredUsers.length > 0 ? (
           <div className="flex flex-col gap-3">
             {filteredUsers.map((user) => (
-              <Link
-                href={`/profile/${user.username}`}
+              <div
                 key={user.id}
-                className="flex items-center gap-1 hover:bg-slate-100 focus:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2 hover:bg-slate-100 focus:bg-slate-50 cursor-pointer p-2 rounded-md"
               >
-                <div className="w-20 h-20">
-                  <Image
-                    src={user.picture || `/images/noProfile.png`}
-                    alt="Profile Picture"
-                    width={50}
-                    height={50}
-                    className="rounded-full w-16 h-16 object-cover"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <h5>{user.name}</h5>
-                  <h5 className="text-slate-400 text-sm">@{user.username}</h5>
-                  <h6 className="text-slate-500">
-                    {user.department && user.department?.initial}{" "}
-                    {user.level && `${user.level.name}lvl`}
-                  </h6>
-                </div>
-              </Link>
+                {/* Clickable Avatar or Name */}
+                <Link
+                  href={`/profile/${user.username}`}
+                  className="flex items-center gap-2 flex-grow"
+                >
+                  <div className="w-16 h-16">
+                    <Image
+                      src={user.picture || `/images/noProfile.png`}
+                      alt="Profile Picture"
+                      width={64}
+                      height={64}
+                      className="rounded-full object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <h5 className="font-medium">{user.name}</h5>
+                    <h5 className="text-slate-400 text-sm">@{user.username}</h5>
+                    <h6 className="text-slate-500 text-sm">
+                      {user.department?.initial}{" "}
+                      {user.level && `${user.level.name}lvl`}
+                    </h6>
+                  </div>
+                </Link>
+
+                {/* Independent Connect Button */}
+                {user.isFriend ? (
+                  <></>
+                ) : user.requestSent ? (
+                  <button
+                    type="button"
+                    onClick={() => handleCancelFriendRequest(user.id)}
+                    className="bg-red-500 text-white py-1 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    {friendRequestLoad === user.id ? "Canceling..." : "Cancel "}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleSendFriendRequest(user.id)}
+                    className={`bg-blue-500 ${
+                      friendRequestLoad === user.id ? "bg-blue-400" : ""
+                    } text-white py-1 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    disabled={friendRequestLoad === user.id}
+                  >
+                    {friendRequestLoad === user.id ? "Sending..." : "Connect"}
+                  </button>
+                )}
+
+                {/* <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent bubbling just in case
+                    handleSendFriendRequest(user.id);
+                  }}
+                  className={`bg-blue-500 ${
+                    friendRequestLoad === user.id ? "bg-blue-400" : ""
+                  } text-white py-1 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  disabled={friendRequestLoad === user.id}
+                >
+                  {friendRequestLoad === user.id ? "Sending..." : "Connect"}
+                </button> */}
+              </div>
             ))}
           </div>
         ) : (
