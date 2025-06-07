@@ -195,25 +195,66 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
     { id: 3284646, name: "beside-prostetics" },
   ];
 
-  try {
-    // Load all tilesets sequentially to ensure smooth loading and debug visibility
-    for (const { id, name } of tilesets) {
-      // console.log(`Loading tileset: ${name} (ID: ${id})`);
-      const tileset = await Cesium3DTileset.fromIonAssetId(id);
-      cesiumViewer.scene.primitives.add(tileset);
+  // try {
+  //   // Load all tilesets sequentially to ensure smooth loading and debug visibility
+  //   for (const { id, name } of tilesets) {
+  //     // console.log(`Loading tileset: ${name} (ID: ${id})`);
+  //     const tileset = await Cesium3DTileset.fromIonAssetId(id);
+  //     cesiumViewer.scene.primitives.add(tileset);
 
-      // Wait for the tileset to be ready before proceeding
-      await tileset.readyPromise;
-      // console.log(`Successfully loaded tileset: ${name}`);
-      // await alignTilesetBaseToGround(tileset);
+  //     // Wait for the tileset to be ready before proceeding
+  //     await tileset.readyPromise;
+  //     // console.log(`Successfully loaded tileset: ${name}`);
+  //     // await alignTilesetBaseToGround(tileset);
 
-      // Adjust height offset
-    }
+  //     // Adjust height offset
+  //   }
 
-    console.log("All tilesets loaded successfully!");
-  } catch (error) {
-    // console.error("An error occurred while loading tilesets:", error);
-  }
+  //   console.log("All tilesets loaded successfully!");
+  // } catch (error) {
+  //   // console.error("An error occurred while loading tilesets:", error);
+  // }
+
+  tilesetsToLoad.forEach(({ name, url, position }) => {
+    console.log(`📦 Loading tileset: ${name} from URI: ${url}`);
+
+    const tileset = new Cesium3DTileset({
+      url: url, // use the uri from the data
+    });
+    console.log("Tileset", tileset);
+
+    cesiumViewer.scene.primitives.add(tileset);
+
+    // When tileset is ready
+    tileset.readyPromise
+      .then(() => {
+        console.log(`✅ Successfully loaded tileset: ${name}`);
+
+        // Optional: apply position transform if provided
+        if (position) {
+          const transform = Transforms.eastNorthUpToFixedFrame(
+            Cartesian3.fromDegrees(
+              position.lon,
+              position.lat,
+              position.height || 0
+            )
+          );
+          tileset.modelMatrix = transform;
+          console.log(`📍 Applied position to tileset: ${name}`);
+        }
+      })
+      .catch((error) => {
+        console.error(
+          `❌ Failed to load tileset "${name}" from URI "${url}"`,
+          error
+        );
+      });
+
+    // Listen for tile load failures
+    tileset.tileFailed.addEventListener((tile, error) => {
+      console.error(`⚠️ Tile failed to load in tileset "${name}"`, error);
+    });
+  });
 };
 
 const material = new ColorMaterialProperty(Color.GREEN.withAlpha(0.1));
@@ -554,13 +595,15 @@ export const getMapboxDirections = async (
   const accessToken =
     "pk.eyJ1IjoiZWF6eiIsImEiOiJjbTM5ZTVqeXUxMHJuMnBzY3Jpa3RpcjV6In0.4jWwsMi42zaIedqwlmVjXg";
   const profile = "walking"; // Options: driving, walking, cycling
-  const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&access_token=${accessToken}`;
+  // const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&access_token=${accessToken}`;
+  const url = `https://car-kfey.onrender.com/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
+  // const url = `https://car-kfey.onrender.com/route/v1/driving/${startLon};${endLon}?overview=full&geometries=geojson`
 
   try {
     // console.log("sending this url to mapbox", url);
     const response = await fetch(url);
     const data = await response.json();
-    // console.log("got", data);
+    console.log("got", data);
 
     if (data.code === "Ok") {
       return data.routes[0].geometry.coordinates; // Returns an array of [longitude, latitude] waypoints
@@ -612,6 +655,7 @@ export const generateLocationLink = (longitude, latitude) => {
     .then(() => toast("Link copied! Share it with others."))
     .catch((err) => console.error("Failed to copy link:", err));
 };
+
 export const generateProfileLink = () => {
   const baseUrl = window.location.origin + window.location.pathname;
 
@@ -620,6 +664,7 @@ export const generateProfileLink = () => {
     .then(() => toast("Link copied! Share it with others."))
     .catch((err) => console.error("Failed to copy link:", err));
 };
+
 export const generateMyProfileLink = (username) => {
   const baseUrl =
     window.location.origin + window.location.pathname + "/" + username;
@@ -643,6 +688,7 @@ function padZero(number) {
 
 // utils/groupMessagesByDate.ts
 import { format, isToday, isYesterday } from "date-fns";
+import { tilesetsToLoad } from "./arrays";
 
 export const groupMessagesByDate = (messages) => {
   const groups = {};

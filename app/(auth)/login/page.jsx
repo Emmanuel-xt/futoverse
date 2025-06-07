@@ -1,23 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { CgDanger } from "react-icons/cg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const LogIn = () => {
   const router = useRouter();
-
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
+  // function to change input
   const handleChange = (e) => {
     setLoginError("");
     setErrors({});
@@ -30,7 +29,6 @@ const LogIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = {};
     if (!form.email.trim()) {
       newErrors.email = "Email is required";
@@ -55,7 +53,7 @@ const LogIn = () => {
       });
 
       if (response.error) {
-        console.log("Response error", response.error);
+        // console.log("Response error", response.error);
         setLoginError("Invalid credentials. Please try again.");
       } else {
         router.push("/profile");

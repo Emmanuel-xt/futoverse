@@ -35,7 +35,7 @@ const ChatPage = ({ params }) => {
         if (data) {
           setSelectedConversation(data);
         } else {
-          // toast("These two users haven't chatted before.");
+          // toast.("These two users haven't chatted before.");
           setSelectedConversation(null);
         }
       } catch (error) {
