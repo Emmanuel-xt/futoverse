@@ -35,50 +35,25 @@ import {
 import { concatPlaces, groupedPlaces, places } from "./places";
 import { toast } from "sonner";
 
-const alignTilesetBaseToGround = async (tileset) => {
-  // Wait for the tileset to be ready
-  // await tileset.readyPromise;
+export async function loadAllTilesets(viewer) {
+  for (const { name, url, position } of tilesetsToLoad) {
+    try {
+      console.log(`📦 Attempting to load tileset: ${name} from URI: ${url}`);
 
-  // Get the bounding sphere (center and radius)
-  const boundingSphere = tileset.boundingSphere;
-  const boundingCenter = boundingSphere.center;
-  const radius = boundingSphere.radius;
+      const tileset = await Cesium3DTileset.fromUrl(url);
 
-  // Convert to Cartographic coordinates
-  const cartographic = Cartographic.fromCartesian(boundingCenter);
+      // Optional: apply position offset if needed
+      viewer.scene.primitives.add(tileset);
 
-  // Calculate the base height (center height minus radius)
-  const baseHeight = cartographic.height - radius;
-
-  // Log the current base height for debugging
-  // console.log(`Original base height of tileset: ${baseHeight}`);
-
-  // Set the base height to 0 (flat ground)
-  const heightOffset = -baseHeight; // Offset to bring the base to 0
-  const newPosition = Cartesian3.fromDegrees(
-    Math.toDegrees(cartographic.longitude),
-    Math.toDegrees(cartographic.latitude),
-    heightOffset
-  );
-
-  // Calculate the translation matrix
-  const translation = Cartesian3.subtract(
-    newPosition,
-    boundingCenter,
-    new Cartesian3()
-  );
-
-  // Apply the translation to the tileset's model matrix
-  const newModelMatrix = Matrix4.fromTranslation(translation);
-  tileset.modelMatrix = newModelMatrix;
-
-  // console.log("Tileset base aligned to ground successfully!");
-};
-// Example usage
-const loadAndAlignTileset = async (viewer, assetId) => {
-  const tileset = await Cesium3DTileset.fromIonAssetId(assetId);
-  viewer.scene.primitives.add(tileset);
-};
+      console.log(`✅ Successfully loaded tileset: ${name}`);
+    } catch (error) {
+      console.error(
+        `❌ Failed to load tileset "${name}" from URI "${url}"`,
+        error
+      );
+    }
+  }
+}
 
 export const loadNewBuildingTileset = async (cesiumViewer) => {
   // Array of tileset IDs and corresponding names for better debugging
@@ -214,47 +189,6 @@ export const loadNewBuildingTileset = async (cesiumViewer) => {
   // } catch (error) {
   //   // console.error("An error occurred while loading tilesets:", error);
   // }
-
-  tilesetsToLoad.forEach(({ name, url, position }) => {
-    console.log(`📦 Loading tileset: ${name} from URI: ${url}`);
-
-    const tileset = new Cesium3DTileset({
-      url: url, // use the uri from the data
-    });
-    console.log("Tileset", tileset);
-
-    cesiumViewer.scene.primitives.add(tileset);
-
-    // When tileset is ready
-    tileset.readyPromise
-      .then(() => {
-        console.log(`✅ Successfully loaded tileset: ${name}`);
-
-        // Optional: apply position transform if provided
-        if (position) {
-          const transform = Transforms.eastNorthUpToFixedFrame(
-            Cartesian3.fromDegrees(
-              position.lon,
-              position.lat,
-              position.height || 0
-            )
-          );
-          tileset.modelMatrix = transform;
-          console.log(`📍 Applied position to tileset: ${name}`);
-        }
-      })
-      .catch((error) => {
-        console.error(
-          `❌ Failed to load tileset "${name}" from URI "${url}"`,
-          error
-        );
-      });
-
-    // Listen for tile load failures
-    tileset.tileFailed.addEventListener((tile, error) => {
-      console.error(`⚠️ Tile failed to load in tileset "${name}"`, error);
-    });
-  });
 };
 
 const material = new ColorMaterialProperty(Color.GREEN.withAlpha(0.1));
