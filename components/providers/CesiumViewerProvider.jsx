@@ -17,6 +17,10 @@ import {
   ImageryLayer,
   TileMapServiceImageryProvider,
   buildModuleUrl,
+  UrlTemplateImageryProvider,
+  WebMercatorTilingScheme,
+  Rectangle,
+  IonImageryProvider,
 } from "cesium";
 
 const CesiumViewerContext = createContext(null);
@@ -37,9 +41,21 @@ export const CesiumViewerProvider = ({ children }) => {
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
         const cesiumViewer = new Viewer("cesiumContainer", {
           baseLayerPicker: false,
+          // terrainProvider: new EllipsoidTerrainProvider(),
         });
-        // terrainProvider = createWorldTerrainAsync();
-        // cesiumViewer.imageryLayers.removeAll();
+
+        cesiumViewer.imageryLayers.removeAll();
+
+        // const imageryProvider = new UrlTemplateImageryProvider({
+        //   url: "http://localhost:8000/{z}/{x}/{y}.png",
+        //   tilingScheme: new WebMercatorTilingScheme(),
+        //   minimumLevel: 15,
+        //   maximumLevel: 18,
+        //   credit: "Offline Tiles",
+        //   rectangle: Rectangle.fromDegrees(6.9813, 5.3568, 7.0167, 5.412),
+        // });
+
+        // cesiumViewer.imageryLayers.addImageryProvider(imageryProvider);
 
         // Add your custom Cesium Ion imagery by assetId
         // cesiumViewer.imageryLayers.addImageryProvider(

@@ -9,10 +9,6 @@ import {
   Color,
   ColorMaterialProperty,
   JulianDate,
-  Model,
-  Transforms,
-  Matrix4,
-  HeadingPitchRoll,
   Rectangle,
 } from "cesium";
 
@@ -23,16 +19,15 @@ import {
   checkIfTileOccupied,
   flytoDestination,
   load3DModelForShop,
+  loadAllTilesets,
   loadNewBuildingTileset,
 } from "@constants/functions";
 import OccupiedTile from "@components/modals/OccupiedTileModal";
 import TileModal from "../modals/UnOccupiedTileModal";
 import { useCesiumViewer } from "../providers/CesiumViewerProvider";
-import { motion } from "framer-motion";
 import { IoMdArrowBack } from "react-icons/io";
 import { fetchOnlyShops } from "@lib/actions/shops.prisma";
 import MapFlyers from "@components/Navigation/MapFlyers";
-import MapNav from "@components/Navigation/MapNav";
 import UserInfoModal from "@components/modals/UserInfoModal";
 import {
   AddUserMarkerToMap,
@@ -43,12 +38,9 @@ import {
   ModelRelocation,
   NewShopCreation,
 } from "@components/socket/ModelAddition";
-import { useSocket } from "@components/providers/SocketProvider";
 import FindEntityModal from "@components/modals/FindEntityModal";
 import LabelModal from "@components/modals/LabelModal";
-import TerrainPositioner from "./TerrainPositioner";
 import PointerModal from "@components/modals/PointerModal";
-// import { useSocket } from "@components/socket/Socket";
 
 const CesiumMapB = () => {
   const { viewer, viewerReady, isMapVisible, setMapVisible } =
@@ -66,30 +58,17 @@ const CesiumMapB = () => {
   const [occupiedTileDetails, setOccupiedTileDetails] = useState({});
 
   const [isOccupied, setIsOccupied] = useState(false); // State to check tile status
-  const [activeTile, setActiveTile] = useState(null); // State to keep track of the active tile
 
   const [shops, setShops] = useState([]);
 
-  const [myId, setmyId] = useState(null);
-  const socket = useSocket();
   const [labelsVisible, setLabelsVisible] = useState(false);
   const [labelEntities, setLabelEntities] = useState([]);
 
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    socket.on("client_id", (clientId) => {
-      // console.log("Connected Client ID:", clientId);
-      setmyId(clientId);
-    });
-  }, []);
-
-  useEffect(() => {
     const initializeCesium = async () => {
       try {
-        // Ion.defaultAccessToken;
-        // ("eyJhbGciOiJIUzI1NiIsInR5cCI6Ik=pXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A");
-        // terrainProvider = await createWorldTerrainAsync();
         if (viewerReady && viewer) {
           viewer.camera.flyTo({
             destination: Cartesian3.fromDegrees(
@@ -130,78 +109,8 @@ const CesiumMapB = () => {
           };
 
           flyToLocationFromURL();
-
-          const longitude = 6.9955297993; // Replace with your exact coordinates
-          const latitude = 5.3823293861;
-          const altitude = 0.1; // Adjust altitude as needed
-
-          // const loadTerrain = async () => {
-          //   try {
-          //     const terrainModel = await viewer.scene.primitives.add(
-          //       Model.fromGltfAsync({
-          //         url: "https://futo-terrain-a0rzcqp6z-emmanuel-xts-projects.vercel.app/fmap10.glb",
-          //         modelMatrix: Transforms.eastNorthUpToFixedFrame(
-          //           Cartesian3.fromDegrees(longitude, latitude, altitude)
-          //         ),
-          //         scale: 1.0,
-          //       })
-          //     );
-          //     // viewer.scene.primitives.add(terrainModel);
-          //     console.log("Model suppose don dey show", terrainModel);
-          //   } catch (error) {
-          //     console.error("Failed to load terrain model:", error);
-          //   }
-          // };
-          // await loadTerrain();
-
-          // const loadTerrain = async () => {
-          //   try {
-          //     const modelUrl = "/models/futo20.glb"; // Ensure this path is correct
-
-          //     // Define model properties
-          //     const longitude = 6.9952911009;
-          //     const latitude = 5.3823475094;
-          //     const height = 0.3;
-          //     const heading = 90; // Adjust to rotate the model
-          //     const pitch = 0;
-          //     const roll = 0;
-          //     const scale = 2.0419514503;
-
-          //     // Convert position & rotation
-          //     const position = Cartesian3.fromDegrees(
-          //       longitude,
-          //       latitude,
-          //       height
-          //     );
-          //     const hpr = HeadingPitchRoll.fromDegrees(heading, pitch, roll);
-          //     const rotation = Transforms.headingPitchRollQuaternion(
-          //       position,
-          //       hpr
-          //     );
-
-          //     // Check if model already exists, update it; otherwise, create a new one
-
-          //     viewer.entities.add({
-          //       position: position,
-          //       orientation: rotation,
-          //       model: {
-          //         uri: modelUrl,
-          //         scale: scale,
-          //         // minimumPixelSize: 128,
-          //       },
-          //     });
-
-          //     // console.log("Model loaded successfully");
-          //   } catch (error) {
-          //     // console.error("Failed to load terrain model:", error);
-          //   }
-          // };
-
-          // Call the function
-          // await loadTerrain();
-
           loadNewBuildingTileset(viewer);
-
+          loadAllTilesets(viewer);
           callTHeCreateTIles(viewer);
 
           const loadAllRealShops = async () => {
@@ -245,8 +154,6 @@ const CesiumMapB = () => {
             // console.log("Ocuppation", tileOccupied);
 
             setIsOccupied(tileOccupied.occupied);
-
-            setActiveTile(tile);
 
             setOccupiedTileDetails(
               tileOccupied.details // Add shop owner (user) if occupied
@@ -366,11 +273,14 @@ const CesiumMapB = () => {
           }, ScreenSpaceEventType.LEFT_CLICK);
         }
       } catch (error) {
+        console.log("Error inititing the Viewer", Error);
         setError("Failed to load Cesium viewer");
       }
     };
 
     initializeCesium();
+
+    // return () => viewerRef.current?.destroy();
   }, [viewer]);
   AddUserMarkerToMap();
   DisplayAllUserMarkers();
@@ -389,26 +299,11 @@ const CesiumMapB = () => {
 
   return (
     <>
-      {/* <motion.div
-        className="cesium-map-container"
-        initial={{ opacity: 0, y: 100, zIndex: 1 }} // Start hidden and beneath
-        animate={
-          isMapVisible
-            ? { opacity: 1, y: 0, zIndex: 10 }
-            : { opacity: 0, y: 100, zIndex: 1 }
-        } // Bring map on top and animate in
-        transition={{ duration: 1, ease: "easeInOut" }} // Adjust timing as needed
-        style={{ pointerEvents: isMapVisible ? "auto" : "none" }} // Disable pointer events when hidden
-      > */}
       <div className="relative w-full h-screen overflow-hidden">
         <div
           id="cesiumContainer"
           className="w-full h-[110vh] relative border px-1"
         >
-          {/* {viewer && (
-            <TerrainPositioner viewer={viewer} modelUrl="/models/futo14.glb" />
-          )} */}
-          {/* search/other basr */}
           <MapFlyers
             labelsVisible={labelsVisible}
             setShowLabels={setLabelsVisible}
