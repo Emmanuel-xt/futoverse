@@ -38,14 +38,14 @@ import { toast } from "sonner";
 export async function loadAllTilesets(viewer) {
   for (const { name, url, position } of tilesetsToLoad) {
     try {
-      console.log(`📦 Attempting to load tileset: ${name} from URI: ${url}`);
+      // console.log(`📦 Attempting to load tileset: ${name} from URI: ${url}`);
 
       const tileset = await Cesium3DTileset.fromUrl(url);
 
       // Optional: apply position offset if needed
       viewer.scene.primitives.add(tileset);
 
-      console.log(`✅ Successfully loaded tileset: ${name}`);
+      // console.log(`✅ Successfully loaded tileset: ${name}`);
     } catch (error) {
       console.error(
         `❌ Failed to load tileset "${name}" from URI "${url}"`,

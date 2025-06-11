@@ -52,6 +52,8 @@ export const CesiumViewerProvider = ({ children }) => {
           timeline: false,
           navigationHelpButton: false,
           navigationInstructionsInitiallyVisible: false,
+          requestRenderMode: true, //manual .requestRender() is mostly used when this is set to true , incase you start having entity update issues in the future
+          maximumRenderTimeChange: Infinity,
           // terrainProvider: new EllipsoidTerrainProvider(),
         });
 
@@ -72,6 +74,10 @@ export const CesiumViewerProvider = ({ children }) => {
         // cesiumViewer.imageryLayers.addImageryProvider(
         //   await IonImageryProvider.fromAssetId(4) // or replace 4 with your specific assetId
         // );
+
+        cesiumViewer.scene.debugShowFramesPerSecond = true;
+        // cesiumViewer.scene.globe.maximumScreenSpaceError = 2; increase to reduce quality , for future optimization sake
+
         cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(
           (tilesRemaining) => {
             if (

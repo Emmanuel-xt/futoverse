@@ -23,11 +23,9 @@ import { Button } from "@components/ui/button";
 import { Badge } from "@components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { cn } from "@lib/utils";
-import { SearchDrawer } from "@components/drawers/SearchInMapDrawer";
-import { CategoryDrawer } from "@components/drawers/MapFilterCategoryDrawer";
-import { SettingsDrawer } from "@components/drawers/MapSettingsDrawer";
-// import { SearchDrawer } from "./search-drawer";
-// import { CategoryDrawer } from "./category-drawer";
+import { SearchDrawer } from "@components/drawers/map-drawers/SearchInMapDrawer";
+import { CategoryDrawer } from "@components/drawers/map-drawers/MapFilterCategoryDrawer";
+import { SettingsDrawer } from "@components/drawers/map-drawers/MapSettingsDrawer";
 
 // interface MapFlyersProps {
 //   labelsVisible: boolean
@@ -167,10 +165,7 @@ export const MapFlyers = ({}) => {
         <div className="flex items-center gap-4 mb-4">
           <Avatar className="h-12 w-12 border-2 border-white shadow-lg">
             <AvatarImage
-              src={
-                session?.user?.image ||
-                `https://randomuser.me/api/portraits/men/1.jpg`
-              }
+              src={session?.user?.image || `/images/noPicture.png`}
               alt="Profile"
             />
             <AvatarFallback>

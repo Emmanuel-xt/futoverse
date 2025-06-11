@@ -86,6 +86,7 @@ export const useMapInitialization = ({
           const load = await fetchOnlyShops();
 
           if (!load.success || !Array.isArray(load.shops)) {
+            // setError("Failed to fetch shops");
             return;
           }
 
@@ -106,8 +107,9 @@ export const useMapInitialization = ({
         };
 
         // Load places and shops
-        const placesLabel = await addPlacesToViewer(viewer);
-        setLabelEntities(placesLabel);
+        // const placesLabel = await addPlacesToViewer(viewer);
+        // setLabelEntities(placesLabel);
+
         await loadAllRealShops();
 
         // Setup event handlers
