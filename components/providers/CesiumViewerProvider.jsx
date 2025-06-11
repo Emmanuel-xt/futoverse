@@ -41,6 +41,17 @@ export const CesiumViewerProvider = ({ children }) => {
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
         const cesiumViewer = new Viewer("cesiumContainer", {
           baseLayerPicker: false,
+
+          fullscreenButton: false,
+          vrButton: false,
+          geocoder: false,
+          homeButton: false,
+          infoBox: false,
+          sceneModePicker: false,
+          selectionIndicator: false,
+          timeline: false,
+          navigationHelpButton: false,
+          navigationInstructionsInitiallyVisible: false,
           // terrainProvider: new EllipsoidTerrainProvider(),
         });
 
