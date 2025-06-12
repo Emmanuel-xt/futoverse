@@ -20,6 +20,9 @@ import { fetchOnlyUserInfo } from "@lib/actions/user.prisma";
 import { fetchAllShops } from "@lib/actions/shops.prisma";
 import { fetchAllProductS } from "@lib/actions/product.prisma";
 import Image from "next/image";
+import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
+import { flytoDestination } from "@constants/functions";
+import { toast } from "sonner";
 
 // Cache for storing fetched data to avoid refetching
 const dataCache = new Map();
@@ -56,6 +59,7 @@ export const CategoryDrawer = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { viewer } = useCesiumViewer();
   const onlineUsers = useOnlineUsers();
   const fetchedUsersRef = useRef(new Set());
   const abortControllerRef = useRef(null);
@@ -299,10 +303,64 @@ export const CategoryDrawer = ({
   // Memoized filtered data
   const filteredData = useMemo(() => {
     if (!searchTerm.trim()) return data;
-    return data.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return data.filter((item) => {
+      switch (category) {
+        case "user":
+          // Check name OR username
+          return (
+            (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
+            (item.username && item.username.toLowerCase().includes(lowerSearch))
+          );
+
+        case "items":
+          // Check name OR description
+          return (
+            (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
+            (item.description &&
+              item.description.toLowerCase().includes(lowerSearch))
+          );
+
+        case "shops":
+          // Check name OR description
+          return (
+            (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
+            (item.description &&
+              item.description.toLowerCase().includes(lowerSearch))
+          );
+
+        default:
+          // Fallback to just name if category unknown
+          return item.name && item.name.toLowerCase().includes(lowerSearch);
+      }
+    });
+  }, [searchTerm, data, category]);
+
+  const findUser = (username) => {
+    if (!viewer) return;
+    const searchName = `User: ${username.trim()}`;
+
+    // Search for the entity
+    const entity = viewer.entities.values.find(
+      (entity) => entity.name === searchName
     );
-  }, [searchTerm, data]);
+
+    if (entity) {
+      // Center camera on found entity
+      viewer.flyTo(entity);
+      onOpenChange(false);
+      // toast("User Found !");
+    } else {
+      toast("Cant View User's Location !");
+    }
+  };
+
+  const handleFlyOver = (lon, lat) => {
+    flytoDestination(viewer, lon, lat);
+    onOpenChange(false);
+  };
 
   const renderItem = (item) => {
     switch (category) {
@@ -313,26 +371,35 @@ export const CategoryDrawer = ({
             className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
           >
             <div className="flex gap-4">
-              <div className="flex-shrink-0">
-                <Image
-                  src={item.image || "/images/noProfile.png"}
-                  alt={item.name}
-                  width={200}
-                  height={150}
-                  className="w-full h-32 object-contain rounded"
-                />
+              <div className="flex-shrink-0 relative w-12 h-12">
+                <Avatar className="h-14 w-14 ">
+                  <AvatarImage
+                    src={item.image || "/images/noPicture.png"}
+                    alt={`${item.name}'s profile`}
+                  />
+                  <AvatarFallback>
+                    <User className="h-6 w-6" />
+                  </AvatarFallback>
+                </Avatar>
               </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold text-lg">{item.name}</h4>
-                  <Badge variant="secondary">{item.rating.toFixed(1)} ⭐</Badge>
+              <div className="flex-1 flex justify-between items-center ">
+                <div className="">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-semibold text-lg">{item.name}</h4>
+                    {/* <Badge variant="secondary">{item.rating.toFixed(1)} ⭐</Badge> */}
+                  </div>
+                  {/* <p className="text-sm text-gray-600 mb-2">{item.description}</p> */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                    {/* <MapPin className="h-4 w-4" /> */}
+                    <span>{item.category}</span>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{item.category}</span>
-                </div>
-                <div className="text-sm text-gray-500">{item.distance}</div>
+                {/* <div className="text-sm text-gray-500">{item.distance}</div> */}
+
+                <MapPin
+                  className="text-primary text-lg flex-shrink-0"
+                  onClick={() => handleFlyOver(item.longitude, item.latitude)}
+                />
               </div>
             </div>
           </div>
@@ -342,35 +409,43 @@ export const CategoryDrawer = ({
         return (
           <div
             key={item.id}
-            className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+            className="p-2 border rounded-lg hover:bg-gray-50 transition-colors"
           >
-            <div className="flex gap-4">
-              <div className="flex-shrink-0">
+            <div className="flex gap-4 items-center">
+              <div className="flex-shrink-0 w-14 h-14 ">
                 <Image
                   src={item.image || "/images/noProfile.png"}
                   alt={item.name}
                   width={200}
-                  height={150}
-                  className="w-full h-32 object-contain rounded"
+                  height={200}
+                  className="w-full h-full object-contain rounded"
                 />
               </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold text-lg">{item.name}</h4>
-                  <Badge
+              <div className="flex-1 flex justify-between items-center">
+                <div className="">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-semibold text-lg">{item.name}</h4>
+                    {/* <Badge
                     variant={
                       item.availability === "In Stock" ? "default" : "secondary"
                     }
-                  >
+                    >
                     {item.availability}
-                  </Badge>
+                  </Badge> */}
+                  </div>
+                  <div className="text-sm font-bold text-green-600 mb-1">
+                    #{item.price}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Category: {item.category}
+                  </div>
                 </div>
-                <div className="text-lg font-bold text-green-600 mb-1">
-                  ${item.price}
-                </div>
-                <div className="text-sm text-gray-600">
-                  Category: {item.category}
-                </div>
+                <MapPin
+                  className="text-primary text-lg flex-shrink-0"
+                  onClick={() =>
+                    handleFlyOver(item.shopLongitude, item.shopLatitude)
+                  }
+                />
               </div>
             </div>
           </div>
@@ -393,14 +468,21 @@ export const CategoryDrawer = ({
                 </AvatarFallback>
               </Avatar>
             </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-lg mb-1">
-                {item?.name || item?.username}
-              </h4>
-              <div className="space-y-1 text-sm text-gray-600">
+            <div className="flex-1 flex justify-between items-center">
+              <div className="">
+                <h4 className="font-semibold text-lg ">{item?.name}</h4>
+                <p className="text-sm text-gray-600 font-semibold mb-1">
+                  {item?.username}
+                </p>
+              </div>
+              <MapPin
+                className="text-primary text-lg flex-shrink-0"
+                onClick={() => findUser(item.username)}
+              />
+              {/* <div className="space-y-1 text-sm text-gray-600">
                 {item.department && <div>Department: {item.department}</div>}
                 {item.level && <div>Level: {item.level}</div>}
-              </div>
+              </div> */}
             </div>
           </div>
         );
@@ -452,7 +534,7 @@ export const CategoryDrawer = ({
 
         <div className="p-6">
           {/* Search Input */}
-          <div className="relative mb-6">
+          <div className="relative mb-2">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder={`Search ${categoryData.label.toLowerCase()}...`}
@@ -461,6 +543,7 @@ export const CategoryDrawer = ({
               className="pl-10"
             />
           </div>
+          <p className="text-sm text-slate-600 text-right ">View in Map</p>
 
           {/* Error State */}
           {error && (

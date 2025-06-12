@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { CartProvider } from "@components/providers/CartProvider";
 import CesiumMapB from "@components/cesium/Cesium";
 import CesiumMapBWrapper from "@components/cesium/CesiumWrapper";
+import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,25 +29,27 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Provider>
-          <SocketProvider>
-            <OnlineUsersProvider>
-              <OnlineShopsProvider>
-                <LocationProvider>
-                  <CesiumViewerProvider>
-                    <CartProvider>
-                      <main className="bg-light">
-                        <div className="">{children}</div>
-                        <Toaster />
-                        <ButtomNav />
-                        {/* <CesiumMapB /> */}
-                        <CesiumMapBWrapper />
-                      </main>
-                    </CartProvider>
-                  </CesiumViewerProvider>
-                </LocationProvider>
-              </OnlineShopsProvider>
-            </OnlineUsersProvider>
-          </SocketProvider>
+          <TanStackQueryProvider>
+            <SocketProvider>
+              <OnlineUsersProvider>
+                <OnlineShopsProvider>
+                  <LocationProvider>
+                    <CesiumViewerProvider>
+                      <CartProvider>
+                        <main className="bg-light">
+                          <div className="">{children}</div>
+                          <Toaster />
+                          <ButtomNav />
+                          {/* <CesiumMapB /> */}
+                          <CesiumMapBWrapper />
+                        </main>
+                      </CartProvider>
+                    </CesiumViewerProvider>
+                  </LocationProvider>
+                </OnlineShopsProvider>
+              </OnlineUsersProvider>
+            </SocketProvider>
+          </TanStackQueryProvider>
         </Provider>
       </body>
     </html>

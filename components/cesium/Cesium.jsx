@@ -10,7 +10,7 @@ import MapFlyers from "@components/Navigation/MapFlyers";
 import { useMapInitialization } from "./hooks/useMapInitialization";
 // import { useMapEventHandlers } from "./hooks/useMapEventHandlers";
 // import { useSocketComponents } from "./hooks/useSocketComponents";
-import { MapModals } from "./MapModals";
+import { MapDrawers, MapModals } from "./MapModals";
 import { useSocketComponents } from "./hooks/useSocketComponent";
 
 const CesiumMapB = () => {
@@ -86,22 +86,14 @@ const CesiumMapB = () => {
           />
         </div>
 
-        <MapModals
+        <MapDrawers
           showModal={showModal}
           setShowModal={setShowModal}
           showUserModal={showUserModal}
           setShowUserModal={setShowUserModal}
-          showLabelModal={showLabelModal}
-          setShowLabelModal={setShowLabelModal}
-          showPointer={showPointer}
-          setShowPointer={setShowPointer}
-          findEntityModal={findEntityModal}
-          setFindEntityModal={setFindEntityModal}
           isOccupied={isOccupied}
           tileInfo={tileInfo}
           userInfo={userInfo}
-          labelInfo={labelInfo}
-          pointerInfo={pointerInfo}
           occupiedTileDetails={occupiedTileDetails}
         />
       </div>

@@ -1,75 +1,53 @@
-import React from "react";
-import OccupiedTile from "@components/modals/OccupiedTileModal";
-import TileModal from "@components/modals/UnOccupiedTileModal";
-import UserInfoModal from "@components/modals/UserInfoModal";
-import FindEntityModal from "@components/modals/FindEntityModal";
-import LabelModal from "@components/modals/LabelModal";
-import PointerModal from "@components/modals/PointerModal";
+"use client";
 
-export const MapModals = ({
+import { OccupiedTileDrawer } from "@components/drawers/map-drawers/OccupiedTileDrawer";
+import { UnoccupiedTileDrawer } from "@components/drawers/map-drawers/UnoccupiedTileDrawer";
+import { UserInfoDrawer } from "@components/drawers/map-drawers/UserInfoDrawer";
+
+// interface MapDrawersProps {
+//   showModal: boolean
+//   setShowModal: (show: boolean) => void
+//   showUserModal: boolean
+//   setShowUserModal: (show: boolean) => void
+//   isOccupied: boolean
+//   tileInfo: any
+//   userInfo: any
+//   occupiedTileDetails: any
+// }
+
+export const MapDrawers = ({
   showModal,
   setShowModal,
   showUserModal,
   setShowUserModal,
-  showLabelModal,
-  setShowLabelModal,
-  showPointer,
-  setShowPointer,
-  findEntityModal,
-  setFindEntityModal,
   isOccupied,
   tileInfo,
   userInfo,
-  labelInfo,
-  pointerInfo,
   occupiedTileDetails,
 }) => {
   return (
     <>
-      {showUserModal && (
-        <UserInfoModal
-          showModal={showUserModal}
-          setShowModal={setShowUserModal}
-          userInfo={userInfo}
-        />
-      )}
+      {/* User Info Drawer */}
+      <UserInfoDrawer
+        open={showUserModal}
+        onOpenChange={setShowUserModal}
+        userInfo={userInfo}
+      />
 
-      {findEntityModal && (
-        <FindEntityModal
-          showModal={findEntityModal}
-          setShowModal={setFindEntityModal}
-        />
-      )}
-
-      {showLabelModal && (
-        <LabelModal
-          showModal={showLabelModal}
-          setShowModal={setShowLabelModal}
-          labelInfo={labelInfo}
-        />
-      )}
-
-      {showPointer && (
-        <PointerModal
-          showModal={showPointer}
-          setShowModal={setShowPointer}
-          pointerInfo={pointerInfo}
-        />
-      )}
-
+      {/* Tile Drawers */}
       {showModal && (
         <>
           {isOccupied ? (
-            <OccupiedTile
-              showModal={showModal}
-              setShowModal={setShowModal}
+            <OccupiedTileDrawer
+              open={showModal}
+              onOpenChange={setShowModal}
               tileInfo={tileInfo}
               tileDetails={occupiedTileDetails}
             />
           ) : (
-            <TileModal
-              showModal={showModal}
-              setShowModal={setShowModal}
+            <UnoccupiedTileDrawer
+              open={showModal}
+              onOpenChange={setShowModal}
               tileInfo={tileInfo}
             />
           )}
