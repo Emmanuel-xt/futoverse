@@ -18,6 +18,12 @@ import { UserInfoDrawer } from "@components/drawers/map-drawers/UserInfoDrawer";
 export const MapDrawers = ({
   showModal,
   setShowModal,
+  showShopModal,
+  setShowShopModal,
+  showOccuppiedTileModal,
+  setOccuppiedTileModal, //
+  showUnoccuppiedTileModal,
+  setUnoccuppiedTileModal, //
   showUserModal,
   setShowUserModal,
   isOccupied,
@@ -35,23 +41,33 @@ export const MapDrawers = ({
       />
 
       {/* Tile Drawers */}
-      {showModal && (
-        <>
-          {isOccupied ? (
-            <OccupiedTileDrawer
-              open={showModal}
-              onOpenChange={setShowModal}
-              tileInfo={tileInfo}
-              tileDetails={occupiedTileDetails}
-            />
-          ) : (
-            <UnoccupiedTileDrawer
-              open={showModal}
-              onOpenChange={setShowModal}
-              tileInfo={tileInfo}
-            />
-          )}
-        </>
+      {/* {showModal && ( */}
+
+      {/* {isOccupied ? ( */}
+
+      {showOccuppiedTileModal && (
+        <OccupiedTileDrawer
+          open={showOccuppiedTileModal}
+          onOpenChange={setOccuppiedTileModal}
+          tileInfo={tileInfo}
+          tileDetails={occupiedTileDetails}
+        />
+      )}
+      {showShopModal && (
+        <OccupiedTileDrawer
+          open={showShopModal}
+          onOpenChange={setShowShopModal}
+          tileInfo={tileInfo}
+          tileDetails={occupiedTileDetails}
+        />
+      )}
+
+      {showUnoccuppiedTileModal && (
+        <UnoccupiedTileDrawer
+          open={showUnoccuppiedTileModal}
+          onOpenChange={setUnoccuppiedTileModal}
+          tileInfo={tileInfo}
+        />
       )}
     </>
   );

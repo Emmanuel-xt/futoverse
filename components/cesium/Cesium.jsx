@@ -12,6 +12,7 @@ import { useMapInitialization } from "./hooks/useMapInitialization";
 // import { useSocketComponents } from "./hooks/useSocketComponents";
 import { MapDrawers, MapModals } from "./MapModals";
 import { useSocketComponents } from "./hooks/useSocketComponent";
+import { useShops } from "./hooks/useTileActions";
 
 const CesiumMapB = () => {
   const { viewer, viewerReady, isMapVisible, setMapVisible } =
@@ -20,7 +21,12 @@ const CesiumMapB = () => {
   // State management
   const [selectedTile, setSelectedTile] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showShopModal, setShowShopModal] = useState(false);
+  const [occuppiedTileModal, setOccuppiedTileModal] = useState(false);
+  const [unOccupiedTileModal, setUnoccuppiedTileModal] = useState(false);
+
   const [showUserModal, setShowUserModal] = useState(false);
+
   const [showLabelModal, setShowLabelModal] = useState(false);
   const [showPointer, setShowPointer] = useState(false);
   const [findEntityModal, setFindEntityModal] = useState(false);
@@ -31,21 +37,27 @@ const CesiumMapB = () => {
   const [pointerInfo, setPointerInfo] = useState({});
   const [occupiedTileDetails, setOccupiedTileDetails] = useState({});
   const [isOccupied, setIsOccupied] = useState(false);
-  const [shops, setShops] = useState([]);
   const [labelsVisible, setLabelsVisible] = useState(false);
   const [labelEntities, setLabelEntities] = useState([]);
   const [error, setError] = useState(null);
+
+  const { data: shops, isLoading, error: shopFetchError } = useShops();
 
   // Custom hooks for logic separation
   const { initializeCesium } = useMapInitialization({
     viewer,
     viewerReady,
-    setShops,
+    shops,
     setLabelEntities,
     setError,
     selectedTile,
     setSelectedTile,
     setShowModal,
+
+    setShowShopModal,
+    setOccuppiedTileModal,
+    setUnoccuppiedTileModal,
+
     setShowUserModal,
     setShowLabelModal,
     setShowPointer,
@@ -62,6 +74,18 @@ const CesiumMapB = () => {
 
   useEffect(() => {
     initializeCesium();
+
+    return () => {
+      // Cleanup Cesium Viewer if needed
+      if (viewer && !viewer.isDestroyed()) {
+        viewer.entities.removeAll();
+        // viewer.dataSources.removeAll();
+        // viewer.scene.screenSpaceCameraController.removeInputAction(
+        //   Cesium.ScreenSpaceEventType.LEFT_CLICK
+        // );
+        // add any custom cleanup like event handlers you attached
+      }
+    };
   }, [viewer]);
 
   if (error) {
@@ -89,6 +113,12 @@ const CesiumMapB = () => {
         <MapDrawers
           showModal={showModal}
           setShowModal={setShowModal}
+          showShopModal={showShopModal}
+          setShowShopModal={setShowShopModal}
+          showOccuppiedTileModal={occuppiedTileModal}
+          setOccuppiedTileModal={setOccuppiedTileModal}
+          showUnoccuppiedTileModal={unOccupiedTileModal}
+          setUnoccuppiedTileModal={setUnoccuppiedTileModal}
           showUserModal={showUserModal}
           setShowUserModal={setShowUserModal}
           isOccupied={isOccupied}

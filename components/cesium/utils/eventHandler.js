@@ -8,13 +8,17 @@ import {
 } from "cesium";
 
 import { checkIfTileOccupied } from "@constants/functions";
-import { fetchOnlyShops } from "@lib/actions/shops.prisma";
+import { fetchOnlyShop, fetchOnlyShops } from "@lib/actions/shops.prisma";
 
 export const setupEventHandlers = (viewer, handlers) => {
   const {
-    selectedTile,
-    setSelectedTile,
+    shops,
     setShowModal,
+
+    setShowShopModal,
+    setOccuppiedTileModal, //
+    setUnoccuppiedTileModal, //
+
     setShowUserModal,
     setShowLabelModal,
     setShowPointer,
@@ -22,25 +26,31 @@ export const setupEventHandlers = (viewer, handlers) => {
     setUserInfo,
     setLabelInfo,
     setPointerInfo,
-    setIsOccupied,
     setOccupiedTileDetails,
     occupiedTileDetails,
   } = handlers;
 
   const handleTileClick = async (tile) => {
-    const load = await fetchOnlyShops();
-    const tileOccupied = checkIfTileOccupied(
-      tile.properties.tileId,
-      load.shops
-    );
+    const tileOccupied = checkIfTileOccupied(tile.properties.tileId, shops);
 
-    setIsOccupied(tileOccupied.occupied);
-    setOccupiedTileDetails(tileOccupied.details);
-    setShowModal(true);
+    if (tileOccupied.occupied) {
+      setOccupiedTileDetails(tileOccupied.details);
+      setOccuppiedTileModal(true);
+      console.log("occupied tile was clicked");
+    } else {
+      setUnoccuppiedTileModal(true);
+      console.log("unoccupied tile was clicked");
+    }
+  };
+
+  const handleShopClick = async () => {
+    console.log("Shop was clicked");
+    setShowShopModal(true);
   };
 
   const handleUserClick = () => {
     setShowUserModal(true);
+    console.log("user was clicked");
   };
 
   const handleLabelClick = () => {
@@ -66,19 +76,6 @@ export const setupEventHandlers = (viewer, handlers) => {
 
       if (properties.type === "tile") {
         handleTileClick(pickedObject.id);
-
-        if (selectedTile) {
-          selectedTile.rectangle.material = new ColorMaterialProperty(
-            Color.CHOCOLATE.withAlpha(0.2)
-          );
-        } else {
-          pickedObject.id.rectangle.material = new ColorMaterialProperty(
-            Color.GREEN.withAlpha(0.2)
-          );
-        }
-
-        setSelectedTile(pickedObject.id);
-
         setTileInfo({
           longitude: tileCenterLon,
           latitude: tileCenterLat,
@@ -86,11 +83,10 @@ export const setupEventHandlers = (viewer, handlers) => {
           id: properties.tileId,
           occupiedDetails: occupiedTileDetails,
         });
-        setShowModal(true);
       }
 
       if (properties.type === "shop") {
-        handleTileClick(pickedObject.id);
+        handleShopClick();
         setTileInfo({
           longitude: tileCenterLon,
           latitude: tileCenterLat,
@@ -98,7 +94,6 @@ export const setupEventHandlers = (viewer, handlers) => {
           id: properties.tileId,
           occupiedDetails: occupiedTileDetails,
         });
-        setShowModal(true);
       }
 
       if (properties.type === "user") {

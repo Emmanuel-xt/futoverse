@@ -25,41 +25,49 @@ import { Badge } from "@components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { ScrollArea } from "@components/ui/scroll-area";
 import { Separator } from "@components/ui/separator";
+import { Skeleton } from "@components/ui/skeleton";
 import { ShopDetailsPanel } from "./ShopDetailsSidePanel";
 import {
   drawLineBetweenPoints,
   generateLocationLink,
 } from "@constants/functions";
-import { userLocation } from "@constants/userDat";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import { toast } from "sonner";
 import { useLocation } from "@components/providers/LocationProvider";
-// import { ShopDetailsPanel } from "./shop-details-panel"
+import { useQuery } from "@tanstack/react-query";
+import { fetchOnlyShop } from "@lib/actions/shops.prisma";
 
-// interface OccupiedTileDrawerProps {
-//   open: boolean
-//   onOpenChange: (open: boolean) => void
-//   tileInfo: any
-//   tileDetails: any
-// }
-
-export const OccupiedTileDrawer = ({
-  open,
-  onOpenChange,
-  tileInfo,
-  tileDetails,
-}) => {
+export const OccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const { viewer } = useCesiumViewer();
   const { currentPosition } = useLocation();
+  const [loadingDirections, setLoadingDirections] = useState(false);
+
+  const {
+    data: tileDetails,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["tile-info", tileInfo?.id],
+    queryFn: async () => {
+      if (!tileInfo?.id) throw new Error("invalid Tile/Store");
+      console.log("TileInfo", tileInfo.id);
+      const fetched = await fetchOnlyShop(tileInfo.id);
+      console.log("fetched", fetched);
+      return fetched.shop;
+    },
+    enabled: open && !!tileInfo?.id,
+    staleTime: 300000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
   const handleSaveToFavorites = () => {
-    // Implement your bookmark/favorite logic here
-    console.log("Saved to favorites:", tileDetails.name);
+    console.log("Saved to favorites:", tileDetails?.name);
   };
 
-  const [loadingDirections, setLoadingDirections] = useState(false);
   const handleGetDirections = async () => {
+    if (!tileDetails) return;
+
     const endLocation = {
       longitude: tileDetails.longitude,
       latitude: tileDetails.latitude,
@@ -71,8 +79,6 @@ export const OccupiedTileDrawer = ({
       endLocation,
       setLoadingDirections
     );
-
-    console.log("Result", result);
 
     if (!result?.success) {
       switch (result.reason) {
@@ -89,11 +95,10 @@ export const OccupiedTileDrawer = ({
           toast("An unexpected error occurred.");
       }
     }
-    // onOpenChange(false);
   };
 
   const handleShareLocation = () => {
-    // console.log("Tile details", tileDetails);
+    if (!tileDetails) return;
     generateLocationLink(tileDetails.longitude, tileDetails.latitude);
   };
 
@@ -104,170 +109,160 @@ export const OccupiedTileDrawer = ({
       : text;
   };
 
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="px-6 py-4 space-y-4">
+          <div className="flex gap-3 items-center">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-40" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-10 w-full" />
+          <div className="grid grid-cols-3 gap-3">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+      );
+    }
+
+    if (error || !tileDetails) {
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <Store className="h-16 w-16 text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Store Not Found
+          </h3>
+          <p className="text-gray-600">
+            This store doesn't exist or couldn't be loaded.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="px-6 py-1 space-y-1">
+        <div className="space-y-3">
+          <div className="flex gap-3 items-center">
+            {tileDetails.image && (
+              <Avatar className="h-16 w-16 border-2 border-primary">
+                <AvatarImage
+                  src={tileDetails.image || "/images/noPicture.png"}
+                  alt={`${tileDetails.name}'s profile`}
+                />
+                <AvatarFallback>
+                  <User className="h-12 w-12" />
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <div className="flex flex-col justify-between">
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">
+                  {tileDetails.name}
+                </h2>
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="secondary">{tileDetails.category}</Badge>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-gray-600">4.5</span>
+                  </div>
+                </div>
+              </div>
+              {!tileDetails.locationDesc && (
+                <div className="flex items-center gap-1 rounded-lg">
+                  <MapPin className="h-3 w-3 text-gray-600 mt-0.5" />
+                  <p className="text-xs text-gray-600">
+                    {tileDetails.locationDesc} Opposite Munalux Hotel, Umuchima
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-1">About</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {truncateDescription(tileDetails.description)}
+            </p>
+            {tileDetails.description &&
+              tileDetails.description.length > 120 && (
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-blue-600 text-sm"
+                  onClick={() => setShowDetailsPanel(true)}
+                >
+                  Read more
+                </Button>
+              )}
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full justify-between"
+            onClick={() => setShowDetailsPanel(true)}
+          >
+            <span>View Full Store Details</span>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+
+          <Separator />
+
+          <div className="grid grid-cols-3 gap-3">
+            <Button
+              variant="outline"
+              onClick={handleSaveToFavorites}
+              className="flex"
+            >
+              <Bookmark className="h-5 w-5 mb-1" />
+              <span className="text-xs">Save</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={handleGetDirections}
+              className="flex"
+            >
+              {loadingDirections ? (
+                <div className="text-xs flex items-center gap-2">
+                  Getting directions...
+                </div>
+              ) : (
+                <>
+                  <Navigation className="h-5 w-5 mb-1" />
+                  <span className="text-xs">Directions</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={handleShareLocation}
+              className="flex"
+            >
+              <Share2 className="h-5 w-5 mb-1" />
+              <span className="text-xs">Share</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="max-h-[100vh]">
-          {/* <DrawerHeader className="border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-100 text-green-600">
-                  <Store className="h-4 w-4" />
-                </div>
-                <DrawerTitle className="text-lg font-semibold">
-                  Store Details
-                </DrawerTitle>
-              </div>
-              <DrawerClose asChild>
-                <Button variant="ghost" size="icon">
-                  <X className="h-4 w-4" />
-                </Button>
-              </DrawerClose>
-            </div>
-          </DrawerHeader> */}
-
-          <ScrollArea className="flex-1">
-            <div className="px-6 py-1 space-y-1">
-              {/* Store Info */}
-              <div className="space-y-3">
-                <div className="flex gap-3 items-center">
-                  {/* Store Image */}
-                  {tileDetails.image && (
-                    <Avatar className="h-16 w-16 border-2 border-primary">
-                      <AvatarImage
-                        src={tileDetails.image || "/images/noPicture.png"}
-                        alt={`${tileDetails.name}'s profile`}
-                      />
-                      <AvatarFallback>
-                        <User className="h-12 w-12" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div className="flex flex-col justify-between">
-                    <div className="flex-1">
-                      <h2 className="text-lg font-bold text-gray-900 mb-2">
-                        {tileDetails.name}
-                      </h2>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="secondary">
-                          {tileDetails.category}
-                        </Badge>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm text-gray-600">4.5</span>
-                        </div>
-                      </div>
-                    </div>
-                    {!tileDetails.locationDesc && (
-                      <div className="flex items-center gap-1 rounded-lg">
-                        <MapPin className="h-3 w-3 text-gray-600 mt-0.5" />
-                        <p className="text-xs text-gray-600">
-                          {tileDetails.locationDesc} Opposite Munalux Hotel ,
-                          Umuchima
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">About</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {truncateDescription(tileDetails.description)}
-                  </p>
-                  {tileDetails.description &&
-                    tileDetails.description.length > 120 && (
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-blue-600 text-sm"
-                        onClick={() => setShowDetailsPanel(true)}
-                      >
-                        Read more
-                      </Button>
-                    )}
-                </div>
-
-                {/* Location */}
-
-                {/* Owner Info */}
-                {/* {tileDetails.user && (
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage
-                        src={tileDetails.user.picture || "/placeholder.svg"}
-                        alt={tileDetails.user.username}
-                      />
-                      <AvatarFallback>
-                        <User className="h-5 w-5" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h4 className="font-medium text-gray-900">Store Owner</h4>
-                      <p className="text-sm text-gray-600">
-                        @{tileDetails.user.username}
-                      </p>
-                    </div>
-                  </div>
-                )} */}
-
-                {/* Full Details Button */}
-                <Button
-                  variant="outline"
-                  className="w-full justify-between"
-                  onClick={() => setShowDetailsPanel(true)}
-                >
-                  <span>View Full Store Details</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-
-                <Separator />
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={handleSaveToFavorites}
-                    className="flex"
-                  >
-                    <Bookmark className="h-5 w-5 mb-1" />
-                    <span className="text-xs">Save</span>
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    onClick={handleGetDirections}
-                    className="flex"
-                  >
-                    {loadingDirections ? (
-                      <div className="text-xs flex items-center gap-2">
-                        {/* <Spinner className="animate-spin h-4 w-4" /> */}
-                        Getting directions...
-                      </div>
-                    ) : (
-                      <>
-                        <Navigation className="h-5 w-5 mb-1" />
-                        <span className="text-xs">Directions</span>
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    onClick={handleShareLocation}
-                    className="flex"
-                  >
-                    <Share2 className="h-5 w-5 mb-1" />
-                    <span className="text-xs">Share</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </ScrollArea>
+          <ScrollArea className="flex-1">{renderContent()}</ScrollArea>
         </DrawerContent>
       </Drawer>
 
-      {/* Shop Details Panel */}
       <ShopDetailsPanel
         open={showDetailsPanel}
         onOpenChange={setShowDetailsPanel}

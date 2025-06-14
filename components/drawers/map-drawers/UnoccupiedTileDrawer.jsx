@@ -9,6 +9,8 @@ import {
   Move,
   AlertCircle,
   CheckCircle,
+  Navigation,
+  Share2,
 } from "lucide-react";
 import {
   Drawer,
@@ -41,10 +43,16 @@ import {
   updateShopTileId,
 } from "@lib/actions/shops.prisma";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
-import { load3DModel } from "@constants/functions";
+import {
+  drawLineBetweenPoints,
+  generateLocationLink,
+  load3DModel,
+} from "@constants/functions";
 import socket from "@components/socket/Socket";
 import Link from "next/link";
 import { Cartesian3 } from "cesium";
+import { useLocation } from "@components/providers/LocationProvider";
+import { toast } from "sonner";
 
 // interface UnoccupiedTileDrawerProps {
 //   open: boolean
@@ -67,6 +75,7 @@ import { Cartesian3 } from "cesium";
 export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
   const { data: session } = useSession();
   const { viewer } = useCesiumViewer();
+  const { currentPosition } = useLocation();
 
   const [currentStep, setCurrentStep] = useState("main");
   const [form, setForm] = useState({
@@ -78,6 +87,7 @@ export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
     useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingDirections, setLoadingDirections] = useState(false);
 
   // Fetch user's shop count
   const { data: shopCount = 0 } = useQuery({
@@ -141,12 +151,6 @@ export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
     }
   };
 
-  const handleBookmark = () => {
-    // Implement bookmark logic
-    console.log("Bookmarked tile:", tileInfo.id);
-    onOpenChange(false);
-  };
-
   const handlePitchSubmit = async () => {
     if (!validateForm()) return;
 
@@ -186,6 +190,7 @@ export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
         onOpenChange(false);
       }
     } catch (error) {
+      toast("Store Creation Failed");
       console.error("Error creating shop:", error);
     } finally {
       setIsSubmitting(false);
@@ -230,6 +235,49 @@ export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGetDirections = async () => {
+    const endLocation = {
+      longitude: tileInfo.longitude,
+      latitude: tileInfo.latitude,
+    };
+
+    const result = await drawLineBetweenPoints(
+      viewer,
+      () => currentPosition,
+      endLocation,
+      setLoadingDirections
+    );
+
+    console.log("Result", result);
+
+    if (!result?.success) {
+      switch (result.reason) {
+        case "no-location":
+          toast("Could not get your current location.");
+          break;
+        case "network":
+          toast("Network error while fetching directions.");
+          break;
+        case "no-route":
+          toast("Could not retrieve a valid route.");
+          break;
+        default:
+          toast("An unexpected error occurred.");
+      }
+    }
+    // onOpenChange(false);
+  };
+
+  const handleShareLocation = () => {
+    // console.log("Tile details", tileDetails);
+    generateLocationLink(tileInfo.longitude, tileInfo.latitude);
+  };
+
+  const handleSaveToFavorites = () => {
+    // Implement your bookmark/favorite logic here
+    console.log("Saved to favorites:", tileDetails.name);
   };
 
   const renderMainContent = () => (
@@ -277,14 +325,43 @@ export const UnoccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
           </Alert>
         )}
 
-        <Button
-          variant="outline"
-          onClick={handleBookmark}
-          className="w-full h-12"
-        >
-          <Bookmark className="h-5 w-5 mr-2" />
-          Bookmark This Location
-        </Button>
+        <div className="grid grid-cols-3 gap-3">
+          <Button
+            variant="outline"
+            onClick={handleSaveToFavorites}
+            className="flex"
+          >
+            <Bookmark className="h-5 w-5 mb-1" />
+            <span className="text-xs">Save</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleGetDirections}
+            className="flex"
+          >
+            {loadingDirections ? (
+              <div className="text-xs flex items-center gap-2">
+                {/* <Spinner className="animate-spin h-4 w-4" /> */}
+                Getting directions...
+              </div>
+            ) : (
+              <>
+                <Navigation className="h-5 w-5 mb-1" />
+                <span className="text-xs">Directions</span>
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleShareLocation}
+            className="flex"
+          >
+            <Share2 className="h-5 w-5 mb-1" />
+            <span className="text-xs">Share</span>
+          </Button>
+        </div>
       </div>
     </div>
   );
