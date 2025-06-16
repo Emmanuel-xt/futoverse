@@ -1,14 +1,9 @@
 "use client";
 
-// import Conversations from "./Conversations";
-// import LogoutButton from "./LogoutButton";
-// import SearchInput from "./SearchInput";
-
 import useConversation from "zustand/useConversation";
 import Conversations from "./Conversations";
 import SearchInput from "./SearchInput";
 import { useState } from "react";
-import useGlobalMessageListener from "hooks/useGlobalMessageListener";
 
 const Sidebar = () => {
   const { setSelectedConversation, selectedConversation } = useConversation();
@@ -21,10 +16,7 @@ const Sidebar = () => {
       }`}
     >
       <h2 className="text-2xl font-Semibold mb-4">Chat</h2>
-      {/* <SearchInput setSearchResults={setSearchResults} /> */}
-      {/* <div className="divider px-3" /> */}
       <Conversations searchResults={searchResults} />
-      {/* <LogoutButton /> */}
     </div>
   );
 };

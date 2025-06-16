@@ -1,6 +1,3 @@
-// import { useSocketContext } from "../../context/SocketContext";
-// import useConversation from "../../zustand/useConversation";
-
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
 import { markMessagesAsRead } from "@lib/actions/Chat.prisma";
 import { useSession } from "next-auth/react";
@@ -23,9 +20,9 @@ const Conversation = ({ conversation, emoji, isUserOnly }) => {
   );
   const router = useRouter();
   const handleOpenDM = async (conversation) => {
-    // console.log("CONVERSATIO", conversation);
-    router.push(`/chat?receiverId=${conversation?.id}`);
-    // setSelectedConversation(conversation);
+    console.log("CONVERSATIO", conversation);
+    // router.push(`/chat?receiverId=${conversation?.id}`);
+    setSelectedConversation(conversation);
     markMessagesAsRead(
       conversation.conversationId,
       parseFloat(session?.user.id)

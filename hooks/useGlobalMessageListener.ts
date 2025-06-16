@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from "react";
 import socket from "@components/socket/Socket";
 import { useSession } from "next-auth/react";

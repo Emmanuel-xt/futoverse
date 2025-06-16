@@ -8,41 +8,52 @@ datasource db {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  username     String       @unique
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
   about        String?
   departmentId Int?
   name         String?
   picture      String?
-  email        String       @unique
+  email        String  @unique
   password     String
   bio          String?
   gender       String?
   levelId      Int?
-  comments     Comment[]
-  orders       Order[]
-  posts        Post[]
-  shops        Shop[]
-  shopItem     ShopItem[]
-  department   Department?  @relation(fields: [departmentId], references: [id])
-  level        Level?       @relation(fields: [levelId], references: [id])
-  statuses     UserStatus[]
+
+  // New fields for enhanced chat functionality
+  displayName String? // Will use name as fallback
+  lastSeen    DateTime @default(now())
+  isOnline    Boolean  @default(false)
+
+  comments   Comment[]
+  orders     Order[]
+  posts      Post[]
+  shops      Shop[]
+  shopItem   ShopItem[]
+  department Department?  @relation(fields: [departmentId], references: [id])
+  level      Level?       @relation(fields: [levelId], references: [id])
+  statuses   UserStatus[]
 
   conversationsIds String[]
+  conversations    Conversation[]
+  messages         Message[]
 
-  conversations Conversation[]
-  messages      Message[]
+  // Enhanced message features
+  messageReactions MessageReaction[]
 
-  // Friend requests
+  // Friend requests (keeping your existing structure)
   sentRequests     FriendRequest[] @relation("SentRequests")
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
 
-  // Friends
+  // Friends (keeping your existing structure)
   friends  User[] @relation("Friendship")
   friendOf User[] @relation("Friendship")
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime?            @updatedAt
+  ConversationMember ConversationMember[]
+
+  @@map("User") // Keep your existing table name
 }
 
 model FriendRequest {
@@ -57,18 +68,6 @@ model FriendRequest {
   @@unique([senderId, receiverId]) // prevent duplicate friend requests
 }
 
-model Conversation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  participantIds Int[]
-  participants   User[]
-
-  messageIds String[]
-  messages   Message[]
-}
-
 model Message {
   id String @id @default(cuid())
 
@@ -78,11 +77,102 @@ model Message {
   senderId Int
   sender   User @relation(fields: [senderId], references: [id])
 
-  body      String
+  body      String? // Made optional since media messages might not have text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   isRead Boolean @default(false)
+
+  // New fields for enhanced messaging
+  type      MessageType @default(TEXT)
+  mediaUrl  String? // For images, videos, voice notes
+  mediaType String? // MIME type for media
+  fileName  String? // Original filename for files
+  fileSize  Int? // File size in bytes
+  duration  Int? // Duration for voice notes in seconds
+
+  // Message metadata
+  isEdited  Boolean @default(false)
+  isDeleted Boolean @default(false)
+  replyToId String? // For reply functionality
+
+  // Relations for replies
+  replyTo Message?  @relation("MessageReply", fields: [replyToId], references: [id])
+  replies Message[] @relation("MessageReply")
+
+  // Message reactions
+  reactions MessageReaction[]
+
+  @@map("Message") // Keep your existing table name
+}
+
+// New model for message reactions
+model MessageReaction {
+  id        String   @id @default(cuid())
+  emoji     String
+  messageId String
+  userId    Int
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@map("message_reactions")
+}
+
+// Enums
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  VOICE
+  FILE
+  STICKER
+}
+
+// Your existing Conversation model with enhancements
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // New fields for group chat functionality
+  name        String? // For group conversations
+  description String? // For group conversations
+  avatar      String? // For group conversations
+  isGroup     Boolean @default(false)
+
+  participantIds Int[]
+  participants   User[]
+
+  messageIds String[]
+  messages   Message[]
+
+  // New: Conversation members with roles (for group management)
+  conversationMembers ConversationMember[]
+
+  @@map("Conversation") // Keep your existing table name
+}
+
+// New model for conversation member roles
+model ConversationMember {
+  id             String           @id @default(cuid())
+  userId         Int
+  conversationId String
+  role           ConversationRole @default(MEMBER)
+  joinedAt       DateTime         @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conversationId])
+  @@map("conversation_members")
+}
+
+enum ConversationRole {
+  ADMIN
+  MEMBER
 }
 
 enum Gender {

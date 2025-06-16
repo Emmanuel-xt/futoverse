@@ -1,5 +1,4 @@
-// import { useAuthContext } from "../../context/AuthContext";
-// import useConversation from "../../zustand/useConversation";
+"use client";
 import useConversation from "zustand/useConversation";
 import MessageInput from "./MessageInput";
 import Messages from "./Messages";
@@ -16,11 +15,7 @@ import { useRouter } from "next/navigation";
 
 const MessageContainer = () => {
   const { setSelectedConversation, selectedConversation } = useConversation();
-  // console.log(
-  //   "SELECTED CONVERSATION AT MESSAGE CONTAINER",
-  //   selectedConversation
-  // );
-  const router = useRouter();
+
   const onlineUsers = useOnlineUsers();
   // console.log("Online users for COnversation", selectedConversation);
   const isUserActive = onlineUsers.find(
@@ -29,7 +24,6 @@ const MessageContainer = () => {
 
   const handleBack = () => {
     setSelectedConversation(null);
-    router.back();
   };
 
   const [menuOpen, setMenuOpen] = useState(false);
