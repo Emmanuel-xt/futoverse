@@ -3,30 +3,47 @@ import socket from "@components/socket/Socket";
 import useConversation from "zustand/useConversation";
 import { saveMessagesToDB } from "@lib/indexedDB";
 import { useSession } from "next-auth/react";
+import useSidebarConversations from "zustand/useSidebarConversations";
+import { markMessagesAsRead } from "@lib/actions/Chat.prisma";
 
 const useListenMessages = () => {
   const { messages, setMessages, selectedConversation } = useConversation();
   const { data: session } = useSession();
 
+  const { updateConversations, markLastMessageAsRead } =
+    useSidebarConversations();
+
   useEffect(() => {
     socket.on("newMessage", async (newMessage) => {
-      // console.log("USE LISTENER MESSAGE", newMessage);
+      const senderId = newMessage?.message.senderId;
+      const conversationId = newMessage?.message.conversationId;
+      const userId = session?.user?.id;
 
-      console.log("selected conversation", selectedConversation.id);
-      console.log("newMessage", newMessage.message.senderId);
+      const isCurrentConversation = selectedConversation?.id === senderId;
 
-      const isCurrentConversation =
-        selectedConversation?.id === newMessage?.message.senderId;
+      // update the conversations list to take latest message to the top
+      updateConversations(newMessage);
+
       if (!isCurrentConversation) return;
 
       // Update only messages state for currently selected conversation
       const updatedMessages = [...messages, newMessage.message];
       setMessages(updatedMessages);
 
-      const senderId = newMessage?.senderId;
-      const receiverId = session?.user?.id;
+      await markMessagesAsRead(conversationId, userId);
+      // console
 
-      await saveMessagesToDB(receiverId, senderId, updatedMessages);
+      socket.emit("messageRead", {
+        conversationId,
+        senderId,
+        readerId: userId,
+      });
+      console.log("Emmitted markRead");
+
+      // ✅ Update the reader’s own sidebar UI
+      markLastMessageAsRead(conversationId);
+
+      await saveMessagesToDB(senderId, userId, updatedMessages);
 
       // Optionally play sound here too if you want
       const sound = new Audio("/sounds/notification.mp3");

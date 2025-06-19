@@ -12,11 +12,12 @@ const useGlobalMessageListener = () => {
     useEffect(() => {
         socket.on("newMessage", (newMessage) => {
             // ✅ Update sidebar conversation ordering
-            updateConversations(newMessage);
+            console.log('New Message from Global Listener', newMessage)
+            updateConversations(newMessage, session?.user?.id);
 
             // ✅ Optional UI effects
-            // const sound = new Audio("/sounds/notification.mp3");
-            // sound.play();
+            const sound = new Audio("/sounds/notification.mp3");
+            sound.play();
 
             // Optionally add .shouldShake etc.
         });
@@ -24,7 +25,7 @@ const useGlobalMessageListener = () => {
         return () => {
             socket.off("newMessage");
         };
-    }, [session, updateConversations]);
+    }, [session, updateConversations, socket]);
 };
 
 export default useGlobalMessageListener;

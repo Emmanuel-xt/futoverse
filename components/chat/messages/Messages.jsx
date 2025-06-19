@@ -1,14 +1,13 @@
 import useChatScroll from "hooks/useChatScroll";
 import useGetMessages from "hooks/useGetMessages";
 import Message from "./Message";
-import MessageSkeleton from "../skeletons/MessageSkeleton";
 import useListenMessages from "hooks/useListenMessages";
 import { groupMessagesByDate } from "@constants/functions";
 // import { groupMessagesByDate } from "@utils/groupMessagesByDate";
 
 const Messages = () => {
   const { loading, messages } = useGetMessages();
-  useListenMessages();
+  // console.log("Messages from Messages componet ", messages);
 
   const ref = useChatScroll(messages);
 
@@ -16,8 +15,6 @@ const Messages = () => {
 
   return (
     <div className="px-4 flex-1 overflow-auto z-30 bg-white" ref={ref}>
-      {/* {loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)} */}
-
       {!loading &&
         Object.entries(grouped).map(([date, msgs]) => (
           <div key={date} className="mb-4">

@@ -15,15 +15,15 @@ const useGetMessages = () => {
       if (!selectedConversation) return;
       // Step 1: Check IndexedDB first
       const cachedMessages = await getMessagesFromDB(
-        selectedConversation.id,
-        session?.user.id
+        session?.user.id,
+        selectedConversation.id
       );
+      // console.log("Got cached messages", cachedMessages);
       setMessages(cachedMessages);
+      // console.log("messages", messages);
 
       if (navigator.onLine) {
         try {
-          setLoading(true);
-
           // Step 2: Fetch from Prisma and update IndexedDB
           const fetchedMessages = await getMessagesOfUsers(
             selectedConversation.id,
@@ -40,8 +40,6 @@ const useGetMessages = () => {
           }
         } catch (error) {
           // toast(error.message);
-        } finally {
-          setLoading(false);
         }
       }
     };
