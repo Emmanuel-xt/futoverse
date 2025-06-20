@@ -9,7 +9,6 @@ import NewChatModal from "./NewChatModal";
 import NewGroupModal from "./NewGroupModal";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import TypingListener from "./TypingListener";
 
 const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");

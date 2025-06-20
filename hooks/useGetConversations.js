@@ -27,7 +27,7 @@ const useGetConversations = () => {
       const cachedData = await store.getAll();
       cachedData.sort((a, b) => a.sortOrder - b.sortOrder);
 
-      console.log("Loaded cached conversations:", cachedData);
+      // console.log("Loaded cached conversations:", cachedData);
       return cachedData;
     } catch (error) {
       console.error("Error loading cached conversations:", error);
@@ -37,7 +37,7 @@ const useGetConversations = () => {
 
   // Save or update conversations in IndexedDB
   const saveConversationsToDB = async (newConversations) => {
-    console.log("About to save cached data ", newConversations);
+    // console.log("About to save cached data ", newConversations);
     try {
       const db = await openDatabase();
       if (!db) return;
@@ -64,7 +64,7 @@ const useGetConversations = () => {
         // });
       });
 
-      console.log("All conversations have been saved or overwritten.");
+      // console.log("All conversations have been saved or overwritten.");
     } catch (error) {
       console.error("Error saving conversations to IndexedDB:", error);
     }

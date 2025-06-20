@@ -12,6 +12,11 @@ import { Input } from "@components/ui/input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useConversation from "zustand/useConversation";
+import {
+  findOrCreateConversation,
+  getSearchedUsersForConversation,
+} from "@lib/actions/Chat.prisma";
+import { useSession } from "next-auth/react";
 
 // interface NewChatModalProps {
 //   open: boolean
@@ -22,8 +27,9 @@ const NewChatModal = ({ open, onClose }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const { setSelectedConversation } = useConversation();
+  const { data: session } = useSession();
+  const currentUserId = Number(session?.user?.id);
 
   useEffect(() => {
     if (open && searchQuery.length > 2) {
@@ -35,9 +41,8 @@ const NewChatModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       // Replace with your actual API call
-      const response = await fetch(`/api/users/search?q=${searchQuery}`);
-      const data = await response.json();
-      setUsers(data.users || []);
+      const users = await getSearchedUsersForConversation(searchQuery);
+      setUsers(users || []);
     } catch (error) {
       console.error("Error searching users:", error);
     } finally {
@@ -45,9 +50,10 @@ const NewChatModal = ({ open, onClose }) => {
     }
   };
 
-  const handleUserSelect = (user) => {
-    setSelectedConversation(user);
-    router.push(`/chat?receiverId=${user.id}`);
+  const handleUserSelect = async (user) => {
+    const conversation = await findOrCreateConversation(currentUserId, user.id);
+    setSelectedConversation(conversation);
+
     onClose();
   };
 
