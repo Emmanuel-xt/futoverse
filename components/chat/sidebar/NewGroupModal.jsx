@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Users, X, Check } from "lucide-react";
 import {
   Dialog,
@@ -12,6 +12,9 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 import { Textarea } from "@components/ui/textarea";
 import Image from "next/image";
+import { openDatabase } from "@lib/indexedDB";
+import { useSession } from "next-auth/react";
+import { createGroupChat } from "@lib/actions/Chat.prisma";
 
 // interface NewGroupModalProps {
 //   open: boolean
@@ -26,6 +29,42 @@ const NewGroupModal = ({ open, onClose }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const loadUsersFromCachedConversations = async () => {
+      const db = await openDatabase();
+      if (!db || !db.objectStoreNames.contains("conversations")) return;
+
+      const tx = db.transaction("conversations", "readonly");
+      const store = tx.objectStore("conversations");
+      const cachedConversations = await store.getAll();
+
+      const currentUserId = session?.user?.id;
+
+      // Remove any duplicates and exclude self
+      const uniqueUsersMap = new Map();
+
+      cachedConversations.forEach((user) => {
+        if (!user || !user.id || user.id === currentUserId) return;
+
+        // Avoid duplicates
+        uniqueUsersMap.set(user.id, user);
+      });
+
+      setUsers(Array.from(uniqueUsersMap.values()));
+    };
+
+    if (open) {
+      loadUsersFromCachedConversations();
+    }
+  }, [open, session]);
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.username?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleUserToggle = (user) => {
     setSelectedUsers((prev) => {
@@ -41,22 +80,20 @@ const NewGroupModal = ({ open, onClose }) => {
   const handleCreateGroup = async () => {
     if (!groupName.trim() || selectedUsers.length === 0) return;
 
+    const form = {
+      name: groupName,
+      description: groupDescription,
+      participants: selectedUsers.map((u) => u.id),
+      creator: Number(session?.user?.id),
+      creatorName: session?.user?.name,
+    };
+
     setLoading(true);
     try {
       // Replace with your actual API call
-      const response = await fetch("/api/conversations/group", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: groupName,
-          description: groupDescription,
-          participants: selectedUsers.map((u) => u.id),
-        }),
-      });
+      const response = await createGroupChat(form);
 
-      if (response.ok) {
+      if (response) {
         handleClose();
         // Optionally redirect to the new group
       }
@@ -115,33 +152,52 @@ const NewGroupModal = ({ open, onClose }) => {
             )}
 
             <div className="max-h-60 overflow-y-auto space-y-2">
-              {users.map((user) => {
-                const isSelected = selectedUsers.find((u) => u.id === user.id);
-                return (
-                  <div
-                    key={user.id}
-                    className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer"
-                    onClick={() => handleUserToggle(user)}
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
-                      <Image
-                        src={user.picture || "/images/noProfile.png"}
-                        alt={user.name}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover"
-                      />
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => {
+                  const isSelected = selectedUsers.find(
+                    (u) => u.id === user.id
+                  );
+                  return (
+                    <div
+                      key={user.id}
+                      className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer"
+                      onClick={() => handleUserToggle(user)}
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+                        <Image
+                          src={user.picture || "/images/noProfile.png"}
+                          alt={user.name}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">
+                          {user.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          @{user.username}
+                        </p>
+                      </div>
+                      {isSelected && (
+                        <Check
+                          className="w-5 h-5"
+                          style={{ color: "#2D75FB" }}
+                        />
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{user.name}</h3>
-                      <p className="text-sm text-gray-500">@{user.username}</p>
-                    </div>
-                    {isSelected && (
-                      <Check className="w-5 h-5" style={{ color: "#2D75FB" }} />
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>
+                    {searchQuery.length > 0
+                      ? "No users matched your search."
+                      : "No recent conversations found."}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end space-x-2">

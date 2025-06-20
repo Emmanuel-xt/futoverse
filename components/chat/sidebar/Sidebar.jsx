@@ -9,6 +9,7 @@ import NewChatModal from "./NewChatModal";
 import NewGroupModal from "./NewGroupModal";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { fetchAllGroups } from "@lib/actions/Chat.prisma";
 
 const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,7 +32,7 @@ const Sidebar = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
+            <div onClick={() => fetchAllGroups()}>
               <h1 className="text-lg font-semibold">Chats</h1>
             </div>
           </div>

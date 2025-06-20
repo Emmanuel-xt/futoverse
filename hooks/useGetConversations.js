@@ -75,29 +75,29 @@ const useGetConversations = () => {
       const cachedConversations = await loadCachedConversations(); // Load cached data first
       setConversations(cachedConversations);
 
-      // if (navigator.onLine) {
-      // Fetch from live data if online
-      // setLoading(true);
-      try {
-        if (session) {
-          const fetchedConversations = await getUsersForSidebar(userId);
-          // console.log("Fetched new conversations:", fetchedConversations);
+      if (navigator.onLine) {
+        // Fetch from live data if online
+        // setLoading(true);
+        try {
+          if (session) {
+            const fetchedConversations = await getUsersForSidebar(userId);
+            console.log("Fetched new conversations:", fetchedConversations);
 
-          if (fetchedConversations.length > 0) {
-            setConversations(fetchedConversations);
-            await saveConversationsToDB(fetchedConversations); // Save new ones to DB
-            // console.log("fetched converstions saved to db");
+            if (fetchedConversations.length > 0) {
+              setConversations(fetchedConversations);
+              await saveConversationsToDB(fetchedConversations); // Save new ones to DB
+              // console.log("fetched converstions saved to db");
+            }
+          } else {
+            // console.log("No session available");
           }
-        } else {
-          // console.log("No session available");
+        } catch (error) {
+          // console.error("Error fetching conversations:", error);
+          toast.error(error.message);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        // console.error("Error fetching conversations:", error);
-        toast.error(error.message);
-      } finally {
-        setLoading(false);
       }
-      // }
     };
 
     getConversations();
