@@ -19,8 +19,6 @@ const CesiumMapB = () => {
     useCesiumViewer();
 
   // State management
-  const [selectedTile, setSelectedTile] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [showShopModal, setShowShopModal] = useState(false);
   const [occuppiedTileModal, setOccuppiedTileModal] = useState(false);
   const [unOccupiedTileModal, setUnoccuppiedTileModal] = useState(false);
@@ -36,7 +34,6 @@ const CesiumMapB = () => {
   const [labelInfo, setLabelInfo] = useState({});
   const [pointerInfo, setPointerInfo] = useState({});
   const [occupiedTileDetails, setOccupiedTileDetails] = useState({});
-  const [isOccupied, setIsOccupied] = useState(false);
   const [labelsVisible, setLabelsVisible] = useState(false);
   const [labelEntities, setLabelEntities] = useState([]);
   const [error, setError] = useState(null);
@@ -50,9 +47,6 @@ const CesiumMapB = () => {
     shops,
     setLabelEntities,
     setError,
-    selectedTile,
-    setSelectedTile,
-    setShowModal,
 
     setShowShopModal,
     setOccuppiedTileModal,
@@ -65,7 +59,7 @@ const CesiumMapB = () => {
     setUserInfo,
     setLabelInfo,
     setPointerInfo,
-    setIsOccupied,
+
     setOccupiedTileDetails,
     occupiedTileDetails,
   });
@@ -111,8 +105,6 @@ const CesiumMapB = () => {
         </div>
 
         <MapDrawers
-          showModal={showModal}
-          setShowModal={setShowModal}
           showShopModal={showShopModal}
           setShowShopModal={setShowShopModal}
           showOccuppiedTileModal={occuppiedTileModal}
@@ -121,7 +113,6 @@ const CesiumMapB = () => {
           setUnoccuppiedTileModal={setUnoccuppiedTileModal}
           showUserModal={showUserModal}
           setShowUserModal={setShowUserModal}
-          isOccupied={isOccupied}
           tileInfo={tileInfo}
           userInfo={userInfo}
           occupiedTileDetails={occupiedTileDetails}

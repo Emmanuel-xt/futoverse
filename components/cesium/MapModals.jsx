@@ -16,8 +16,6 @@ import { UserInfoDrawer } from "@components/drawers/map-drawers/UserInfoDrawer";
 // }
 
 export const MapDrawers = ({
-  showModal,
-  setShowModal,
   showShopModal,
   setShowShopModal,
   showOccuppiedTileModal,
@@ -26,7 +24,6 @@ export const MapDrawers = ({
   setUnoccuppiedTileModal, //
   showUserModal,
   setShowUserModal,
-  isOccupied,
   tileInfo,
   userInfo,
   occupiedTileDetails,
