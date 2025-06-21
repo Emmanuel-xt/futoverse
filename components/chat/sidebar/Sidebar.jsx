@@ -7,15 +7,32 @@ import { Input } from "@components/ui/input";
 import Conversations from "./Conversations";
 import NewChatModal from "./NewChatModal";
 import NewGroupModal from "./NewGroupModal";
+// import StoriesContainer from "@/components/stories/StoriesContainer";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { fetchAllGroups } from "@lib/actions/Chat.prisma";
+import {
+  fetchAllGroups,
+  syncConversationMembers,
+} from "@lib/actions/Chat.prisma";
+import { cn } from "@lib/utils";
+import StoriesContainer from "../stories/StoriesContainer";
 
 const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewChat, setShowNewChat] = useState(false);
   const [showNewGroup, setShowNewGroup] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { data: session } = useSession();
+
+  const handleSearchClick = () => {
+    setIsSearchExpanded(true);
+  };
+
+  const handleSearchBlur = () => {
+    if (!searchQuery) {
+      setIsSearchExpanded(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -32,42 +49,66 @@ const Sidebar = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div onClick={() => fetchAllGroups()}>
+            <div>
               <h1 className="text-lg font-semibold">Chats</h1>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20 p-2"
-              onClick={() => setShowNewGroup(true)}
+            {/* Collapsible Search */}
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                isSearchExpanded ? "w-full" : "w-auto"
+              )}
             >
-              <Users className="w-5 h-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20 p-2"
-              onClick={() => setShowNewChat(true)}
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+              {isSearchExpanded ? (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search conversations..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onBlur={handleSearchBlur}
+                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-500"
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-white/20 p-2"
+                    onClick={handleSearchClick}
+                  >
+                    <Search className="w-5 h-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-white/20 p-2"
+                    onClick={() => setShowNewGroup(true)}
+                  >
+                    <Users className="w-5 h-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-white/20 p-2"
+                    onClick={() => setShowNewChat(true)}
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search conversations..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-500"
-          />
-        </div>
       </div>
+
+      {/* Stories Container */}
+      <StoriesContainer />
 
       {/* Conversations List */}
       <div className="flex-1 overflow-hidden">
