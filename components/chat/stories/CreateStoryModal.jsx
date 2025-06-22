@@ -14,6 +14,8 @@ import {
 import { useStories } from "hooks/useStories";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+// import { toast } from "@components/ui/use-toast";
 
 const CreateStoryModal = ({ open, onClose }) => {
   const [storyType, setStoryType] = useState("IMAGE"); // IMAGE, VIDEO, TEXT
@@ -73,10 +75,12 @@ const CreateStoryModal = ({ open, onClose }) => {
     };
 
     try {
-      createStory(storyData);
-      // handleClose();
+      await createStory(storyData);
+      toast("Story has been shared successfully");
+      handleClose();
     } catch (error) {
       console.error("Failed to create story:", error);
+      toast("failed to create story");
     }
   };
 
