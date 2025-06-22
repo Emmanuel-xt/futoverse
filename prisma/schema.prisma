@@ -8,86 +8,124 @@ datasource db {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  username     String       @unique
-  about        String?
-  departmentId Int?
-  name         String?
-  picture      String?
-  email        String       @unique
-  password     String
-  bio          String?
-  gender       String?
-  levelId      Int?
-  comments     Comment[]
-  orders       Order[]
-  posts        Post[]
-  shops        Shop[]
-  shopItem     ShopItem[]
-  department   Department?  @relation(fields: [departmentId], references: [id])
-  level        Level?       @relation(fields: [levelId], references: [id])
-  statuses     UserStatus[]
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  about              String?
+  departmentId       Int?
+  name               String?
+  picture            String?
+  email              String               @unique
+  password           String
+  bio                String?
+  levelId            Int?
+  conversationsIds   String[]
+  gender             String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime?            @updatedAt
+  displayName        String?
+  isOnline           Boolean              @default(false)
+  lastSeen           DateTime             @default(now())
+  comments           Comment[]
+  receivedRequests   FriendRequest[]      @relation("ReceivedRequests")
+  sentRequests       FriendRequest[]      @relation("SentRequests")
+  messages           Message[]
+  orders             Order[]
+  posts              Post[]
+  shops              Shop[]
+  shopItem           ShopItem[]
+  department         Department?          @relation(fields: [departmentId], references: [id])
+  level              Level?               @relation(fields: [levelId], references: [id])
+  statuses           UserStatus[]
+  ConversationMember ConversationMember[]
+  messageReactions   MessageReaction[]
+  conversations      Conversation[]       @relation("ConversationToUser")
+  friends            User[]               @relation("Friendship")
+  friendOf           User[]               @relation("Friendship")
+  stories            Story[] // Stories created by the user
+  storyViews         StoryView[] // Stories viewed by the user
 
-  conversationsIds String[]
+  @@map("User")
+}
 
-  conversations Conversation[]
-  messages      Message[]
+model Message {
+  id             String            @id @default(cuid())
+  conversationId String
+  body           String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  senderId       Int
+  isRead         Boolean           @default(false)
+  duration       Int?
+  fileName       String?
+  fileSize       Int?
+  isDeleted      Boolean           @default(false)
+  isEdited       Boolean           @default(false)
+  mediaType      String?
+  mediaUrl       String?
+  replyToId      String?
+  type           MessageType       @default(TEXT)
+  conversation   Conversation      @relation(fields: [conversationId], references: [id])
+  replyTo        Message?          @relation("MessageReply", fields: [replyToId], references: [id])
+  replies        Message[]         @relation("MessageReply")
+  sender         User              @relation(fields: [senderId], references: [id])
+  reactions      MessageReaction[]
 
-  // Friend requests
-  sentRequests     FriendRequest[] @relation("SentRequests")
-  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+  @@map("Message")
+}
 
-  // Friends
-  friends  User[] @relation("Friendship")
-  friendOf User[] @relation("Friendship")
+model MessageReaction {
+  id        String   @id @default(cuid())
+  emoji     String
+  messageId String
+  userId    Int
+  createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  @@unique([messageId, userId, emoji])
+  @@map("message_reactions")
+}
+
+model Conversation {
+  id                  String               @id @default(cuid())
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  messageIds          String[]
+  participantIds      Int[]
+  avatar              String?
+  description         String?
+  isGroup             Boolean              @default(false)
+  name                String?
+  messages            Message[]
+  conversationMembers ConversationMember[]
+  participants        User[]               @relation("ConversationToUser")
+
+  @@map("Conversation")
+}
+
+model ConversationMember {
+  id             String           @id @default(cuid())
+  userId         Int
+  conversationId String
+  role           ConversationRole @default(MEMBER)
+  joinedAt       DateTime         @default(now())
+  conversation   Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conversationId])
+  @@map("conversation_members")
 }
 
 model FriendRequest {
   id         Int      @id @default(autoincrement())
-  sender     User     @relation("SentRequests", fields: [senderId], references: [id])
   senderId   Int
-  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
   receiverId Int
-  status     String // 'pending', 'accepted', 'rejected'
   createdAt  DateTime @default(now())
+  status     String
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  sender     User     @relation("SentRequests", fields: [senderId], references: [id])
 
-  @@unique([senderId, receiverId]) // prevent duplicate friend requests
-}
-
-model Conversation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  participantIds Int[]
-  participants   User[]
-
-  messageIds String[]
-  messages   Message[]
-}
-
-model Message {
-  id String @id @default(cuid())
-
-  conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
-
-  senderId Int
-  sender   User @relation(fields: [senderId], references: [id])
-
-  body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  isRead Boolean @default(false)
-}
-
-enum Gender {
-  male
-  female
+  @@unique([senderId, receiverId])
 }
 
 model Post {
@@ -125,17 +163,16 @@ model Shop {
   userId         Int
   latitude       Float
   longitude      Float
-  locationDesc   String?
   image          String?
   coverImage     String?
+  locationDesc   String?
   model          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime?     @updatedAt
   orders         Order[]
   user           User          @relation(fields: [userId], references: [id])
   shopItems      ShopItem[]
   statuses       StoreStatus[]
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
 }
 
 model UserStatus {
@@ -146,6 +183,48 @@ model UserStatus {
   expiresAt DateTime
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Story {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  content         String
+  type            StoryType @default(IMAGE)
+  caption         String?
+  backgroundColor String?
+  textColor       String?
+  createdAt       DateTime  @default(now())
+  expiresAt       DateTime
+  isActive        Boolean   @default(true)
+
+  // Relations
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  views StoryView[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([expiresAt])
+}
+
+model StoryView {
+  id       Int      @id @default(autoincrement())
+  storyId  Int
+  userId   Int
+  viewedAt DateTime @default(now())
+
+  // Relations
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@index([storyId])
+  @@index([userId])
+}
+
+enum StoryType {
+  IMAGE
+  VIDEO
+  TEXT
 }
 
 model StoreStatus {
@@ -176,12 +255,12 @@ model ShopItem {
   name        String
   price       Float
   image       String
-  description String
+  shopId      Int?
   tag         String?
   quantity    Int?    @default(1)
-  shopId      Int?
-  shop        Shop?   @relation(fields: [shopId], references: [id])
+  description String
   userId      Int?
+  shop        Shop?   @relation(fields: [shopId], references: [id])
   user        User?   @relation(fields: [userId], references: [id])
 }
 
@@ -216,4 +295,23 @@ model Place {
   longitude Float
   latitude  Float
   createdAt String?
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  VOICE
+  FILE
+  STICKER
+}
+
+enum ConversationRole {
+  ADMIN
+  MEMBER
+}
+
+enum Gender {
+  male
+  female
 }

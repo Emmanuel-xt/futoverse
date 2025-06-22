@@ -11,8 +11,12 @@ export const OnlineShopsProvider = ({ children }) => {
 
   useEffect(() => {
     const handleOnlineShopsUpdate = (shops) => {
+      // console.log("SHops at online shop provider", shops);
       // Flatten and transform the array of shop objects
-      const flattenedShops = shops.flatMap((shopData) => shopData.shops || []);
+      const flattenedShops = Array.isArray(shops)
+        ? shops.flatMap((shopData) => shopData.shops || [])
+        : Object.values(shops).flatMap((shopData) => shopData.shops || []);
+
       setOnlineShops(flattenedShops);
       // console.log("online shops =", shops);
     };

@@ -54,10 +54,10 @@ const useSidebarConversations = create((set, get) => ({
       updated.unshift(convo);
       // console.log("✅ Moved convo to top:", convo);
     } else {
-      // console.warn(
-      //   "❗️Couldn't find conversation to update with ID:",
-      //   newMessageConvoId
-      // );
+      console.warn(
+        "❗️Couldn't find conversation to update with ID:",
+        newMessageConvoId
+      );
     }
 
     // console.log("💾 Saving updated conversations to IndexedDB...");
@@ -65,6 +65,25 @@ const useSidebarConversations = create((set, get) => ({
 
     set({ conversations: updated });
     // console.log("✅ Conversations updated in Zustand store");
+  },
+
+  markLastMessageAsRead: (conversationId) => {
+    // console.log("Want to mark last message as read ");
+    const updated = [...get().conversations];
+    const index = updated.findIndex((c) => c.conversationId === conversationId);
+
+    if (index !== -1) {
+      const convo = updated[index];
+      if (convo.lastMessage) {
+        convo.lastMessage.isRead = true;
+      }
+      set({ conversations: updated });
+    }
+    // else {
+    //   console.log(
+    //     "Couldnt find the conversation with the matching coonversationId"
+    //   );
+    // }
   },
 }));
 

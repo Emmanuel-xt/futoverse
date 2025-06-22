@@ -29,6 +29,7 @@ export const ModelRelocation = () => {
         // );
       }
       entityToRelocate.position = Cartesian3.fromDegrees(longitude, latitude);
+      viewer.scene.requestRender();
       // console.log(
       //   "shop wey another person relocated from some where don move to new locaton , you bad !!"
       // );
@@ -54,6 +55,7 @@ export const NewShopCreation = () => {
           return null;
         }
         load3DModel(viewer, name, longitude, latitude, id);
+        viewer.scene.requestRender();
         // console.log("shop updates was triggered and model loaded successfully");
       }
     });
@@ -95,11 +97,13 @@ export const AddOnlineMarkers = () => {
             heightReference: HeightReference.CLAMP_TO_GROUND,
             distanceDisplayCondition: new DistanceDisplayCondition(0, 5000),
           });
+          viewer.scene.requestRender();
         }
       } else {
         // Remove the marker if the shop is offline
         if (entity.billboard) {
           entity.billboard = undefined; // Safely remove the billboard
+          viewer.scene.requestRender();
         }
       }
     });

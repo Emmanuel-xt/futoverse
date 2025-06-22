@@ -1,0 +1,12 @@
+{
+  "id": "name",
+  "classes": {
+    "name": {
+      "properties": {
+        "name": {
+          "type": "STRING"
+        }
+      }
+    }
+  }
+}

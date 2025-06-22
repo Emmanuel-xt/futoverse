@@ -229,3 +229,561 @@ export const funEmojis = [
 export const getRandomEmoji = () => {
   return funEmojis[Math.floor(Math.random() * funEmojis.length)];
 };
+
+export const tilesetsToLoad = [
+  {
+    name: "beside-prostectics",
+    archiveName: "beside-prostectics",
+    url: "/tilesets/beside-prostectics/tileset.json",
+  },
+  // {
+  //   name: "trythis",
+  //   archiveName: "trythis",
+  //   url: "/tilesets/trythis/tileset.json",
+  // },
+  {
+    name: "prostetics",
+    archiveName: "prostetics",
+    url: "/tilesets/prostetics/tileset.json",
+  },
+  {
+    name: "soht-hall",
+    archiveName: "soht-hall",
+    url: "/tilesets/soht-hall/tileset.json",
+  },
+  {
+    name: "beside-dental",
+    archiveName: "beside-dental",
+    url: "/tilesets/beside-dental/tileset.json",
+  },
+  {
+    name: "optometry",
+    archiveName: "optometry",
+    url: "/tilesets/optometry/tileset.json",
+  },
+  // {
+  //   name: "dental",
+  //   archiveName: "dental",
+  //   url: "/tilesets/dental/tileset.json",
+  // },
+  {
+    name: "Bank",
+    archiveName: "Bank",
+    url: "/tilesets/Bank/tileset.json",
+  },
+  {
+    name: "ENS",
+    archiveName: "ENS",
+    url: "/tilesets/ENS/tileset.json",
+  },
+  {
+    name: "logistics",
+    archiveName: "logistics",
+    url: "/tilesets/logistics/tileset.json",
+  },
+  {
+    name: "last-sat",
+    archiveName: "last-sat",
+    url: "/tilesets/last-sat/tileset.json",
+  },
+  {
+    name: "micro-bio",
+    archiveName: "micro-bio",
+    url: "/tilesets/micro-bio/tileset.json",
+  },
+  {
+    name: "SOPS-theatre",
+    archiveName: "SOPS-theatre",
+    url: "/tilesets/SOPS-theatre/tileset.json",
+  },
+  {
+    name: "physics-textbook",
+    archiveName: "physics-textbook",
+    url: "/tilesets/physics-textbook/tileset.json",
+  },
+  {
+    name: "beside-physics_new",
+    archiveName: "beside-physics_new",
+    url: "/tilesets/beside-physics_new/tileset.json",
+  },
+  {
+    name: "colledge-medicine",
+    archiveName: "colledge-medicine",
+    url: "/tilesets/colledge-medicine/tileset.json",
+  },
+  {
+    name: "physics-new",
+    archiveName: "physics-new",
+    url: "/tilesets/physics-new/tileset.json",
+  },
+  {
+    name: "opposite-nuclear",
+    archiveName: "opposite-nuclear",
+    url: "/tilesets/opposite-nuclear/tileset.json",
+  },
+  {
+    name: "biochem",
+    archiveName: "biochem",
+    url: "/tilesets/biochem/tileset.json",
+  },
+  {
+    name: "architecture-hall",
+    archiveName: "architecture-hall",
+    url: "/tilesets/architecture-hall/tileset.json",
+  },
+  {
+    name: "geology",
+    archiveName: "geology",
+    url: "/tilesets/geology/tileset.json",
+  },
+  {
+    name: "press",
+    archiveName: "press",
+    url: "/tilesets/press/tileset.json",
+  },
+  {
+    name: "afterPress",
+    archiveName: "afterPress",
+    url: "/tilesets/afterPress/tileset.json",
+  },
+  {
+    name: "futo_cafe",
+    archiveName: "futo_cafe",
+    url: "/tilesets/futo_cafe/tileset.json",
+  },
+  {
+    name: "beside_siwes",
+    archiveName: "beside_siwes",
+    url: "/tilesets/beside_siwes/tileset.json",
+  },
+  {
+    name: "stacc",
+    archiveName: "stacc",
+    url: "/tilesets/stacc/tileset.json",
+  },
+  {
+    name: "SEET_3",
+    archiveName: "SEET_3",
+    url: "/tilesets/SEET_3/tileset.json",
+  },
+  {
+    name: "SEET_2",
+    archiveName: "SEET_2",
+    url: "/tilesets/SEET_2/tileset.json",
+  },
+  {
+    name: "SEET",
+    archiveName: "SEET",
+    url: "/tilesets/SEET/tileset.json",
+  },
+  {
+    name: "smat_2",
+    archiveName: "smat_2",
+    url: "/tilesets/smat_2/tileset.json",
+  },
+  {
+    name: "smat_2",
+    archiveName: "smat_2",
+    url: "/tilesets/smat_2/tileset.json",
+  },
+  // {
+  //   name: "smat_1",
+  //   archiveName: "smat_1",
+  //   url: "/tilesets/smat_1/tileset.json",
+  // },
+  {
+    name: "smat_3",
+    archiveName: "smat_3",
+    url: "/tilesets/smat_3/tileset.json",
+  },
+  {
+    name: "beside_ift",
+    archiveName: "beside_ift",
+    url: "/tilesets/beside_ift/tileset.json",
+  },
+  {
+    name: "csc",
+    archiveName: "csc",
+    url: "/tilesets/csc/tileset.json",
+  },
+  {
+    name: "CSC_maual",
+    archiveName: "CSC_maual",
+    url: "/tilesets/CSC_maual/tileset.json",
+  },
+  {
+    name: "ift_building",
+    archiveName: "ift_building",
+    url: "/tilesets/ift_building/tileset.json",
+  },
+  {
+    name: "nuclearEnergy",
+    archiveName: "nuclearEnergy",
+    url: "/tilesets/nuclearEnergy/tileset.json",
+  },
+  {
+    name: "beforeFutowA",
+    archiveName: "beforeFutowA",
+    url: "/tilesets/beforeFutowA/tileset.json",
+  },
+  {
+    name: "AeX",
+    archiveName: "AeX",
+    url: "/tilesets/AeX/tileset.json",
+  },
+  {
+    name: "Agri-Econs",
+    archiveName: "Agri-Econs",
+    url: "/tilesets/Agri-Econs/tileset.json",
+  },
+  {
+    name: "architecture_building",
+    archiveName: "architecture_building",
+    url: "/tilesets/architecture_building/tileset.json",
+  },
+  {
+    name: "backofArchiHall",
+    archiveName: "backofArchiHall",
+    url: "/tilesets/backofArchiHall/tileset.json",
+  },
+  {
+    name: "before_Archi_short",
+    archiveName: "before_Archi_short",
+    url: "/tilesets/before_Archi_short/tileset.json",
+  },
+  {
+    name: "beforeSOes",
+    archiveName: "beforeSOes",
+    url: "/tilesets/beforeSOes/tileset.json",
+  },
+  {
+    name: "oppositeArchiHall",
+    archiveName: "oppositeArchiHall",
+    url: "/tilesets/oppositeArchiHall/tileset.json",
+  },
+  {
+    name: "Archi-Hall",
+    archiveName: "Archi-Hall",
+    url: "/tilesets/Archi-Hall/tileset.json",
+  },
+  {
+    name: "Innfront-ArchiHall",
+    archiveName: "Innfront-ArchiHall",
+    url: "/tilesets/Innfront-ArchiHall/tileset.json",
+  },
+  {
+    name: "Archi-short",
+    archiveName: "Archi-short",
+    url: "/tilesets/Archi-short/tileset.json",
+  },
+  {
+    name: "hostelC",
+    archiveName: "hostelC",
+    url: "/tilesets/hostelC/tileset.json",
+  },
+  {
+    name: "afterDGS",
+    archiveName: "afterDGS",
+    url: "/tilesets/afterDGS/tileset.json",
+  },
+  {
+    name: "DGS",
+    archiveName: "DGS",
+    url: "/tilesets/DGS/tileset.json",
+  },
+  {
+    name: "futo14",
+    archiveName: "futo14",
+    url: "/tilesets/futo14/tileset.json",
+  },
+  // {
+  //   name: "f12fbx",
+  //   archiveName: "f12fbx",
+  //   url: "/tilesets/f12fbx/tileset.json",
+  // },
+  // {
+  //   name: "fmap10",
+  //   archiveName: "fmap10",
+  //   url: "/tilesets/fmap10/tileset.json",
+  // },
+  {
+    name: "BesideDGS",
+    archiveName: "BesideDGS",
+    url: "/tilesets/BesideDGS/tileset.json",
+  },
+  {
+    name: "jil",
+    archiveName: "jil",
+    url: "/tilesets/jil/tileset.json",
+  },
+  {
+    name: "BackOfSoes",
+    archiveName: "BackOfSoes",
+    url: "/tilesets/BackOfSoes/tileset.json",
+  },
+  {
+    name: "SOES",
+    archiveName: "SOES",
+    url: "/tilesets/SOES/tileset.json",
+  },
+  // {
+  //   name: "SOBS",
+  //   archiveName: "SOBS",
+  //   url: "/tilesets/SOBS/tileset.json",
+  // },
+  {
+    name: "BeforeSOBS",
+    archiveName: "BeforeSOBS",
+    url: "/tilesets/BeforeSOBS/tileset.json",
+  },
+  {
+    name: "Statistics",
+    archiveName: "Statistics",
+    url: "/tilesets/Statistics/tileset.json",
+  },
+  {
+    name: "AllSaints",
+    archiveName: "AllSaints",
+    url: "/tilesets/AllSaints/tileset.json",
+  },
+  {
+    name: "ACOL",
+    archiveName: "ACOL",
+    url: "/tilesets/ACOL/tileset.json",
+  },
+  {
+    name: "Library",
+    archiveName: "Library",
+    url: "/tilesets/Library/tileset.json",
+  },
+  {
+    name: "BackOFLib",
+    archiveName: "BackOFLib",
+    url: "/tilesets/BackOFLib/tileset.json",
+  },
+  {
+    name: "UCC",
+    archiveName: "UCC",
+    url: "/tilesets/UCC/tileset.json",
+  },
+  {
+    name: "futowa2",
+    archiveName: "futowa2",
+    url: "/tilesets/futowa2/tileset.json",
+  },
+  {
+    name: "750Caps",
+    archiveName: "750Caps",
+    url: "/tilesets/750Caps/tileset.json",
+  },
+  {
+    name: "backOfHOM",
+    archiveName: "backOfHOM",
+    url: "/tilesets/backOfHOM/tileset.json",
+  },
+  {
+    name: "futowa1",
+    archiveName: "futowa1",
+    url: "/tilesets/futowa1/tileset.json",
+  },
+  {
+    name: "HallOfExcellence",
+    archiveName: "HallOfExcellence",
+    url: "/tilesets/HallOfExcellence/tileset.json",
+  },
+  {
+    name: "500Caps",
+    archiveName: "500Caps",
+    url: "/tilesets/500Caps/tileset.json",
+  },
+  {
+    name: "HallOfMercy",
+    archiveName: "HallOfMercy",
+    url: "/tilesets/HallOfMercy/tileset.json",
+  },
+  {
+    name: "oldUCC",
+    archiveName: "oldUCC",
+    url: "/tilesets/oldUCC/tileset.json",
+  },
+  {
+    name: "stacc",
+    archiveName: "stacc",
+    url: "/tilesets/stacc/tileset.json",
+  },
+  {
+    name: "JupebHall3",
+    archiveName: "JupebHall3",
+    url: "/tilesets/JupebHall3/tileset.json",
+  },
+  {
+    name: "JupebHall2",
+    archiveName: "JupebHall2",
+    url: "/tilesets/JupebHall2/tileset.json",
+  },
+  {
+    name: "Workshop2",
+    archiveName: "Workshop2",
+    url: "/tilesets/Workshop2/tileset.json",
+  },
+  {
+    name: "JupebHall",
+    archiveName: "JupebHall",
+    url: "/tilesets/JupebHall/tileset.json",
+  },
+  {
+    name: "BesideJupehHall",
+    archiveName: "BesideJupehHall",
+    url: "/tilesets/BesideJupehHall/tileset.json",
+  },
+  {
+    name: "OppositeICT",
+    archiveName: "OppositeICT",
+    url: "/tilesets/OppositeICT/tileset.json",
+  },
+  {
+    name: "BesideICT",
+    archiveName: "BesideICT",
+    url: "/tilesets/BesideICT/tileset.json",
+  },
+  {
+    name: "ICT",
+    archiveName: "ICT",
+    url: "/tilesets/ICT/tileset.json",
+  },
+  {
+    name: "OppositeSops",
+    archiveName: "OppositeSops",
+    url: "/tilesets/OppositeSops/tileset.json",
+  },
+  {
+    name: "SOPS",
+    archiveName: "SOPS",
+    url: "/tilesets/SOPS/tileset.json",
+  },
+  {
+    name: "PhysicsNew",
+    archiveName: "PhysicsNew",
+    url: "/tilesets/PhysicsNew/tileset.json",
+  },
+  {
+    name: "PhysicPractical",
+    archiveName: "PhysicPractical",
+    url: "/tilesets/PhysicPractical/tileset.json",
+  },
+  {
+    name: "PhysicsPracticalExtension",
+    archiveName: "PhysicsPracticalExtension",
+    url: "/tilesets/PhysicsPracticalExtension/tileset.json",
+  },
+  {
+    name: "SOPsExtend",
+    archiveName: "SOPsExtend",
+    url: "/tilesets/SOPsExtend/tileset.json",
+  },
+  // {
+  //   name: "AutoMotiveShop",
+  //   archiveName: "AutoMotiveShop",
+  //   url: "/tilesets/AutoMotiveShop/tileset.json",
+  // },
+  {
+    name: "Workshop",
+    archiveName: "Workshop",
+    url: "/tilesets/Workshop/tileset.json",
+  },
+  {
+    name: "OldEatery",
+    archiveName: "OldEatery",
+    url: "/tilesets/OldEatery/tileset.json",
+  },
+  {
+    name: "besideDepperLife",
+    archiveName: "besideDepperLife",
+    url: "/tilesets/besideDepperLife/tileset.json",
+  },
+  {
+    name: "DeeperLife",
+    archiveName: "DeeperLife",
+    url: "/tilesets/DeeperLife/tileset.json",
+  },
+  {
+    name: "ChristEmbassy",
+    archiveName: "ChristEmbassy",
+    url: "/tilesets/ChristEmbassy/tileset.json",
+  },
+  {
+    name: "BackOfSEET",
+    archiveName: "BackOfSEET",
+    url: "/tilesets/BackOfSEET/tileset.json",
+  },
+  {
+    name: "sug",
+    archiveName: "sug",
+    url: "/tilesets/sug/tileset.json",
+  },
+  {
+    name: "girlshostel2",
+    archiveName: "girlshostel2",
+    url: "/tilesets/girlshostel2/tileset.json",
+  },
+  {
+    name: "hostelE",
+    archiveName: "hostelE",
+    url: "/tilesets/hostelE/tileset.json",
+  },
+  {
+    name: "hostelb",
+    archiveName: "hostelb",
+    url: "/tilesets/hostelb/tileset.json",
+  },
+  {
+    name: "predegree",
+    archiveName: "predegree",
+    url: "/tilesets/predegree/tileset.json",
+  },
+  {
+    name: "hostelA",
+    archiveName: "hostelA",
+    url: "/tilesets/hostelA/tileset.json",
+  },
+  {
+    name: "mechanical_glab",
+    archiveName: "mechanical_glab",
+    url: "/tilesets/mechanical_glab/tileset.json",
+  },
+  {
+    name: "mechanical",
+    archiveName: "mechanical",
+    url: "/tilesets/mechanical/tileset.json",
+  },
+  {
+    name: "beside_chemical",
+    archiveName: "beside_chemical",
+    url: "/tilesets/beside_chemical/tileset.json",
+  },
+  {
+    name: "chemical",
+    archiveName: "chemical",
+    url: "/tilesets/chemical/tileset.json",
+  },
+  // {
+  //   name: "Tetfunds2",
+  //   archiveName: "Tetfunds2",
+  //   url: "/tilesets/Tetfunds2/tileset.json",
+  // },
+  {
+    name: "GuestHouse",
+    archiveName: "GuestHouse",
+    url: "/tilesets/GuestHouse/tileset.json",
+  },
+  {
+    name: "TetFunds",
+    archiveName: "TetFunds",
+    url: "/tilesets/TetFunds/tileset.json",
+  },
+  {
+    name: "NDDC",
+    archiveName: "NDDC",
+    url: "/tilesets/NDDC/tileset.json",
+  },
+];

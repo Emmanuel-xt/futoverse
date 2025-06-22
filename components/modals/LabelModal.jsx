@@ -41,7 +41,7 @@ const LabelModal = ({ showModal, setShowModal, labelInfo }) => {
           className="flex flex-col gap-1 items-center text-sm"
           onClick={() => {
             if (stableLocation) {
-              drawLineBetweenPoints(viewer, () => stableLocation, endLocation);
+              drawLineBetweenPoints(viewer, () => userLocation, endLocation);
             } else {
               // console.warn("User location not available.");
             }

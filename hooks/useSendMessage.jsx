@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { sendMessageToUser } from "@lib/actions/Chat.prisma";
 import socket from "@components/socket/Socket";
 import useSidebarConversations from "zustand/useSidebarConversations"; // ✅
+import { saveMessagesToDB } from "@lib/indexedDB";
 
 const useSendMessage = () => {
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,11 @@ const useSendMessage = () => {
 
       // ✅ Update messages UI immediately
       setMessages([...messages, data]);
+      await saveMessagesToDB(
+        selectedConversation.id,
+        session.user.id,
+        messages
+      );
 
       // console.log("data from server", data);
       // ✅ Raise conversation to the top
@@ -38,6 +44,7 @@ const useSendMessage = () => {
       const newMessage = {
         message: data,
       };
+      // console.log("New Message ==", newMessage);
       updateConversations(newMessage);
     } catch (error) {
       toast.error(error.message);

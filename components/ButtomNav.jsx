@@ -9,7 +9,7 @@ function ButtomNav() {
   const pathname = usePathname();
 
   return (
-    <section className="fixed bottom-0 z-10 w-full rounded-t-3xl bg-primary p-2 xs:px-7">
+    <section className="fixed bottom-0 z-10 w-full bg-primary p-2 xs:px-7">
       <div className="flex items-center justify-between gap-3 xs:gap-5">
         {sidebarLinks.map((link) => {
           const isActive =

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import ButtomNav from "@components/ButtomNav"; // Assuming you have this
 import Link from "next/link";
 import Image from "next/image";
-import InstallPWAButton from "@components/InstallPWAButton";
+// import InstallPWAButton from "@components/InstallPWAButton";
 import { useSession } from "next-auth/react";
 import Modal from "@components/modals/Modal";
 

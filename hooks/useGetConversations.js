@@ -37,7 +37,7 @@ const useGetConversations = () => {
 
   // Save or update conversations in IndexedDB
   const saveConversationsToDB = async (newConversations) => {
-    console.log("About to save cached data ", newConversations);
+    // console.log("About to save cached data ", newConversations);
     try {
       const db = await openDatabase();
       if (!db) return;
@@ -64,7 +64,7 @@ const useGetConversations = () => {
         // });
       });
 
-      console.log("All conversations have been saved or overwritten.");
+      // console.log("All conversations have been saved or overwritten.");
     } catch (error) {
       console.error("Error saving conversations to IndexedDB:", error);
     }
@@ -77,11 +77,11 @@ const useGetConversations = () => {
 
       if (navigator.onLine) {
         // Fetch from live data if online
-        setLoading(true);
+        // setLoading(true);
         try {
           if (session) {
             const fetchedConversations = await getUsersForSidebar(userId);
-            // console.log("Fetched new conversations:", fetchedConversations);
+            console.log("Fetched new conversations:", fetchedConversations);
 
             if (fetchedConversations.length > 0) {
               setConversations(fetchedConversations);

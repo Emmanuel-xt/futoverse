@@ -41,6 +41,7 @@ export const AddUserMarkerToMap = () => {
       const existingEntity = viewer.entities.getById(fallbackId);
       if (existingEntity) {
         existingEntity.position = position;
+        viewer.scene.requestRender();
       } else {
         viewer.entities.add({
           id: `user-${username}`,
@@ -66,6 +67,7 @@ export const AddUserMarkerToMap = () => {
             distanceDisplayCondition: new DistanceDisplayCondition(0.0, 1e7), // Always visible
           },
         });
+        viewer.scene.requestRender();
       }
 
       // Emit location to the server for other users
@@ -129,6 +131,7 @@ export const DisplayAllUserMarkers = () => {
             const existingEntity = viewer.entities.getById(`user-${username}`);
             if (existingEntity) {
               existingEntity.position = position;
+              viewer.scene.requestRender();
             } else {
               viewer.entities.add({
                 id: `user-${username}`,
@@ -158,6 +161,7 @@ export const DisplayAllUserMarkers = () => {
                   ), // Always visible
                 },
               });
+              viewer.scene.requestRender();
             }
           }
         );
@@ -173,6 +177,7 @@ export const DisplayAllUserMarkers = () => {
             )
           ) {
             viewer.entities.remove(entity);
+            viewer.scene.requestRender();
           }
         });
       }
@@ -184,3 +189,5 @@ export const DisplayAllUserMarkers = () => {
 
   return null;
 };
+
+// REMEBER TO ADD viewer.scene.requestRender(); WHENEVER YOU ARE MAKING ANY SCENE UPDATES
