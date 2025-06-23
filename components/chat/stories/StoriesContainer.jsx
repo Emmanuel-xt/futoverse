@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -9,21 +9,69 @@ import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserStories } from "@lib/actions/status.prisma";
 import StoryItem from "./StoryItem";
 import StoryViewer from "./StoryViewer";
-import CreateStoryModal from "./CreateStoryModal";
+import CreateStoryDrawer from "./CreateStoryModal";
+// import CreateStoryModal from "./CreateStoryModal";
 
 const StoriesContainer = () => {
   const { data: session } = useSession();
   const { stories, isLoading } = useStories();
   const [selectedStoryData, setSelectedStoryData] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [viewerKey, setViewerKey] = useState(0); // Key to force re-render
+  const [currentUserStories, setCurrentUserStories] = useState([]);
 
   // Get current user's stories
-  const { data: currentUserStories = [] } = useQuery({
+  const { refetch } = useQuery({
     queryKey: ["currentUserStories", session?.user?.id],
     queryFn: () => getCurrentUserStories(Number(session?.user?.id)),
     enabled: !!session?.user?.id,
     staleTime: 2 * 60 * 1000, // 2 minutes
+    onSuccess: (data) => {
+      setCurrentUserStories(data);
+    },
   });
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      refetch();
+    }
+  }, [session?.user?.id, refetch]);
+
+  const handleStoryClick = useCallback(
+    (userStories, userIndex) => {
+      console.log("Selected story:", userStories, "at index:", userIndex);
+      setSelectedStoryData({
+        stories: stories,
+        initialUserIndex: userIndex,
+        isOwnStory: false,
+      });
+      setViewerKey((prev) => prev + 1); // Force new viewer instance
+    },
+    [stories]
+  );
+
+  const handleCloseViewer = useCallback(() => {
+    setSelectedStoryData(null);
+    // Small delay to ensure clean state reset
+    setTimeout(() => {
+      setViewerKey((prev) => prev + 1);
+    }, 100);
+  }, []);
+
+  const handleCurrentUserStoryClick = useCallback(() => {
+    if (currentUserStories.length > 0) {
+      // View own stories
+      setSelectedStoryData({
+        stories: [{ user: session?.user, stories: currentUserStories }],
+        initialUserIndex: 0,
+        isOwnStory: true,
+      });
+      setViewerKey((prev) => prev + 1); // Force new viewer instance
+    } else {
+      // Create new story
+      setShowCreateModal(true);
+    }
+  }, [currentUserStories, session?.user]);
 
   if (isLoading) {
     return (
@@ -36,33 +84,6 @@ const StoriesContainer = () => {
       </div>
     );
   }
-
-  const handleStoryClick = (userStories, userIndex) => {
-    console.log("Selected story:", userStories, "at index:", userIndex);
-    setSelectedStoryData({
-      stories: stories,
-      initialUserIndex: userIndex,
-      isOwnStory: false,
-    });
-  };
-
-  const handleCloseViewer = () => {
-    setSelectedStoryData(null);
-  };
-
-  const handleCurrentUserStoryClick = () => {
-    if (currentUserStories.length > 0) {
-      // View own stories
-      setSelectedStoryData({
-        stories: [{ user: session?.user, stories: currentUserStories }],
-        initialUserIndex: 0,
-        isOwnStory: true,
-      });
-    } else {
-      // Create new story
-      setShowCreateModal(true);
-    }
-  };
 
   return (
     <>
@@ -108,7 +129,10 @@ const StoriesContainer = () => {
 
         {/* Friends' stories */}
         {stories.map((userStories, index) => (
-          <div key={userStories.user?.id} className="flex-shrink-0">
+          <div
+            key={`${userStories.user?.id}-${index}`}
+            className="flex-shrink-0"
+          >
             <StoryItem
               userStories={userStories}
               onClick={() => handleStoryClick(userStories, index)}
@@ -119,6 +143,7 @@ const StoriesContainer = () => {
 
       {selectedStoryData && (
         <StoryViewer
+          key={viewerKey} // Force re-render with new key
           stories={selectedStoryData.stories}
           initialUserIndex={selectedStoryData.initialUserIndex}
           onClose={handleCloseViewer}
@@ -126,7 +151,7 @@ const StoriesContainer = () => {
         />
       )}
 
-      <CreateStoryModal
+      <CreateStoryDrawer
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   X,
   ChevronLeft,
@@ -25,10 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
-import StoryViewersModal from "./StoryViewersModal";
 import { replyToStory } from "@lib/actions/status.prisma";
+import StoryViewersDrawer from "./StoryViewersModal";
 
-const STORY_DURATION = 20000; // 5 seconds per story
+const STORY_DURATION = 5000; // 20 seconds per story
 
 const StoryViewer = ({
   stories,
@@ -41,9 +41,15 @@ const StoryViewer = ({
   const [replyText, setReplyText] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showViewersModal, setShowViewersModal] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Refs for managing timers and interactions
   const progressIntervalRef = useRef(null);
-  const storyTimeoutRef = useRef(null);
   const touchStartRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const pauseStartTimeRef = useRef(null);
+  const totalPausedTimeRef = useRef(0);
+  const hasAdvancedRef = useRef(false); // Prevent double advancement
 
   const {
     currentUserIndex,
@@ -63,52 +69,117 @@ const StoryViewer = ({
   // Initialize with the selected user
   useEffect(() => {
     goToStory(initialUserIndex, 0);
+    // Reset pause state when initializing
+    setIsPaused(false);
+    totalPausedTimeRef.current = 0;
+    hasAdvancedRef.current = false;
   }, [initialUserIndex, goToStory]);
-  // console.log("Stories ======", stories);
 
   const currentUser = stories[currentUserIndex];
   const currentStory = currentUser?.stories[currentStoryIndex];
   const storyOwnerId = Number(stories[currentUserIndex]?.user.id);
 
-  // Auto-progress story
-  useEffect(() => {
-    if (!isPlaying || !currentStory) return;
-
-    const startTime = Date.now();
-
-    progressIntervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const newProgress = (elapsed / STORY_DURATION) * 100;
-
-      if (newProgress >= 100) {
-        setProgress(100);
-        nextStory(stories, onClose);
-      } else {
-        setProgress(newProgress);
-      }
-    }, 50);
-
-    storyTimeoutRef.current = setTimeout(() => {
-      nextStory(stories, onClose);
-    }, STORY_DURATION);
-
-    return () => {
+  // Clear all timers
+  const clearTimers = useCallback(() => {
+    if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
-      clearTimeout(storyTimeoutRef.current);
+      progressIntervalRef.current = null;
+    }
+  }, []);
+
+  // Pause story
+  const pauseStory = useCallback(() => {
+    if (!isPaused && isPlaying) {
+      setIsPaused(true);
+      setIsPlaying(false);
+      pauseStartTimeRef.current = Date.now();
+      clearTimers();
+    }
+  }, [isPaused, isPlaying, clearTimers, setIsPlaying]);
+
+  // Resume story
+  const resumeStory = useCallback(() => {
+    if (isPaused) {
+      setIsPaused(false);
+      setIsPlaying(true);
+      if (pauseStartTimeRef.current) {
+        totalPausedTimeRef.current += Date.now() - pauseStartTimeRef.current;
+        pauseStartTimeRef.current = null;
+      }
+    }
+  }, [isPaused, setIsPlaying]);
+
+  // Auto-progress story with pause support
+  useEffect(() => {
+    if (!isPlaying || !currentStory || isPaused) {
+      clearTimers();
+      return;
+    }
+
+    // Set start time if not already set
+    if (!startTimeRef.current) {
+      startTimeRef.current = Date.now();
+      totalPausedTimeRef.current = 0;
+      hasAdvancedRef.current = false;
+    }
+
+    const updateProgress = () => {
+      if (hasAdvancedRef.current) return; // Prevent updates after advancement
+
+      const now = Date.now();
+      const elapsed = now - startTimeRef.current - totalPausedTimeRef.current;
+      const newProgress = Math.min((elapsed / STORY_DURATION) * 100, 100);
+
+      setProgress(newProgress);
+
+      // Only advance once when progress reaches 100%
+      if (newProgress >= 100 && !hasAdvancedRef.current) {
+        hasAdvancedRef.current = true;
+        clearTimers();
+        // Small delay to ensure smooth transition
+        setTimeout(() => {
+          nextStory(stories, onClose);
+        }, 50);
+      }
     };
-  }, [currentStory, isPlaying, nextStory, stories, setProgress, onClose]);
+
+    // Update progress immediately
+    updateProgress();
+
+    // Set up interval for smooth progress updates (every 100ms for smooth animation)
+    // progressIntervalRef.current = setInterval(updateProgress, 100);
+
+    return clearTimers;
+  }, [
+    currentStory,
+    isPlaying,
+    isPaused,
+    nextStory,
+    stories,
+    setProgress,
+    onClose,
+    clearTimers,
+  ]);
+
+  // Reset timing when story changes
+  useEffect(() => {
+    startTimeRef.current = null;
+    totalPausedTimeRef.current = 0;
+    pauseStartTimeRef.current = null;
+    hasAdvancedRef.current = false;
+    setIsPaused(false);
+  }, [currentUserIndex, currentStoryIndex]);
 
   // Mark story as viewed
   useEffect(() => {
     if (currentStory && session?.user?.id && !isOwnStory) {
-      // console.log("Current story", currentStory);
       viewStory({
         storyId: currentStory.id,
         userId: Number.parseInt(session.user.id),
-        storyOwnerId: storyOwnerId, // 👈 pass this!
+        storyOwnerId: storyOwnerId,
       });
     }
-  }, [currentStory, session?.user?.id, viewStory, isOwnStory]);
+  }, [currentStory, session?.user?.id, viewStory, isOwnStory, storyOwnerId]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -125,14 +196,26 @@ const StoryViewer = ({
           break;
         case " ":
           e.preventDefault();
-          setIsPlaying(!isPlaying);
+          if (isPaused) {
+            resumeStory();
+          } else {
+            pauseStory();
+          }
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isPlaying, nextStory, previousStory, stories, onClose, setIsPlaying]);
+  }, [
+    isPaused,
+    nextStory,
+    previousStory,
+    stories,
+    onClose,
+    pauseStory,
+    resumeStory,
+  ]);
 
   // Touch handlers for mobile gestures
   const handleTouchStart = (e) => {
@@ -141,6 +224,8 @@ const StoryViewer = ({
       y: e.touches[0].clientY,
       time: Date.now(),
     };
+    // Pause on touch start
+    pauseStory();
   };
 
   const handleTouchEnd = (e) => {
@@ -155,6 +240,9 @@ const StoryViewer = ({
     const deltaX = touchEnd.x - touchStartRef.current.x;
     const deltaY = touchEnd.y - touchStartRef.current.y;
     const deltaTime = touchEnd.time - touchStartRef.current.time;
+
+    // Resume story
+    resumeStory();
 
     // Swipe detection
     if (
@@ -187,34 +275,31 @@ const StoryViewer = ({
   };
 
   const handleMouseDown = () => {
-    setIsPlaying(false);
+    pauseStory();
   };
 
   const handleMouseUp = () => {
-    setIsPlaying(true);
+    resumeStory();
   };
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
 
-    // TODO: Implement reply functionality
     try {
       await replyToStory({
         storyId: currentStory.id,
         message: replyText.trim(),
         userId: Number(session?.user?.id),
         storyOwnerId: storyOwnerId,
-      }); // 👈 pass this!);
+      });
     } catch (error) {
       console.error("Error sending reply:", error);
     }
-    console.log("Reply:", replyText, "to story:", currentStory.id);
     setReplyText("");
     setShowReplyInput(false);
   };
 
   const handleDeleteStory = () => {
-    // console.log("Deleting story:", currentStory.id, isCurrentUserStory);
     if (currentStory && isCurrentUserStory) {
       deleteStory({ storyId: currentStory.id });
       // Move to next story or close if it's the last one
@@ -227,8 +312,31 @@ const StoryViewer = ({
   };
 
   const handleViewStoryViewers = () => {
+    pauseStory(); // Pause when opening modal
     setShowViewersModal(true);
   };
+
+  const handleCloseViewersModal = () => {
+    setShowViewersModal(false);
+    resumeStory(); // Resume when closing modal
+  };
+
+  const handleReplyInputFocus = () => {
+    pauseStory();
+  };
+
+  const handleReplyInputBlur = () => {
+    if (!showReplyInput) {
+      resumeStory();
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, [clearTimers]);
 
   if (!currentUser || !currentStory) {
     return null;
@@ -299,19 +407,33 @@ const StoryViewer = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={() => {
+                  if (isPaused) {
+                    resumeStory();
+                  } else {
+                    pauseStory();
+                  }
+                }}
                 className="text-white hover:bg-white/20 p-2"
               >
-                {isPlaying ? (
-                  <Pause className="w-4 h-4" />
-                ) : (
+                {isPaused || !isPlaying ? (
                   <Play className="w-4 h-4" />
+                ) : (
+                  <Pause className="w-4 h-4" />
                 )}
               </Button>
 
               {/* Story options for own stories */}
               {isCurrentUserStory && (
-                <DropdownMenu>
+                <DropdownMenu
+                  onOpenChange={(open) => {
+                    if (open) {
+                      pauseStory();
+                    } else {
+                      resumeStory();
+                    }
+                  }}
+                >
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
@@ -433,6 +555,8 @@ const StoryViewer = ({
                     placeholder="Reply to story..."
                     className="flex-1 bg-transparent border-none text-white placeholder:text-white/70 focus:ring-0"
                     onKeyPress={(e) => e.key === "Enter" && handleReply()}
+                    onFocus={handleReplyInputFocus}
+                    onBlur={handleReplyInputBlur}
                     autoFocus
                   />
                   <Button
@@ -449,7 +573,10 @@ const StoryViewer = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowReplyInput(true)}
+                    onClick={() => {
+                      pauseStory();
+                      setShowReplyInput(true);
+                    }}
                     className="text-white hover:bg-white/20 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm"
                   >
                     Send message
@@ -470,10 +597,10 @@ const StoryViewer = ({
 
       {/* Story Viewers Modal */}
       {showViewersModal && currentStory && (
-        <StoryViewersModal
+        <StoryViewersDrawer
           storyId={currentStory.id}
           open={showViewersModal}
-          onClose={() => setShowViewersModal(false)}
+          onClose={handleCloseViewersModal}
         />
       )}
     </>

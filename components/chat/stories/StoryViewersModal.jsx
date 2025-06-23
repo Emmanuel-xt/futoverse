@@ -3,34 +3,58 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStoryViewers } from "@lib/actions/status.prisma";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@components/ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@components/ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { ScrollArea } from "@components/ui/scroll-area";
 import { Eye } from "lucide-react";
+import { useEffect } from "react";
 
-const StoryViewersModal = ({ storyId, open, onClose }) => {
-  console.log("Querying viewers for story:", storyId);
-  const { data: viewers = [], isLoading } = useQuery({
+const StoryViewersDrawer = ({ storyId, open, onClose }) => {
+  const {
+    data: viewers = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["storyViewers", storyId],
     queryFn: () => getStoryViewers(storyId),
     enabled: !!storyId && open,
+    staleTime: 30000,
+    cacheTime: 60000,
   });
+  console.log("i am mounted");
+
+  // Cleanup delay on close
+  useEffect(() => {
+    console.log("i am opened or closed");
+    if (!open) {
+      const timer = setTimeout(() => {}, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+
+  const handleClose = (openState) => {
+    if (!openState) {
+      setTimeout(() => {
+        onClose();
+      }, 0);
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <Drawer open={open} onOpenChange={handleClose}>
+      <DrawerContent className="max-h-[90%]">
+        <DrawerHeader>
+          <DrawerTitle className="flex items-center gap-2">
             <Eye className="w-5 h-5" />
             Story Viewers ({viewers.length})
-          </DialogTitle>
-        </DialogHeader>
+          </DrawerTitle>
+        </DrawerHeader>
 
-        <ScrollArea className="max-h-96">
+        <ScrollArea className="px-4 pb-4 max-h-[calc(90vh-4rem)]">
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
@@ -42,6 +66,10 @@ const StoryViewersModal = ({ storyId, open, onClose }) => {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">
+              <p>Failed to load viewers</p>
             </div>
           ) : viewers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
@@ -73,9 +101,9 @@ const StoryViewersModal = ({ storyId, open, onClose }) => {
             </div>
           )}
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-export default StoryViewersModal;
+export default StoryViewersDrawer;
