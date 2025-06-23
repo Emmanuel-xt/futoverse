@@ -26,8 +26,9 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 import StoryViewersModal from "./StoryViewersModal";
+import { replyToStory } from "@lib/actions/status.prisma";
 
-const STORY_DURATION = 5000; // 5 seconds per story
+const STORY_DURATION = 20000; // 5 seconds per story
 
 const StoryViewer = ({
   stories,
@@ -100,7 +101,7 @@ const StoryViewer = ({
   // Mark story as viewed
   useEffect(() => {
     if (currentStory && session?.user?.id && !isOwnStory) {
-      console.log("Current story", currentStory);
+      // console.log("Current story", currentStory);
       viewStory({
         storyId: currentStory.id,
         userId: Number.parseInt(session.user.id),
@@ -193,17 +194,28 @@ const StoryViewer = ({
     setIsPlaying(true);
   };
 
-  const handleReply = () => {
+  const handleReply = async () => {
     if (!replyText.trim()) return;
 
     // TODO: Implement reply functionality
+    try {
+      await replyToStory({
+        storyId: currentStory.id,
+        message: replyText.trim(),
+        userId: Number(session?.user?.id),
+        storyOwnerId: storyOwnerId,
+      }); // 👈 pass this!);
+    } catch (error) {
+      console.error("Error sending reply:", error);
+    }
     console.log("Reply:", replyText, "to story:", currentStory.id);
     setReplyText("");
     setShowReplyInput(false);
   };
 
   const handleDeleteStory = () => {
-    if (currentStory && isOwnStory) {
+    // console.log("Deleting story:", currentStory.id, isCurrentUserStory);
+    if (currentStory && isCurrentUserStory) {
       deleteStory({ storyId: currentStory.id });
       // Move to next story or close if it's the last one
       if (currentUser.stories.length === 1) {

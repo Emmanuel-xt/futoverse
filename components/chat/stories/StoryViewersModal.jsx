@@ -13,6 +13,7 @@ import { ScrollArea } from "@components/ui/scroll-area";
 import { Eye } from "lucide-react";
 
 const StoryViewersModal = ({ storyId, open, onClose }) => {
+  console.log("Querying viewers for story:", storyId);
   const { data: viewers = [], isLoading } = useQuery({
     queryKey: ["storyViewers", storyId],
     queryFn: () => getStoryViewers(storyId),
