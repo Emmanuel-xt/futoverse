@@ -6,19 +6,19 @@ import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@components/ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from "@components/ui/drawer";
 import { useStories } from "hooks/useStories";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-// import { toast } from "@components/ui/use-toast";
 
-const CreateStoryModal = ({ open, onClose }) => {
-  const [storyType, setStoryType] = useState("IMAGE"); // IMAGE, VIDEO, TEXT
+const CreateStoryDrawer = ({ open, onClose }) => {
+  const [storyType, setStoryType] = useState("IMAGE");
   const [content, setContent] = useState("");
   const [caption, setCaption] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -42,32 +42,29 @@ const CreateStoryModal = ({ open, onClose }) => {
     "#800080",
   ];
 
-  const handleFileSelect = (event) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreview(e.target?.result);
-      };
-      reader.readAsDataURL(file);
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
 
-      if (file.type.startsWith("image/")) {
-        setStoryType("IMAGE");
-      } else if (file.type.startsWith("video/")) {
-        setStoryType("VIDEO");
-      }
-    }
+    const reader = new FileReader();
+    reader.onload = (e) => setPreview(e.target?.result);
+    reader.readAsDataURL(file);
+
+    if (file.type.startsWith("image/")) setStoryType("IMAGE");
+    else if (file.type.startsWith("video/")) setStoryType("VIDEO");
   };
 
   const handleCreateStory = async () => {
-    if (storyType === "TEXT" && !content.trim()) return;
-    if ((storyType === "IMAGE" || storyType === "VIDEO") && !selectedFile)
+    if (
+      (storyType === "TEXT" && !content.trim()) ||
+      ((storyType === "IMAGE" || storyType === "VIDEO") && !selectedFile)
+    )
       return;
 
     const storyData = {
       type: storyType,
-      content: storyType === "TEXT" ? content : preview, // In real app, upload file and get URL
+      content: storyType === "TEXT" ? content : preview,
       caption: caption.trim() || null,
       backgroundColor: storyType === "TEXT" ? backgroundColor : null,
       textColor: storyType === "TEXT" ? textColor : null,
@@ -76,11 +73,10 @@ const CreateStoryModal = ({ open, onClose }) => {
 
     try {
       await createStory(storyData);
-      toast("Story has been shared successfully");
+      toast.success("Story shared!");
       handleClose();
-    } catch (error) {
-      console.error("Failed to create story:", error);
-      toast("failed to create story");
+    } catch (err) {
+      toast.error("Failed to create story");
     }
   };
 
@@ -96,174 +92,161 @@ const CreateStoryModal = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create Story</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Story type selector */}
-          <div className="flex space-x-2">
-            <Button
-              variant={storyType === "IMAGE" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStoryType("IMAGE")}
-              className="flex-1"
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Photo
+    <Drawer open={open} onOpenChange={handleClose}>
+      <DrawerContent className="max-w-lg mx-auto p-4 space-y-6">
+        <DrawerHeader className="flex items-center justify-between mb-2">
+          <DrawerTitle className="text-lg font-semibold">
+            Create Story
+          </DrawerTitle>
+          <DrawerClose asChild>
+            <Button size="icon" variant="ghost">
+              <X className="w-5 h-5" />
             </Button>
-            <Button
-              variant={storyType === "TEXT" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStoryType("TEXT")}
-              className="flex-1"
-            >
-              <Type className="w-4 h-4 mr-2" />
-              Text
-            </Button>
-          </div>
+          </DrawerClose>
+        </DrawerHeader>
 
-          {/* Content based on type */}
-          {storyType === "TEXT" ? (
-            <div className="space-y-4">
-              <Textarea
-                placeholder="What's on your mind?"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={4}
-                className="resize-none"
-              />
+        <div className="flex space-x-2">
+          <Button
+            variant={storyType === "IMAGE" ? "default" : "outline"}
+            onClick={() => setStoryType("IMAGE")}
+            className="flex-1"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Photo
+          </Button>
+          <Button
+            variant={storyType === "TEXT" ? "default" : "outline"}
+            onClick={() => setStoryType("TEXT")}
+            className="flex-1"
+          >
+            <Type className="w-4 h-4 mr-2" />
+            Text
+          </Button>
+        </div>
 
-              {/* Background color picker */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Background Color</label>
-                <div className="flex space-x-2">
-                  {backgroundColors.map((color) => (
-                    <button
-                      key={color}
-                      className="w-8 h-8 rounded-full border-2 border-gray-300"
-                      style={{ backgroundColor: color }}
-                      onClick={() => setBackgroundColor(color)}
-                    />
-                  ))}
-                </div>
+        {storyType === "TEXT" ? (
+          <>
+            <Textarea
+              rows={4}
+              placeholder="What's on your mind?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="resize-none"
+            />
+            <div>
+              <label className="text-sm mb-1 block">Background Color</label>
+              <div className="flex flex-wrap gap-2">
+                {backgroundColors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-7 h-7 rounded-full border-2 ${
+                      backgroundColor === color
+                        ? "border-blue-500"
+                        : "border-transparent"
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setBackgroundColor(color)}
+                  />
+                ))}
               </div>
-
-              {/* Text color picker */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Text Color</label>
-                <Input
-                  type="color"
-                  value={textColor}
-                  onChange={(e) => setTextColor(e.target.value)}
-                  className="w-full h-10"
+            </div>
+            <div>
+              <label className="text-sm mb-1 block">Text Color</label>
+              <Input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                className="w-full h-10"
+              />
+            </div>
+            <div
+              className="w-full h-32 rounded-md flex items-center justify-center text-center font-semibold text-lg"
+              style={{ backgroundColor, color: textColor }}
+            >
+              {content || "Your text will appear here"}
+            </div>
+          </>
+        ) : (
+          <>
+            {!selectedFile ? (
+              <div
+                className="border border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                <p className="text-sm text-gray-600">
+                  Click to select image or video
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
                 />
               </div>
-
-              {/* Preview */}
-              <div
-                className="w-full h-32 rounded-lg flex items-center justify-center p-4"
-                style={{ backgroundColor, color: textColor }}
-              >
-                <p className="text-center font-medium">
-                  {content || "Your text will appear here"}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {!selectedFile ? (
-                <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-2">Click to select a file</p>
-                  <p className="text-sm text-gray-500">
-                    {storyType === "IMAGE"
-                      ? "Images only"
-                      : "Images and videos"}
-                  </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept={
-                      storyType === "IMAGE" ? "image/*" : "image/*,video/*"
-                    }
-                    onChange={handleFileSelect}
-                    className="hidden"
+            ) : (
+              <div className="relative">
+                {storyType === "IMAGE" ? (
+                  <Image
+                    src={preview || "/placeholder.svg"}
+                    alt="Preview"
+                    width={500}
+                    height={300}
+                    className="w-full h-64 object-cover rounded-lg"
                   />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="relative">
-                    {storyType === "IMAGE" ? (
-                      <Image
-                        src={preview || "/placeholder.svg"}
-                        alt="Preview"
-                        width={400}
-                        height={300}
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <video
-                        src={preview}
-                        className="w-full h-64 object-cover rounded-lg"
-                        controls
-                      />
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-2 right-2 bg-black/50 text-white hover:bg-black/70"
-                      onClick={() => {
-                        setSelectedFile(null);
-                        setPreview("");
-                      }}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                ) : (
+                  <video
+                    src={preview}
+                    className="w-full h-64 object-cover rounded-lg"
+                    controls
+                  />
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute top-2 right-2 bg-black/50 text-white"
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setPreview("");
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
 
-          {/* Caption */}
-          <Input
-            placeholder="Add a caption..."
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-          />
+        <Input
+          placeholder="Add a caption..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+        />
 
-          {/* Actions */}
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreateStory}
-              disabled={
-                isCreatingStory ||
-                (storyType === "TEXT" && !content.trim()) ||
-                ((storyType === "IMAGE" || storyType === "VIDEO") &&
-                  !selectedFile)
-              }
-              className="text-white"
-              style={{ backgroundColor: "#2D75FB" }}
-            >
-              {isCreatingStory ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              ) : null}
-              Share Story
-            </Button>
-          </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleCreateStory}
+            disabled={
+              isCreatingStory ||
+              (storyType === "TEXT" && !content.trim()) ||
+              ((storyType === "IMAGE" || storyType === "VIDEO") &&
+                !selectedFile)
+            }
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {isCreatingStory && (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            )}
+            Share Story
+          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-export default CreateStoryModal;
+export default CreateStoryDrawer;

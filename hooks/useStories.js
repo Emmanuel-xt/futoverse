@@ -120,7 +120,7 @@ export const useStories = () => {
         socket.emit("story_viewed", {
           storyId: variables.storyId,
           viewerId: variables.userId,
-          storyOwnerId: data.storyOwnerId, // Assuming this is returned from the API
+          storyOwnerId: data.storyOwnerId,
         });
       }
     },
@@ -182,7 +182,7 @@ export const useStories = () => {
     return getStoryViewers(storyId);
   };
 
-  const getStoryViewersQuery = (storyId) => {
+  const useStoryViewersQuery = (storyId) => {
     return useQuery({
       queryKey: ["storyViewers", storyId],
       queryFn: () => getStoryViewersQueryFn(storyId),
@@ -199,7 +199,7 @@ export const useStories = () => {
     viewStory: viewStoryMutation.mutate,
     createStory: createStoryMutation.mutate,
     deleteStory: deleteStoryMutation.mutate,
-    getStoryViewers: getStoryViewersQuery,
+    getStoryViewers: useStoryViewersQuery,
     isViewingStory: viewStoryMutation.isPending,
     isCreatingStory: createStoryMutation.isPending,
     isDeletingStory: deleteStoryMutation.isPending,
