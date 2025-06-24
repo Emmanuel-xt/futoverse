@@ -6,7 +6,7 @@ import { UserCard } from "../user-card";
 import { fetchUnconnectedUsers } from "@lib/actions/user.prisma";
 import { Skeleton } from "@components/ui/skeleton";
 
-export function SuggestedTab({ userId }) {
+export function SuggestedTab({ userId, onUserCardClick }) {
   const observerRef = useRef(null);
 
   const {
@@ -56,6 +56,7 @@ export function SuggestedTab({ userId }) {
             user={user}
             currentUserId={userId}
             showFollowButton={true}
+            onUserCardClick={onUserCardClick}
           />
         ))}
 

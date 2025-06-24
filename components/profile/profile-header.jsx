@@ -8,6 +8,11 @@ import { NotificationPanel } from "./notification-panel";
 import { ConnectionsPanel } from "./connections-panel";
 import { ProfileActions } from "./profile-actions";
 import { useRouter } from "next/navigation";
+import Message from "@components/chat/messages/Message";
+import { MessagePanel } from "./message-panel";
+import { getConversationByUserId } from "@lib/actions/Chat.prisma";
+import useConversation from "zustand/useConversation";
+import MessageContainer from "@components/chat/messages/MessageContainer";
 
 export function ProfileHeader({
   user,
@@ -16,10 +21,36 @@ export function ProfileHeader({
   isFriend,
   hasSentRequest,
   currentUserId,
+  isPanel = false, // Add this prop
+  onClose,
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessageContainer, setShowMessageContainer] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
   const router = useRouter();
+  const { selectedConversation, setSelectedConversation } = useConversation();
+
+  const handleClickMessage = async (recieverId) => {
+    if (!showMessageContainer) {
+      window.history.pushState({ panel: "message" }, "", window.location.href);
+      setShowMessageContainer(true);
+    } else {
+      window.history.back();
+      return;
+    }
+
+    try {
+      const conversation = await getConversationByUserId(
+        currentUserId,
+        recieverId
+      );
+      if (conversation) {
+        setSelectedConversation(conversation); // Set to Zustand or Context store
+      }
+    } catch (err) {
+      console.error("Failed to fetch conversation:", err);
+    }
+  };
 
   const handleNotificationToggle = () => {
     if (!showNotifications) {
@@ -54,9 +85,13 @@ export function ProfileHeader({
         setShowNotifications(true);
       } else if (event.state?.panel === "connections") {
         setShowConnections(true);
+      } else if (event.state?.panel === "message") {
+        setShowMessageContainer(true);
       } else {
         setShowNotifications(false);
         setShowConnections(false);
+        setShowMessageContainer(false);
+        // If no panel state, close all panels
       }
     };
 
@@ -69,10 +104,17 @@ export function ProfileHeader({
       {/* <div className="relative bg-white border-b border-gray-100"> */}
       {/* Header Actions */}
       <div className="flex justify-between items-center p-4 sticky top-0 left-0 right-0 bg-white z-10 shadow-sm">
-        <div className=" w-20">
-          {!isOwnProfile && (
+        <div className="w-20">
+          {!isOwnProfile && !isPanel ? ( // Only show back button if not in panel mode
             <button
               onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-full"
+            >
+              ←
+            </button>
+          ) : (
+            <button
+              onClick={() => onClose}
               className="p-2 hover:bg-gray-100 rounded-full"
             >
               ←
@@ -135,7 +177,9 @@ export function ProfileHeader({
               <div className="text-sm text-gray-600">friends</div>
             </button>
             <div className="text-center">
-              <div className="text-lg font-bold">{user._count?.shops || 0}</div>
+              <div className="text-lg font-bold">
+                {user?._count?.shops || 0}
+              </div>
               <div className="text-sm text-gray-600">Store</div>
             </div>
             <div className="text-center">
@@ -167,7 +211,7 @@ export function ProfileHeader({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => router.push(`/chat?receiverId=${user.id}`)}
+                onClick={() => handleClickMessage(user.id)}
               >
                 <MessageCircle size={16} />
               </Button>
@@ -194,6 +238,12 @@ export function ProfileHeader({
       {/* </div> */}
 
       {/* Sliding Panels */}
+
+      <MessagePanel
+        isOpen={showMessageContainer}
+        selectedConversation={selectedConversation}
+        onClose={() => setShowMessageContainer(false)}
+      />
       <NotificationPanel
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
@@ -202,6 +252,7 @@ export function ProfileHeader({
         isOpen={showConnections}
         onClose={() => setShowConnections(false)}
         userId={user.id}
+        username={user.username}
       />
     </>
   );

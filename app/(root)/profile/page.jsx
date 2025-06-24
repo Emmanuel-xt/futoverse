@@ -6,6 +6,7 @@ import { fetchUserByUsername } from "@lib/actions/user.prisma";
 import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
 import { ProfileHeader } from "@components/profile/profile-header";
 import { auth } from "auth";
+import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
 
 async function getProfileData(username) {
   const [user, friendCount] = await Promise.all([
@@ -23,26 +24,31 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
+  const userId = Number(session.user.id);
+
   const { user, friendCount } = await getProfileData(session.user.username);
 
-  if (!user) {
-    redirect("/profile/setup");
-  }
+  // if (!user) {
+  //   redirect("/profile/setup");
+  // }
 
   return (
     <div className="min-h-screen pb-14 bg-white">
-      <Suspense fallback={<ProfileSkeleton />}>
-        <ProfileHeader
-          user={user}
-          friendCount={friendCount}
-          isOwnProfile={true}
-        />
-        <ProfileTabs
-          userId={user.id}
-          username={user.username}
-          isOwnProfile={true}
-        />
-      </Suspense>
+      <ProfilePanelProvider currentUserId={userId}>
+        <Suspense fallback={<ProfileSkeleton />}>
+          <ProfileHeader
+            user={session.user}
+            userPop={user}
+            friendCount={friendCount}
+            isOwnProfile={true}
+          />
+          <ProfileTabs
+            userId={userId}
+            username={session.user.username}
+            isOwnProfile={true}
+          />
+        </Suspense>
+      </ProfilePanelProvider>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { UserCard } from "../user-card";
 import { fetchPendingFriendRequests } from "@lib/actions/connect.prisma";
 import { Skeleton } from "@components/ui/skeleton"; // Replace with your Skeleton component
 
-export function FriendRequestsTab({ userId }) {
+export function FriendRequestsTab({ userId, onUserCardClick }) {
   const queryClient = useQueryClient();
 
   const {
@@ -84,6 +84,7 @@ export function FriendRequestsTab({ userId }) {
           showFollowButton={true}
           isRequest={true}
           onRequestAction={(action) => handleRequestAction(action, request.id)}
+          onUserCardClick={onUserCardClick}
         />
       ))}
     </div>

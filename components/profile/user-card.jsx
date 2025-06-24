@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@components/ui/button";
 import { X } from "lucide-react";
 import {
@@ -26,6 +25,7 @@ export function UserCard({
   showFollowButton,
   isRequest,
   onRequestAction,
+  onUserCardClick, // Add this prop
 }) {
   const [loading, setLoading] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -74,11 +74,21 @@ export function UserCard({
     }
   };
 
+  const handleUserClick = (e) => {
+    e.preventDefault();
+    if (onUserCardClick) {
+      onUserCardClick(user.username);
+    } else {
+      // Fallback to navigation if no panel handler
+      window.location.href = `/profile/${user.username}`;
+    }
+  };
+
   if (dismissed) return null;
 
   return (
     <div className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg">
-      <Link href={`/profile/${user.username}`}>
+      <button onClick={handleUserClick} className="flex-shrink-0">
         <div className="w-12 h-12 rounded-full overflow-hidden">
           <Image
             src={user.picture || "/images/noProfile.png"}
@@ -88,16 +98,16 @@ export function UserCard({
             className="w-full h-full object-cover"
           />
         </div>
-      </Link>
+      </button>
 
       <div className="flex-1 min-w-0">
-        <Link href={`/profile/${user.username}`}>
+        <button onClick={handleUserClick} className="text-left w-full">
           <h4 className="font-semibold text-sm truncate">{user.name}</h4>
           <p className="text-xs text-gray-600 truncate">
             {user.department?.initial}{" "}
             {user.level?.name && `(${user.level.name}lvl)`}
           </p>
-        </Link>
+        </button>
       </div>
 
       <div className="flex items-center gap-2">

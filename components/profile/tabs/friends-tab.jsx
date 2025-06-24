@@ -5,7 +5,7 @@ import { UserCard } from "../user-card";
 import { fetchUsersFriendList } from "@lib/actions/connect.prisma";
 import { Skeleton } from "@components/ui/skeleton";
 
-export function FriendsTab({ userId, username }) {
+export function FriendsTab({ userId, username, onUserCardClick }) {
   const {
     data: friends,
     isLoading,
@@ -71,6 +71,7 @@ export function FriendsTab({ userId, username }) {
           user={friend}
           currentUserId={userId}
           showFollowButton={false}
+          onUserCardClick={onUserCardClick}
         />
       ))}
     </div>

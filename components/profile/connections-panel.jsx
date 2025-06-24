@@ -11,7 +11,7 @@ import { fetchUsersFriendList } from "@lib/actions/connect.prisma";
 //   userId: number
 // }
 
-export function ConnectionsPanel({ isOpen, onClose, userId }) {
+export function ConnectionsPanel({ isOpen, onClose, userId, username }) {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,7 +19,7 @@ export function ConnectionsPanel({ isOpen, onClose, userId }) {
     if (isOpen) {
       const fetchConnections = async () => {
         try {
-          const friends = await fetchUsersFriendList(userId);
+          const friends = await fetchUsersFriendList(username);
           setConnections(friends);
         } catch (error) {
           console.error("Error fetching connections:", error);
