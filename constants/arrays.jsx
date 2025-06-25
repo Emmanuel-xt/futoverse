@@ -77,7 +77,7 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/assets/search.svg",
-    route: "/find",
+    route: "/finds",
     label: "Find",
   },
 
