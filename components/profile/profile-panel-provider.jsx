@@ -73,7 +73,10 @@ export function ProfilePanelProvider({ children, currentUserId }) {
           username={panel.username}
           currentUserId={currentUserId}
           isOpen={true}
-          onClose={() => closePanel(index)}
+          onClose={() => {
+            console.log("Onclose was fired");
+            closePanel(index);
+          }}
           onOpenProfile={openProfile}
           panelIndex={index}
         />

@@ -62,20 +62,30 @@ export function ProfileActions({
 
   const getButtonContent = () => {
     if (friendStatus.isFriend) {
-      return { text: "Connected", icon: UserMinus, variant: "outline" };
+      return {
+        text: "Connected",
+        icon: UserMinus,
+        variant: "outline bg-slate-200",
+        style: "bg-slate-200",
+      };
     } else if (friendStatus.hasSentRequest) {
-      return { text: "Pending", icon: Clock, variant: "outline" };
+      return {
+        text: "Pending",
+        icon: Clock,
+        variant: "outline",
+        style: "bg-slate-200",
+      };
     } else {
       return { text: "Connect", icon: UserPlus, variant: "default" };
     }
   };
 
-  const { text, icon: Icon, variant } = getButtonContent();
+  const { text, icon: Icon, variant, style } = getButtonContent();
 
   return (
     <Button
       variant={variant}
-      className="flex-1"
+      className={`flex-1 ${style}`}
       onClick={handleFriendAction}
       disabled={loading}
     >

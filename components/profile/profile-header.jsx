@@ -3,7 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@components/ui/button";
-import { Bell, MessageCircle, MoreHorizontal, UserPlus } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  MessageCircle,
+  MoreHorizontal,
+  UserPlus,
+} from "lucide-react";
 import { NotificationPanel } from "./notification-panel";
 import { ConnectionsPanel } from "./connections-panel";
 import { ProfileActions } from "./profile-actions";
@@ -105,19 +111,12 @@ export function ProfileHeader({
       {/* Header Actions */}
       <div className="flex justify-between items-center p-2 sticky top-0 left-0 right-0 bg-white z-10 shadow-sm">
         <div className="w-20">
-          {!isOwnProfile && !isPanel ? ( // Only show back button if not in panel mode
+          {!isOwnProfile && ( // Only show back button if not in panel mode
             <button
-              onClick={() => router.back()}
+              onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full"
             >
-              ←
-            </button>
-          ) : (
-            <button
-              onClick={() => onClose}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              {/*  */}
+              <ArrowLeft size={20} />
             </button>
           )}
         </div>
@@ -127,19 +126,21 @@ export function ProfileHeader({
 
         <div className="flex items-center gap-3  w-20">
           {isOwnProfile && (
-            <button
-              onClick={handleNotificationToggle}
-              className="p-2 hover:bg-gray-100 rounded-full relative"
-            >
-              <Bell size={20} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </button>
+            <>
+              <button
+                onClick={handleNotificationToggle}
+                className="p-2 hover:bg-gray-100 rounded-full relative"
+              >
+                <Bell size={20} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  3
+                </span>
+              </button>
+              <button className="p-2 hover:bg-gray-100 rounded-full">
+                <MoreHorizontal size={20} />
+              </button>
+            </>
           )}
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <MoreHorizontal size={20} />
-          </button>
         </div>
       </div>
 
@@ -193,7 +194,7 @@ export function ProfileHeader({
             {isOwnProfile ? (
               <Button
                 variant="outline"
-                className="flex-1"
+                className="flex-1 bg-gray-200"
                 onClick={() => router.push("/profile/edit")}
               >
                 Edit profile

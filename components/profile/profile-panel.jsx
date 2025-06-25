@@ -84,7 +84,7 @@ export function ProfilePanel({
         style={{ zIndex: 50 + panelIndex }}
       >
         {/* Panel Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-10">
+        {/* <div className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-10">
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full"
@@ -98,7 +98,7 @@ export function ProfilePanel({
           >
             <X size={20} />
           </button>
-        </div>
+        </div> */}
 
         {/* Panel Content */}
         <div className="h-full overflow-y-auto pb-20">
@@ -119,7 +119,7 @@ export function ProfilePanel({
               profileData={profileData}
               currentUserId={currentUserId}
               onUserCardClick={handleUserCardClick}
-              onClose={onClose}
+              closer={onClose}
             />
           ) : null}
         </div>
@@ -132,7 +132,7 @@ function ProfilePanelContent({
   profileData,
   currentUserId,
   onUserCardClick,
-  onClose,
+  closer,
 }) {
   const { user, friendCount, isFriend, hasSentRequest } = profileData;
 
@@ -146,7 +146,7 @@ function ProfilePanelContent({
         hasSentRequest={hasSentRequest}
         currentUserId={currentUserId}
         isPanel={true}
-        onClose={onClose}
+        onClose={closer}
       />
       <ProfileTabs
         userId={user.id}

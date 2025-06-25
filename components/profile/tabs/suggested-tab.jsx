@@ -45,7 +45,6 @@ export function SuggestedTab({ userId, onUserCardClick }) {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold mb-2">Suggested accounts</h3>
         <p className="text-sm text-gray-600">People you may know</p>
       </div>
 
