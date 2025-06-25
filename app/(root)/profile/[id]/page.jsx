@@ -11,6 +11,7 @@ import {
   hasSentFriendRequest,
 } from "@lib/actions/connect.prisma";
 import { auth } from "auth";
+import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
 
 // interface ProfilePageProps {
 //   params: { id: string }
@@ -47,28 +48,31 @@ export default async function UserProfilePage({ params }) {
   if (!profileData) {
     notFound();
   }
+  const currentUserId = Number(session?.user?.id);
 
   const { user, friendCount, isFriend, hasSentRequest } = profileData;
 
   return (
     <div className="min-h-screen bg-white pb-14">
-      <Suspense fallback={<ProfileSkeleton />}>
-        <ProfileHeader
-          user={user}
-          friendCount={friendCount}
-          isOwnProfile={false}
-          isFriend={isFriend}
-          hasSentRequest={hasSentRequest}
-          currentUserId={
-            session?.user?.id ? Number.parseFloat(session.user.id) : undefined
-          }
-        />
-        <ProfileTabs
-          userId={user.id}
-          username={user.username}
-          isOwnProfile={false}
-        />
-      </Suspense>
+      <ProfilePanelProvider currentUserId={currentUserId}>
+        <Suspense fallback={<ProfileSkeleton />}>
+          <ProfileHeader
+            user={user}
+            friendCount={friendCount}
+            isOwnProfile={false}
+            isFriend={isFriend}
+            hasSentRequest={hasSentRequest}
+            currentUserId={
+              session?.user?.id ? Number.parseFloat(session.user.id) : undefined
+            }
+          />
+          <ProfileTabs
+            userId={user.id}
+            username={user.username}
+            isOwnProfile={false}
+          />
+        </Suspense>
+      </ProfilePanelProvider>
     </div>
   );
 }

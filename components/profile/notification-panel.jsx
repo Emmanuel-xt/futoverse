@@ -51,16 +51,16 @@ export function NotificationPanel({ isOpen, onClose }) {
       >
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold">Notifications</h2>
-          <button
+          {/* <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full"
           >
             <X size={20} />
-          </button>
+          </button> */}
         </div>
 
         <div className="overflow-y-auto h-full pb-20">
-          {notifications.length === 0 ? (
+          {notifications.length !== 0 ? (
             <div className="flex flex-col items-center justify-center h-64">
               <Bell size={48} className="text-gray-300 mb-4" />
               <p className="text-gray-500">No notifications yet</p>

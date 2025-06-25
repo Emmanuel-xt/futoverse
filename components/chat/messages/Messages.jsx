@@ -14,7 +14,7 @@ const Messages = () => {
   const grouped = groupMessagesByDate(messages || []);
 
   return (
-    <div className="px-4 flex-1 overflow-auto z-30 bg-white" ref={ref}>
+    <div className="px-4 mb-24 flex-1 overflow-auto z-30" ref={ref}>
       {!loading &&
         Object.entries(grouped).map(([date, msgs]) => (
           <div key={date} className="mb-4">

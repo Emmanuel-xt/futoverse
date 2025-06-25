@@ -87,7 +87,7 @@ export function UserCard({
   if (dismissed) return null;
 
   return (
-    <div className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg">
+    <div className="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-lg">
       <button onClick={handleUserClick} className="flex-shrink-0">
         <div className="w-12 h-12 rounded-full overflow-hidden">
           <Image
@@ -118,7 +118,7 @@ export function UserCard({
             onClick={handleFollow}
             disabled={loading}
           >
-            {loading ? "Sending..." : "Follow"}
+            {loading ? "Sending..." : "Connect"}
           </Button>
         )}
 
@@ -143,12 +143,12 @@ export function UserCard({
           </div>
         )}
 
-        <button
+        {/* <button
           onClick={() => setDismissed(true)}
           className="p-1 hover:bg-gray-200 rounded-full"
         >
           <X size={16} className="text-gray-400" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

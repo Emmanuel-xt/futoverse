@@ -1,16 +1,14 @@
-"use client";
-
 import { useState, useRef, useCallback } from "react";
 
 const useVoiceRecording = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [audioBlob, setAudioBlob] = (useState < Blob) | (null > null);
+  const [audioBlob, setAudioBlob] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const mediaRecorderRef = (useRef < MediaRecorder) | (null > null);
-  const audioRef = (useRef < HTMLAudioElement) | (null > null);
-  const timerRef = (useRef < NodeJS.Timeout) | (null > null);
+  const mediaRecorderRef = useRef(null);
+  const audioRef = useRef(null);
+  const timerRef = useRef(null);
   const chunksRef = useRef([]);
 
   const startRecording = useCallback(async () => {
@@ -18,7 +16,7 @@ const useVoiceRecording = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = []; // Initialize as empty array
+      chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -65,7 +63,7 @@ const useVoiceRecording = () => {
     setRecordingTime(0);
     setAudioBlob(null);
     setIsPlaying(false);
-    chunksRef.current = []; // Reset chunks array
+    chunksRef.current = [];
 
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -105,3 +103,5 @@ const useVoiceRecording = () => {
 };
 
 export default useVoiceRecording;
+// This custom hook manages voice recording functionality, including starting, stopping, and playing audio recordings.
+// It uses the MediaRecorder API to handle audio input and provides methods to control the recording state and playback.
