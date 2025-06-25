@@ -11,6 +11,7 @@ import useTypingStore from "zustand/useTypingStore";
 import { cn } from "@lib/utils";
 import socket from "@components/socket/Socket";
 import useSidebarConversations from "zustand/useSidebarConversations";
+import useImageModal from "hooks/useImageModal";
 
 // interface ConversationItemProps {
 //   conversation: any
@@ -20,6 +21,7 @@ const ConversationItem = ({ conversation }) => {
   const { data: session } = useSession();
   const { selectedConversation, setSelectedConversation } = useConversation();
   const onlineUsers = useOnlineUsers();
+  const { openModal } = useImageModal();
 
   const typingConversations = useTypingStore((s) => s.typingConversations);
   const typingUser = typingConversations[conversation.conversationId];
@@ -34,6 +36,13 @@ const ConversationItem = ({ conversation }) => {
 
   const handleClick = async () => {
     setSelectedConversation(conversation);
+
+    // Push a state entry for this conversation
+    window.history.pushState(
+      { conversationOpen: true },
+      "", // title (ignored)
+      "" // URL (empty so we stay on same page)
+    );
 
     const conversationId = conversation.conversationId;
     const userId = Number(session?.user?.id);
@@ -125,6 +134,10 @@ const ConversationItem = ({ conversation }) => {
               width={48}
               height={48}
               className="w-full h-full object-cover"
+              onClick={(e) => {
+                e.stopPropagation(); // prevent triggering the conversation select
+                if (conversation.picture) openModal(conversation.picture);
+              }}
             />
           )}
         </div>

@@ -7,6 +7,7 @@ import TypingListener from "./sidebar/TypingListener";
 import useGlobalMessageListener from "hooks/useGlobalMessageListener";
 import useListenMessages from "hooks/useListenMessages";
 import useReadReceiptListener from "hooks/useReadMessageListener";
+import ImageModal from "@components/ImageModal";
 
 const ChatLayout = () => {
   const { selectedConversation } = useConversation();
@@ -23,6 +24,7 @@ const ChatLayout = () => {
           selectedConversation && "hidden md:block"
         )}
       >
+        <ImageModal />
         <TypingListener />
         <Sidebar />
       </div>

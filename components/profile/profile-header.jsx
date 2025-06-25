@@ -103,7 +103,7 @@ export function ProfileHeader({
     <>
       {/* <div className="relative bg-white border-b border-gray-100"> */}
       {/* Header Actions */}
-      <div className="flex justify-between items-center p-4 sticky top-0 left-0 right-0 bg-white z-10 shadow-sm">
+      <div className="flex justify-between items-center p-2 sticky top-0 left-0 right-0 bg-white z-10 shadow-sm">
         <div className="w-20">
           {!isOwnProfile && !isPanel ? ( // Only show back button if not in panel mode
             <button
@@ -117,7 +117,7 @@ export function ProfileHeader({
               onClick={() => onClose}
               className="p-2 hover:bg-gray-100 rounded-full"
             >
-              ←
+              {/*  */}
             </button>
           )}
         </div>

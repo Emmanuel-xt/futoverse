@@ -17,12 +17,17 @@ import Image from "next/image";
 import MessageInput from "./MessageInput";
 import TypingIndicator from "./TypingIndicator";
 import Messages from "./Messages";
+import { useRouter } from "next/navigation";
+import { useProfilePanel } from "@components/profile/profile-panel-provider";
 
 const MessageContainer = () => {
   const { selectedConversation, setSelectedConversation } = useConversation();
   const onlineUsers = useOnlineUsers();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
+  const [openProfilePanel, setOpenProfilePanel] = useState(false);
+  const router = useRouter();
+  const { openProfile } = useProfilePanel();
 
   // console.log("Selected COnversation", selectedConversation);
 
@@ -31,7 +36,13 @@ const MessageContainer = () => {
     onlineUsers.some((user) => user.userId === selectedConversation.id);
 
   const handleBack = () => {
-    setSelectedConversation(null);
+    // setSelectedConversation(null);
+    window.history.back();
+  };
+
+  const handleViewProfile = () => {
+    if (!selectedConversation?.username) return;
+    openProfile(selectedConversation.username);
   };
 
   // Close menu when clicking outside
@@ -45,9 +56,23 @@ const MessageContainer = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const onPopState = (e) => {
+      if (e.state?.conversationOpen) {
+        // Stay on the same page — no action needed
+      } else {
+        // Clear the selected conversation when going back
+        setSelectedConversation(null);
+      }
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   if (!selectedConversation) {
     return (
-      <div className="hidden md:flex flex-1 z-50 items-center justify-center bg-gray-50">
+      <div className="hidden md:flex flex-1 z-40 items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="w-64 h-64 mx-auto mb-8 opacity-20">
             <svg viewBox="0 0 303 172" className="w-full h-full">
@@ -86,9 +111,9 @@ const MessageContainer = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-primary">
+    <div className="flex flex-col h-screen ">
       {/* Header */}
-      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
+      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 sticky top-0 z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button
@@ -147,12 +172,12 @@ const MessageContainer = () => {
             <Button variant="ghost" size="sm" className="p-2">
               <Search className="w-5 h-5 text-gray-600" />
             </Button>
-            <Button variant="ghost" size="sm" className="p-2">
+            {/* <Button variant="ghost" size="sm" className="p-2">
               <Phone className="w-5 h-5 text-gray-600" />
-            </Button>
-            <Button variant="ghost" size="sm" className="p-2">
+            </Button> */}
+            {/* <Button variant="ghost" size="sm" className="p-2">
               <Video className="w-5 h-5 text-gray-600" />
-            </Button>
+            </Button> */}
             <div className="relative" ref={menuRef}>
               <Button
                 variant="ghost"
@@ -168,14 +193,11 @@ const MessageContainer = () => {
                   <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
                     Contact info
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
-                    Select messages
-                  </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
-                    Mute notifications
-                  </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
-                    Clear messages
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                    onClick={handleViewProfile}
+                  >
+                    View Profile
                   </button>
                   <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50">
                     Delete chat
@@ -188,7 +210,7 @@ const MessageContainer = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 flex flex-col h-20 border border-primary bg-gray-50 relative">
+      <div className="flex-1 flex flex-col h-screen  bg-gray-50 relative">
         {/* Background Pattern */}
         <div
           className="absolute inset-0 opacity-5"
@@ -201,6 +223,7 @@ const MessageContainer = () => {
         <TypingIndicator />
         <MessageInput />
       </div>
+      {/* {openProfilePanel && } */}
     </div>
   );
 };
