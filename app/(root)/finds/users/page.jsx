@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Card, CardContent } from "@components/ui/card";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Card } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 import {
@@ -14,95 +17,29 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Badge } from "@components/ui/badge";
 import { Search, Filter, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { fetchAllUsers } from "@lib/actions/user.prisma";
+import { useSession } from "next-auth/react";
+// import { departments } from "@constants/departments";
+import Image from "next/image";
+import { departments } from "@constants/arrays";
 import { useScrollPosition } from "hooks/use-scroll-position";
 
-// Mock data based on your schema
-const mockUsers = [
-  {
-    id: 1,
-    username: "john_doe",
-    name: "John Doe",
-    displayName: "Johnny",
-    picture: "/placeholder.svg?height=40&width=40",
-    bio: "Computer Science student passionate about AI",
-    department: { name: "Computer Science", initial: "CS" },
-    level: { name: "300 Level" },
-    isOnline: true,
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    username: "jane_smith",
-    name: "Jane Smith",
-    displayName: "Jane",
-    picture: "/placeholder.svg?height=40&width=40",
-    bio: "Engineering student and tech enthusiast",
-    department: { name: "Electrical Engineering", initial: "EE" },
-    level: { name: "400 Level" },
-    isOnline: false,
-    createdAt: "2024-02-20",
-  },
-  {
-    id: 3,
-    username: "mike_wilson",
-    name: "Mike Wilson",
-    displayName: "Mike",
-    picture: "/placeholder.svg?height=40&width=40",
-    bio: "Mathematics major, love solving complex problems",
-    department: { name: "Mathematics", initial: "MATH" },
-    level: { name: "200 Level" },
-    isOnline: true,
-    createdAt: "2024-03-10",
-  },
-  {
-    id: 4,
-    username: "sarah_johnson",
-    name: "Sarah Johnson",
-    displayName: "Sarah",
-    picture: "/placeholder.svg?height=40&width=40",
-    bio: "Business Administration student and entrepreneur",
-    department: { name: "Business Administration", initial: "BA" },
-    level: { name: "300 Level" },
-    isOnline: false,
-    createdAt: "2024-01-25",
-  },
-  {
-    id: 5,
-    username: "alex_brown",
-    name: "Alex Brown",
-    displayName: "Alex",
-    picture: "/placeholder.svg?height=40&width=40",
-    bio: "Physics student researching quantum mechanics",
-    department: { name: "Physics", initial: "PHY" },
-    level: { name: "400 Level" },
-    isOnline: true,
-    createdAt: "2024-02-05",
-  },
-];
-
-const departments = [
-  "Computer Science",
-  "Electrical Engineering",
-  "Mathematics",
-  "Business Administration",
-  "Physics",
-];
+// 🧪 Replace with real server fetch later
 
 const levels = [
-  "100 Level",
-  "200 Level",
-  "300 Level",
-  "400 Level",
-  "500 Level",
+  { name: "100" },
+  { name: "200" },
+  { name: "300" },
+  { name: "400" },
+  { name: "500" },
+  { name: "600" },
+  { name: "Alumni" },
+  { name: "Others" },
 ];
 
 export default function UsersPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { saveScrollPosition, restoreScrollPosition } =
-    useScrollPosition("users-list");
 
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || ""
@@ -114,13 +51,40 @@ export default function UsersPage() {
     searchParams.get("level") || "All levels"
   );
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const observerRef = useRef(null);
+  const { data: session } = useSession();
+  const currentUserId = Number(session?.user?.id);
 
-  // Restore scroll position on mount
+  const {
+    saveScrollPosition,
+    restoreScrollPosition,
+    savePage,
+    restorePage,
+    clear,
+  } = useScrollPosition("users-page");
+
+  const {
+    data: allUsers = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["allUsers", currentUserId],
+    queryFn: () => fetchAllUsers(currentUserId),
+    enabled: !!currentUserId,
+    // refetchOnWindowFocus: true,
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    // staleTime: Infinity,
+  });
   useEffect(() => {
-    restoreScrollPosition();
-  }, [restoreScrollPosition]);
+    if (isError) {
+      console.error("Error fetching users:");
+    }
+  }, [isError]);
 
-  // Update URL params when filters change
+  // Keep URL in sync
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchQuery) params.set("search", searchQuery);
@@ -130,10 +94,11 @@ export default function UsersPage() {
 
     const newUrl = params.toString() ? `?${params.toString()}` : "";
     router.replace(`/finds/users${newUrl}`, { scroll: false });
-  }, [searchQuery, selectedDepartment, selectedLevel, router]);
+  }, [searchQuery, selectedDepartment, selectedLevel]);
 
+  // Filtered users
   const filteredUsers = useMemo(() => {
-    return mockUsers.filter((user) => {
+    return allUsers.filter((user) => {
       const matchesSearch =
         !searchQuery ||
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -142,19 +107,52 @@ export default function UsersPage() {
 
       const matchesDepartment =
         selectedDepartment === "All departments" ||
-        user.department.name === selectedDepartment;
+        user?.department?.name === selectedDepartment;
 
       const matchesLevel =
-        selectedLevel === "All levels" || user.level.name === selectedLevel;
+        selectedLevel === "All levels" || user?.level?.name === selectedLevel;
 
       return matchesSearch && matchesDepartment && matchesLevel;
     });
-  }, [searchQuery, selectedDepartment, selectedLevel]);
+  }, [allUsers, searchQuery, selectedDepartment, selectedLevel]);
 
-  const handleUserClick = (userId) => {
+  // Paginate displayed users (only when not searching)
+  const displayedUsers = useMemo(() => {
+    return searchQuery
+      ? filteredUsers
+      : filteredUsers.slice(0, page * pageSize);
+  }, [filteredUsers, page, searchQuery]);
+
+  // Infinite scroll (disabled when searching)
+  useEffect(() => {
+    if (searchQuery) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prev) => prev + 1);
+      }
+    });
+
+    const el = observerRef.current;
+    if (el) observer.observe(el);
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [searchQuery]);
+
+  const handleUserClick = (username) => {
     saveScrollPosition();
-    router.push(`/finds/users/${userId}`);
+    savePage(page);
+    router.push(`/finds/users/${username}`);
   };
+
+  // On mount
+  useEffect(() => {
+    const restoredPage = restorePage();
+    setPage(restoredPage);
+    restoreScrollPosition();
+    clear(); // Clean up after restoring
+  }, []);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -171,7 +169,6 @@ export default function UsersPage() {
             Back to Categories
           </Button>
         </Link>
-
         <div>
           <h1 className="text-2xl font-bold">Find Users</h1>
           <p className="text-muted-foreground">
@@ -180,10 +177,10 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Search and Filters */}
+      {/* Search + Filters */}
       <div className="space-y-4 mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search users by name, username, or bio..."
             value={searchQuery}
@@ -216,7 +213,7 @@ export default function UsersPage() {
                 Department
               </label>
               <Select
-                value={selectedDepartment}
+                value={selectedDepartment.name}
                 onValueChange={setSelectedDepartment}
               >
                 <SelectTrigger>
@@ -227,8 +224,8 @@ export default function UsersPage() {
                     All departments
                   </SelectItem>
                   {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
+                    <SelectItem key={dept.initial} value={dept.name}>
+                      {dept.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -236,15 +233,18 @@ export default function UsersPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Level</label>
-              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+              <Select
+                value={selectedLevel.name}
+                onValueChange={setSelectedLevel}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All levels" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="All levels">All levels</SelectItem>
                   {levels.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level}
+                    <SelectItem key={level.name} value={level.name}>
+                      {level.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -256,73 +256,53 @@ export default function UsersPage() {
 
       {/* Results */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}{" "}
-            found
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}{" "}
+          found
+        </p>
 
-        {filteredUsers.map((user) => (
-          <Card
+        {displayedUsers.map((user) => (
+          // <Card
+          //   key={user.id}
+          //   className="hover:shadow-md transition cursor-pointer p-4"
+          //   onClick={() => handleUserClick(user.username)}
+          // >
+          <div
+            className="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-lg"
             key={user.id}
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => handleUserClick(user.id)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage
-                      src={user.picture || "/placeholder.svg"}
-                      alt={user.name}
-                    />
-                    <AvatarFallback>
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  {user.isOnline && (
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold truncate">
-                      {user.displayName || user.name}
-                    </h3>
-                    <span className="text-sm text-muted-foreground">
-                      @{user.username}
-                    </span>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                    {user.bio}
-                  </p>
-
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="secondary" className="text-xs">
-                      {user.department.initial}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {user.level.name}
-                    </Badge>
-                    {user.isOnline && (
-                      <Badge variant="default" className="text-xs bg-green-500">
-                        Online
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+            <button
+              onClick={() => handleUserClick(user.username)}
+              className="flex-shrink-0"
+            >
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <Image
+                  src={user.picture || "/images/noProfile.png"}
+                  alt={user.name}
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </CardContent>
-          </Card>
+            </button>
+
+            <div className="flex-1 min-w-0">
+              <button
+                onClick={() => handleUserClick(user.username)}
+                className="text-left w-full"
+              >
+                <h4 className="font-semibold text-sm truncate">{user.name}</h4>
+                <p className="text-xs text-gray-600 truncate">
+                  {user.department?.initial}{" "}
+                  {user.level?.name && `(${user.level.name}lvl)`}
+                </p>
+              </button>
+            </div>
+          </div>
+          // </Card>
         ))}
 
-        {filteredUsers.length === 0 && (
+        {!displayedUsers.length && !isLoading && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               No users found matching your criteria.
@@ -332,6 +312,8 @@ export default function UsersPage() {
             </Button>
           </div>
         )}
+
+        {!searchQuery && <div ref={observerRef} className="h-8" />}
       </div>
     </div>
   );

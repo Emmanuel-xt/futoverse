@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserCard } from "../user-card";
+import { UserCard } from "../UserCard";
 import { fetchPendingFriendRequests } from "@lib/actions/connect.prisma";
 import { Skeleton } from "@components/ui/skeleton"; // Replace with your Skeleton component
 

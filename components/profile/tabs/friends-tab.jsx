@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { UserCard } from "../user-card";
+import { UserCard } from "../UserCard";
 import { fetchUsersFriendList } from "@lib/actions/connect.prisma";
 import { Skeleton } from "@components/ui/skeleton";
 

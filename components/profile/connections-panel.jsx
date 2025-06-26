@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X, Users } from "lucide-react";
-import { UserCard } from "./user-card";
+import { UserCard } from "./UserCard";
 import { fetchUsersFriendList } from "@lib/actions/connect.prisma";
 
 // interface ConnectionsPanelProps {

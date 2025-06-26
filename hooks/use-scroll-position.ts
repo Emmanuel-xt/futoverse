@@ -1,36 +1,43 @@
-"use client"
-
-import { useCallback } from "react"
+import { useCallback } from "react";
 
 export function useScrollPosition(key: string) {
   const saveScrollPosition = useCallback(() => {
     if (typeof window !== "undefined") {
-      const scrollPosition = window.scrollY
-      sessionStorage.setItem(`scroll-${key}`, scrollPosition.toString())
+      const scrollPosition = window.scrollY;
+      sessionStorage.setItem(`scroll-${key}`, scrollPosition.toString());
     }
-  }, [key])
+  }, [key]);
 
   const restoreScrollPosition = useCallback(() => {
     if (typeof window !== "undefined") {
-      const savedPosition = sessionStorage.getItem(`scroll-${key}`)
+      const savedPosition = sessionStorage.getItem(`scroll-${key}`);
       if (savedPosition) {
-        // Use setTimeout to ensure DOM is ready
         setTimeout(() => {
-          window.scrollTo(0, Number.parseInt(savedPosition, 10))
-        }, 100)
+          window.scrollTo(0, Number.parseInt(savedPosition, 10));
+        }, 100);
       }
     }
-  }, [key])
+  }, [key]);
 
-  const clearScrollPosition = useCallback(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem(`scroll-${key}`)
-    }
-  }, [key])
+  const savePage = useCallback((page: number) => {
+    sessionStorage.setItem(`page-${key}`, page.toString());
+  }, [key]);
+
+  const restorePage = useCallback(() => {
+    const page = sessionStorage.getItem(`page-${key}`);
+    return page ? parseInt(page, 10) : 1;
+  }, [key]);
+
+  const clear = useCallback(() => {
+    sessionStorage.removeItem(`scroll-${key}`);
+    sessionStorage.removeItem(`page-${key}`);
+  }, [key]);
 
   return {
     saveScrollPosition,
     restoreScrollPosition,
-    clearScrollPosition,
-  }
+    savePage,
+    restorePage,
+    clear,
+  };
 }
