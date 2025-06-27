@@ -3,8 +3,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Card } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 import {
@@ -14,8 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
-import { Badge } from "@components/ui/badge";
 import { Search, Filter, ArrowLeft } from "lucide-react";
 import { fetchAllUsers } from "@lib/actions/user.prisma";
 import { useSession } from "next-auth/react";
@@ -23,6 +19,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { departments } from "@constants/arrays";
 import { useScrollPosition } from "hooks/use-scroll-position";
+import { Skeleton } from "@components/ui/skeleton";
 
 // 🧪 Replace with real server fetch later
 
@@ -68,7 +65,9 @@ export default function UsersPage() {
   const {
     data: allUsers = [],
     isLoading,
+    isFetching,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["allUsers", currentUserId],
     queryFn: () => fetchAllUsers(currentUserId),
@@ -78,11 +77,6 @@ export default function UsersPage() {
     staleTime: 1000 * 60 * 5, // 5 minutes
     // staleTime: Infinity,
   });
-  useEffect(() => {
-    if (isError) {
-      console.error("Error fetching users:");
-    }
-  }, [isError]);
 
   // Keep URL in sync
   useEffect(() => {
@@ -163,12 +157,6 @@ export default function UsersPage() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="mb-6 space-y-2">
-        <Link href="/finds">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Categories
-          </Button>
-        </Link>
         <div>
           <h1 className="text-2xl font-bold">Find Users</h1>
           <p className="text-muted-foreground">
@@ -261,12 +249,44 @@ export default function UsersPage() {
           found
         </p>
 
+        {isLoading && (
+          <div className="space-y-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 py-3 px-2">
+                <Skeleton className="w-12 h-12 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="w-3/4 h-4" />
+                  <Skeleton className="w-1/2 h-3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {isError && (
+          <div className="text-center py-12 space-y-4">
+            <div className="text-red-600 text-sm font-medium">
+              Failed to load users. Please check your connection and try again.
+            </div>
+            <Button
+              variant="default"
+              onClick={refetch}
+              disabled={isFetching}
+              className="flex items-center gap-2 mx-auto"
+            >
+              {isFetching ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Retrying...
+                </>
+              ) : (
+                "Try Again"
+              )}
+            </Button>
+          </div>
+        )}
+
         {displayedUsers.map((user) => (
-          // <Card
-          //   key={user.id}
-          //   className="hover:shadow-md transition cursor-pointer p-4"
-          //   onClick={() => handleUserClick(user.username)}
-          // >
           <div
             className="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-lg"
             key={user.id}
@@ -299,10 +319,9 @@ export default function UsersPage() {
               </button>
             </div>
           </div>
-          // </Card>
         ))}
 
-        {!displayedUsers.length && !isLoading && (
+        {!displayedUsers.length && !isLoading && !isError && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               No users found matching your criteria.

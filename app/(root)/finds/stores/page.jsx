@@ -17,100 +17,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useScrollPosition } from "hooks/use-scroll-position";
 import Image from "next/image";
-
-// Mock stores data based on your schema
-const mockStores = [
-  {
-    id: 1,
-    name: "Campus Bookstore",
-    description:
-      "Your one-stop shop for textbooks, supplies, and university merchandise",
-    category: "Books & Supplies",
-    image: "/placeholder.svg?height=200&width=300",
-    coverImage: "/placeholder.svg?height=100&width=400",
-    locationDesc: "Main Campus Building, Ground Floor",
-    latitude: 6.5244,
-    longitude: 3.3792,
-    size: 0.002,
-    rating: 4.5,
-    reviewCount: 128,
-    isOpen: true,
-    createdAt: "2024-01-10",
-  },
-  {
-    id: 2,
-    name: "Quick Bites Cafeteria",
-    description: "Fresh meals, snacks, and beverages for busy students",
-    category: "Food & Beverages",
-    image: "/placeholder.svg?height=200&width=300",
-    coverImage: "/placeholder.svg?height=100&width=400",
-    locationDesc: "Student Center, 2nd Floor",
-    latitude: 6.5245,
-    longitude: 3.3793,
-    size: 0.0015,
-    rating: 4.2,
-    reviewCount: 89,
-    isOpen: true,
-    createdAt: "2024-02-15",
-  },
-  {
-    id: 3,
-    name: "Tech Hub Electronics",
-    description: "Laptops, phones, accessories, and tech repair services",
-    category: "Electronics",
-    image: "/placeholder.svg?height=200&width=300",
-    coverImage: "/placeholder.svg?height=100&width=400",
-    locationDesc: "Engineering Block, Room 101",
-    latitude: 6.5246,
-    longitude: 3.3794,
-    size: 0.001,
-    rating: 4.7,
-    reviewCount: 156,
-    isOpen: false,
-    createdAt: "2024-01-20",
-  },
-  {
-    id: 4,
-    name: "Fashion Forward",
-    description: "Trendy clothing, shoes, and accessories for students",
-    category: "Fashion & Clothing",
-    image: "/placeholder.svg?height=200&width=300",
-    coverImage: "/placeholder.svg?height=100&width=400",
-    locationDesc: "Shopping Complex, Unit 5",
-    latitude: 6.5247,
-    longitude: 3.3795,
-    size: 0.0012,
-    rating: 4.0,
-    reviewCount: 67,
-    isOpen: true,
-    createdAt: "2024-03-01",
-  },
-  {
-    id: 5,
-    name: "Study Essentials",
-    description: "Stationery, printing services, and academic materials",
-    category: "Books & Supplies",
-    image: "/placeholder.svg?height=200&width=300",
-    coverImage: "/placeholder.svg?height=100&width=400",
-    locationDesc: "Library Building, Ground Floor",
-    latitude: 6.5248,
-    longitude: 3.3796,
-    size: 0.0008,
-    rating: 4.3,
-    reviewCount: 94,
-    isOpen: true,
-    createdAt: "2024-02-28",
-  },
-];
-
-const categories = [
-  "Books & Supplies",
-  "Food & Beverages",
-  "Electronics",
-  "Fashion & Clothing",
-  "Health & Beauty",
-  "Sports & Recreation",
-];
+import { shopCategories } from "@constants/arrays";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllShops } from "@lib/actions/shops.prisma";
+import { Skeleton } from "@components/ui/skeleton";
 
 export default function StoresPage() {
   const router = useRouter();
@@ -131,6 +41,19 @@ export default function StoresPage() {
     restoreScrollPosition();
   }, [restoreScrollPosition]);
 
+  const {
+    data: stores = [],
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["allStores"],
+    queryFn: () => fetchAllShops(),
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
   // Update URL params when filters change
   useEffect(() => {
     const params = new URLSearchParams();
@@ -143,7 +66,9 @@ export default function StoresPage() {
   }, [searchQuery, selectedCategory, router]);
 
   const filteredStores = useMemo(() => {
-    return mockStores.filter((store) => {
+    if (isLoading || !stores.length) return [];
+
+    return stores.filter((store) => {
       const matchesSearch =
         !searchQuery ||
         store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -157,11 +82,11 @@ export default function StoresPage() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, stores]);
 
   const handleStoreClick = (storeId) => {
     saveScrollPosition();
-    router.push(`/finds/stores/${storeId}`);
+    router.push(`/shops/${storeId}`);
   };
 
   const clearFilters = () => {
@@ -187,13 +112,6 @@ export default function StoresPage() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="mb-6 space-y-2">
-        <Link href="/finds">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Categories
-          </Button>
-        </Link>
-
         <div>
           <h1 className="text-2xl font-bold">Find Stores</h1>
           <p className="text-muted-foreground">
@@ -243,7 +161,7 @@ export default function StoresPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="All categories">All categories</SelectItem>
-                  {categories.map((category) => (
+                  {shopCategories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
@@ -264,65 +182,108 @@ export default function StoresPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredStores.map((store) => (
-            <Card
-              key={store.id}
-              className="hover:shadow-lg transition-all duration-200 cursor-pointer group"
-              onClick={() => handleStoreClick(store.id)}
-            >
-              <div className="relative">
-                <Image
-                  src={store.image || "/placeholder.svg"}
-                  alt={store.name}
-                  width={300}
-                  height={200}
-                  className="w-full h-48 object-cover rounded-t-lg group-hover:scale-105 transition-transform duration-200"
-                />
-                <div className="absolute top-2 right-2">
-                  <Badge
-                    variant={store.isOpen ? "default" : "secondary"}
-                    className={store.isOpen ? "bg-green-500" : ""}
-                  >
-                    {store.isOpen ? "Open" : "Closed"}
-                  </Badge>
-                </div>
-              </div>
-
-              <CardContent className="p-4">
+        {isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <Card key={idx} className="p-4 space-y-4 animate-pulse">
+                <div className="bg-muted rounded-lg h-48 w-full" />
                 <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <h3 className="font-semibold text-lg line-clamp-1">
-                      {store.name}
-                    </h3>
-                  </div>
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-3 w-1/3" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
-                  <div className="flex items-center gap-1">
-                    {renderStars(store.rating)}
-                    <span className="text-sm text-muted-foreground ml-1">
-                      {store.rating} ({store.reviewCount})
-                    </span>
-                  </div>
+        {isError && (
+          <div className="text-center py-12 space-y-4">
+            <div className="text-red-600 text-sm font-medium">
+              Failed to load stores. Please check your connection and try again.
+            </div>
+            <Button
+              variant="default"
+              onClick={refetch}
+              disabled={isFetching}
+              className="flex items-center gap-2 mx-auto"
+            >
+              {isFetching ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Retrying...
+                </>
+              ) : (
+                "Try Again"
+              )}
+            </Button>
+          </div>
+        )}
 
-                  <Badge variant="outline" className="text-xs">
-                    {store.category}
-                  </Badge>
-
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {store.description}
-                  </p>
-
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="w-3 h-3" />
-                    <span className="line-clamp-1">{store.locationDesc}</span>
+        {!isLoading && !isError && filteredStores.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredStores.map((store) => (
+              <Card
+                key={store.id}
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                onClick={() => handleStoreClick(store.name)}
+              >
+                <div className="relative">
+                  <Image
+                    src={store.image || "/images/noStore.png"}
+                    alt={store.name}
+                    width={300}
+                    height={200}
+                    className="w-full h-48 object-contain rounded-t-lg group-hover:scale-105 transition-transform duration-200"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <Badge
+                      variant={store.isOpen ? "default" : "secondary"}
+                      className={store.isOpen ? "bg-green-500" : ""}
+                    >
+                      {store.isOpen ? "Open" : "Closed"}
+                    </Badge>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
-        {filteredStores.length === 0 && (
+                <CardContent className="p-4">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <h3 className="font-semibold text-lg line-clamp-1">
+                        {store.name}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {renderStars(store.rating)}
+                      <span className="text-sm text-muted-foreground ml-1">
+                        {store.rating} ({store.reviewCount})
+                      </span>
+                    </div>
+
+                    <Badge variant="outline" className="text-xs">
+                      {store.category}
+                    </Badge>
+
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {store.description}
+                    </p>
+
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin className="w-3 h-3" />
+                      <span className="line-clamp-1">
+                        {store?.locationDesc}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {!isLoading && !isError && filteredStores.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               No stores found matching your criteria.
