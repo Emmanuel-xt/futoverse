@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import ButtomNav from "@components/ButtomNav"; // Assuming you have this
 import Link from "next/link";
 import Image from "next/image";
-// import InstallPWAButton from "@components/InstallPWAButton";
 import { useSession } from "next-auth/react";
 import Modal from "@components/modals/Modal";
+import { migrateAuthorId } from "@lib/actions/posts.prisma";
 
 const media = [
   {
@@ -49,7 +48,12 @@ const page = () => {
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <Image src={"/icons/logo.png"} width={20} height={20} alt="logo" />
-          <h6 className="text-primary text-lg font-bold">FUTO-VERSE</h6>
+          <h6
+            className="text-primary text-lg font-bold"
+            onClick={() => migrateAuthorId()}
+          >
+            FUTO-VERSE
+          </h6>
         </div>
 
         {!session?.user ? (
