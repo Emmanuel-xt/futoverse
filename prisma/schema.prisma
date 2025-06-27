@@ -22,15 +22,11 @@ model User {
   gender             String?
   createdAt          DateTime             @default(now())
   updatedAt          DateTime?            @updatedAt
-  displayName        String?
-  isOnline           Boolean              @default(false)
   lastSeen           DateTime             @default(now())
-  comments           Comment[]
   receivedRequests   FriendRequest[]      @relation("ReceivedRequests")
   sentRequests       FriendRequest[]      @relation("SentRequests")
   messages           Message[]
   orders             Order[]
-  posts              Post[]
   shops              Shop[]
   shopItem           ShopItem[]
   department         Department?          @relation(fields: [departmentId], references: [id])
@@ -43,8 +39,114 @@ model User {
   friendOf           User[]               @relation("Friendship")
   stories            Story[] // Stories created by the user
   storyViews         StoryView[] // Stories viewed by the user
+  posts              Post[]
+  comments           Comment[]
+  likes              Like[]
+  views              View[]
 
   @@map("User")
+}
+
+model Post {
+  id         String      @id @default(cuid())
+  title      String?
+  content    String
+  media      PostMedia[] // <-- multiple media per post
+  creatorId  Int // Still using Int because User.id is Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  isApproved Boolean     @default(false)
+  isPinned   Boolean     @default(false)
+
+  creator  User      @relation(fields: [creatorId], references: [id])
+  comments Comment[]
+  likes    Like[]
+  views    View[]
+
+  poll   Poll?   @relation(fields: [pollId], references: [id])
+  pollId String? @unique
+
+  @@index([creatorId])
+  @@index([pollId])
+}
+
+model PostMedia {
+  id        String    @id @default(cuid())
+  postId    String
+  url       String // link to Cloudinary or your storage
+  type      MediaType
+  createdAt DateTime  @default(now())
+
+  post Post @relation(fields: [postId], references: [id])
+
+  @@index([postId])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
+
+model Comment {
+  id              String    @id @default(cuid())
+  content         String
+  creatorId       Int
+  creator         User      @relation(fields: [creatorId], references: [id])
+  postId          String
+  post            Post      @relation(fields: [postId], references: [id])
+  createdAt       DateTime  @default(now())
+  parentCommentId String?
+  parentComment   Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         Comment[] @relation("CommentReplies")
+
+  @@index([creatorId])
+  @@index([postId])
+  @@index([parentCommentId])
+}
+
+model Like {
+  id     String @id @default(cuid())
+  userId Int
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+model View {
+  id       String   @id @default(cuid())
+  postId   String
+  userId   Int?
+  viewedAt DateTime @default(now())
+
+  post Post  @relation(fields: [postId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([postId])
+}
+
+model Poll {
+  id       String       @id @default(cuid())
+  question String
+  options  PollOption[]
+
+  post Post?
+}
+
+model PollOption {
+  id     String @id @default(cuid())
+  pollId String
+  text   String
+  votes  Int    @default(0)
+
+  poll Poll @relation(fields: [pollId], references: [id])
 }
 
 model Message {
@@ -126,31 +228,6 @@ model FriendRequest {
   sender     User     @relation("SentRequests", fields: [senderId], references: [id])
 
   @@unique([senderId, receiverId])
-}
-
-model Post {
-  id        String    @id @default(cuid())
-  authorId  String
-  content   Json?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  media     String?
-  text      String?
-  comments  Comment[]
-  author    User      @relation(fields: [authorId], references: [username], onDelete: Cascade)
-}
-
-model Comment {
-  id              String    @id @default(cuid())
-  text            String
-  postId          String
-  authorId        String
-  parentCommentId String?
-  createdAt       DateTime  @default(now())
-  author          User      @relation(fields: [authorId], references: [username], onDelete: Cascade)
-  parentComment   Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
-  replies         Comment[] @relation("CommentReplies")
-  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Shop {

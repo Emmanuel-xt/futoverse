@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-// import { getServerSession } from "next-auth/next";
 import { notFound } from "next/navigation";
 import { ProfileHeader } from "@components/profile/profile-header";
 import { ProfileTabs } from "@components/profile/profile-tabs";
@@ -12,10 +11,6 @@ import {
 } from "@lib/actions/connect.prisma";
 import { auth } from "auth";
 import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
-
-// interface ProfilePageProps {
-//   params: { id: string }
-// }
 
 async function getProfileData(username, currentUserId) {
   const user = await fetchUserByUsername(username);

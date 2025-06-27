@@ -5,20 +5,20 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Camera, Loader2, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@components/ui/button";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
+import { Textarea } from "@components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { updateProductDetails } from "@/lib/actions/product.prisma";
+} from "@components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import { Separator } from "@components/ui/separator";
+import { updateProductDetails } from "@lib/actions/product.prisma";
 import { DeleteProductDialog } from "./delete-product-dialog";
 
 const categories = [

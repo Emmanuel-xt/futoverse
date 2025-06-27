@@ -1,9 +1,6 @@
-// Server Component - handles initial rendering, SEO, and data prefetching
 import { Suspense } from "react";
 import { fetchAllShops } from "@lib/actions/shops.prisma";
 import { shopCategories } from "@constants/arrays";
-// import StoresPageClient from "./stores-page-client"
-// import StoresPageSkeleton from "./stores-page-skeleton"
 import {
   HydrationBoundary,
   QueryClient,
