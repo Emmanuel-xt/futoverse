@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import {
@@ -12,8 +10,8 @@ import {
   BookOpen,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
+// Static data
 const categories = [
   {
     id: "users",
@@ -65,13 +63,14 @@ const categories = [
   },
 ];
 
-export default function FindsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+// Server-side component
+export default async function FindsPage({ searchParams }) {
+  const query = searchParams?.search?.toLowerCase?.() || "";
 
   const filteredCategories = categories.filter(
     (category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchQuery.toLowerCase())
+      category.name.toLowerCase().includes(query) ||
+      category.description.toLowerCase().includes(query)
   );
 
   return (
@@ -81,16 +80,6 @@ export default function FindsPage() {
         <p className="text-muted-foreground mb-6">
           Search for users, stores, products, events, and more
         </p>
-
-        <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search categories..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
