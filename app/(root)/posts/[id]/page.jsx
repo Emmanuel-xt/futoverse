@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 // import { prisma } from "@lib/prisma"
-import { PostCard } from "@components/post-card";
+import { PostCard } from "@components/post/post-card";
 import prisma from "@prisma/prisma";
 
 export async function generateMetadata({ params }) {

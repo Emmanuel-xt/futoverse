@@ -109,7 +109,7 @@ export async function createPost(data: {
                 title: data.title,
                 content: data.content,
                 creatorId: data.creatorId,
-                isApproved: false, // Requires approval
+                isApproved: true, // Requires approval
                 media: data.media
                     ? {
                         create: data.media,
