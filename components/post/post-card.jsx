@@ -8,6 +8,9 @@ import {
   Share2,
   Eye,
   MoreHorizontal,
+  Edit2,
+  Trash2,
+  Flag,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@components/ui/card";
 import { Button } from "@components/ui/button";
@@ -18,12 +21,23 @@ import { MediaCarousel } from "./media-carousel";
 import { CommentSection } from "./comment-section";
 import { ShareDialog } from "./share-dialog";
 import { cn } from "@lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
+import { EditPostDialog } from "./edit-post-dialog";
+import { DeletePostDialog } from "./delete-post-dialog.jsx";
 
 export function PostCard({ post, userId }) {
   const [showComments, setShowComments] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const likeMutation = useLikeMutation(userId);
   const trackViewMutation = useTrackView();
@@ -92,9 +106,35 @@ export function PostCard({ post, userId }) {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {userId === post.creator.id && (
+                <>
+                  <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Edit post
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete post
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <DropdownMenuItem>
+                <Flag className="h-4 w-4 mr-2" />
+                Report post
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
 
@@ -173,6 +213,20 @@ export function PostCard({ post, userId }) {
         open={showShareDialog}
         onOpenChange={setShowShareDialog}
         post={post}
+      />
+
+      <EditPostDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        post={post}
+        userId={userId}
+      />
+
+      <DeletePostDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        post={post}
+        userId={userId}
       />
     </Card>
   );

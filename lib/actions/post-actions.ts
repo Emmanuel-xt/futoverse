@@ -263,3 +263,169 @@ export async function createComment(data: {
         throw new Error("Failed to create comment")
     }
 }
+
+export async function updatePost(
+    postId: string,
+    data: {
+        title?: string
+        content: string
+        media?: { url: string; type: "IMAGE" | "VIDEO" | "AUDIO" | "DOCUMENT" }[]
+    },
+    userId: number,
+) {
+    try {
+        // Verify ownership
+        const existingPost = await prisma.post.findUnique({
+            where: { id: postId },
+            select: { creatorId: true },
+        })
+
+        if (!existingPost || existingPost.creatorId !== userId) {
+            throw new Error("Unauthorized to edit this post")
+        }
+
+        // Delete existing media
+        await prisma.postMedia.deleteMany({
+            where: { postId },
+        })
+
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                title: data.title,
+                content: data.content,
+                media: data.media
+                    ? {
+                        create: data.media,
+                    }
+                    : undefined,
+                updatedAt: new Date(),
+            },
+            include: {
+                creator: {
+                    select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        picture: true,
+                    },
+                },
+                media: true,
+                _count: {
+                    select: {
+                        likes: true,
+                        comments: true,
+                        views: true,
+                    },
+                },
+            },
+        })
+
+        revalidatePath("/")
+        return updatedPost
+    } catch (error) {
+        console.error("Error updating post:", error)
+        throw new Error("Failed to update post")
+    }
+}
+
+export async function deletePost(postId: string, userId: number) {
+    try {
+        // Verify ownership
+        const existingPost = await prisma.post.findUnique({
+            where: { id: postId },
+            select: { creatorId: true },
+        })
+
+        if (!existingPost || existingPost.creatorId !== userId) {
+            throw new Error("Unauthorized to delete this post")
+        }
+
+        await prisma.post.delete({
+            where: { id: postId },
+        })
+
+        revalidatePath("/")
+        return { success: true }
+    } catch (error) {
+        console.error("Error deleting post:", error)
+        throw new Error("Failed to delete post")
+    }
+}
+
+export async function updateComment(commentId: string, content: string, userId: number) {
+    try {
+        // Verify ownership
+        const existingComment = await prisma.comment.findUnique({
+            where: { id: commentId },
+            select: { creatorId: true },
+        })
+
+        if (!existingComment || existingComment.creatorId !== userId) {
+            throw new Error("Unauthorized to edit this comment")
+        }
+
+        const updatedComment = await prisma.comment.update({
+            where: { id: commentId },
+            data: { content },
+            include: {
+                creator: {
+                    select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        picture: true,
+                    },
+                },
+            },
+        })
+
+        revalidatePath("/")
+        return updatedComment
+    } catch (error) {
+        console.error("Error updating comment:", error)
+        throw new Error("Failed to update comment")
+    }
+}
+
+export async function deleteComment(commentId: string, userId: number) {
+    try {
+        // Verify ownership
+        const existingComment = await prisma.comment.findUnique({
+            where: { id: commentId },
+            select: { creatorId: true },
+        })
+
+        if (!existingComment || existingComment.creatorId !== userId) {
+            throw new Error("Unauthorized to delete this comment")
+        }
+
+        await prisma.comment.delete({
+            where: { id: commentId },
+        })
+
+        revalidatePath("/")
+        return { success: true }
+    } catch (error) {
+        console.error("Error deleting comment:", error)
+        throw new Error("Failed to delete comment")
+    }
+}
+
+export async function checkUserCanPost(userId: number) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                // Add any additional fields that determine posting rights
+                // For now, we'll assume all users can post if they exist
+            },
+        })
+
+        return !!user
+    } catch (error) {
+        console.error("Error checking user permissions:", error)
+        return false
+    }
+}

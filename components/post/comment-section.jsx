@@ -2,20 +2,75 @@
 
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { Send, MessageCircle } from "lucide-react";
+import {
+  Send,
+  MessageCircle,
+  Edit2,
+  Trash2,
+  MoreHorizontal,
+} from "lucide-react";
 import { Button } from "@components/ui/button";
 import { Textarea } from "@components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { useComments, useCreateComment } from "hooks/use-comments";
 import { Skeleton } from "@components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
+// import { useUpdateComment, useDeleteComment } from "hooks/use-post-mutations";
+import { toast } from "sonner";
+import { useDeleteComment, useUpdateComment } from "hooks/use-post-mutation";
 
 export function CommentSection({ postId, userId }) {
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyContent, setReplyContent] = useState("");
+  const [editingComment, setEditingComment] = useState(null);
+  const [editContent, setEditContent] = useState("");
 
   const { data: comments, isLoading, error } = useComments(postId);
   const createCommentMutation = useCreateComment();
+  const updateCommentMutation = useUpdateComment();
+  const deleteCommentMutation = useDeleteComment();
+
+  const handleEditComment = (commentId, currentContent) => {
+    setEditingComment(commentId);
+    setEditContent(currentContent);
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    if (!editContent.trim() || !userId) return;
+
+    try {
+      await updateCommentMutation.mutateAsync({
+        commentId,
+        content: editContent.trim(),
+        userId,
+      });
+      setEditingComment(null);
+      setEditContent("");
+      toast.success("Comment updated successfully");
+    } catch (error) {
+      toast.error("Failed to update comment");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!userId) return;
+
+    try {
+      await deleteCommentMutation.mutateAsync({
+        commentId,
+        userId,
+      });
+      toast.success("Comment deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete comment");
+    }
+  };
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -118,17 +173,82 @@ export function CommentSection({ postId, userId }) {
               </Avatar>
               <div className="flex-1 space-y-1">
                 <div className="bg-muted rounded-lg p-3">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <p className="font-semibold text-sm">
-                      {comment.creator.name || comment.creator.username}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(comment.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center space-x-2">
+                      <p className="font-semibold text-sm">
+                        {comment.creator.name || comment.creator.username}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                        })}
+                      </p>
+                    </div>
+                    {userId === comment.creator.id && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                          >
+                            <MoreHorizontal className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleEditComment(comment.id, comment.content)
+                            }
+                          >
+                            <Edit2 className="h-3 w-3 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
-                  <p className="text-sm">{comment.content}</p>
+
+                  {editingComment === comment.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="min-h-[60px] resize-none text-sm"
+                      />
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleUpdateComment(comment.id)}
+                          disabled={
+                            !editContent.trim() ||
+                            updateCommentMutation.isPending
+                          }
+                        >
+                          Update
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingComment(null);
+                            setEditContent("");
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm">{comment.content}</p>
+                  )}
                 </div>
                 <Button
                   variant="ghost"
@@ -196,17 +316,81 @@ export function CommentSection({ postId, userId }) {
                     </Avatar>
                     <div className="flex-1">
                       <div className="bg-muted rounded-lg p-2">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <p className="font-semibold text-xs">
-                            {reply.creator.name || reply.creator.username}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(reply.createdAt), {
-                              addSuffix: true,
-                            })}
-                          </p>
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center space-x-2">
+                            <p className="font-semibold text-xs">
+                              {reply.creator.name || reply.creator.username}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(reply.createdAt), {
+                                addSuffix: true,
+                              })}
+                            </p>
+                          </div>
+                          {userId === reply.creator.id && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                >
+                                  <MoreHorizontal className="h-3 w-3" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleEditComment(reply.id, reply.content)
+                                  }
+                                >
+                                  <Edit2 className="h-3 w-3 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleDeleteComment(reply.id)}
+                                  className="text-destructive"
+                                >
+                                  <Trash2 className="h-3 w-3 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
                         </div>
-                        <p className="text-xs">{reply.content}</p>
+                        {editingComment === reply.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              className="min-h-[60px] resize-none text-sm"
+                            />
+                            <div className="flex space-x-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleUpdateComment(reply.id)}
+                                disabled={
+                                  !editContent.trim() ||
+                                  updateCommentMutation.isPending
+                                }
+                              >
+                                Update
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingComment(null);
+                                  setEditContent("");
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-xs">{reply.content}</p>
+                        )}
                       </div>
                     </div>
                   </div>

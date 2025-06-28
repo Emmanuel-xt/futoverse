@@ -3,11 +3,18 @@ import { PostFeed } from "@components/post/post-feed";
 import { PostSkeleton } from "@components/post/post-skeleton";
 import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";
+import { WhatsHappening } from "@components/post/whats-happening";
 
 export default async function HomePage() {
   // Pre-fetch initial posts for SSR
   const session = await auth();
-  const CURRENT_USER_ID = session?.user?.id || null;
+  const CURRENT_USER = {
+    id: Number(session?.user?.id) || null,
+    name: session?.user?.name || "Guest",
+    picture: session?.user?.picture || null,
+    canPost: true,
+  };
+  const CURRENT_USER_ID = Number(session?.user?.id) || null;
   const initialData = await getPosts(undefined, 10, CURRENT_USER_ID);
 
   return (
@@ -18,6 +25,13 @@ export default async function HomePage() {
           Stay connected with your campus community
         </p>
       </div>
+
+      <WhatsHappening
+        userId={CURRENT_USER.id}
+        userCanPost={CURRENT_USER.canPost}
+        userName={CURRENT_USER.name}
+        userPicture={CURRENT_USER.picture}
+      />
 
       <Suspense
         fallback={
