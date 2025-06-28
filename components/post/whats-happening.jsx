@@ -52,7 +52,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
               <Video className="h-4 w-4" />
               <span>Video</span>
             </Button>
-
+            {/* 
             <Button
               variant="ghost"
               size="sm"
@@ -61,9 +61,9 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
             >
               <Mic className="h-4 w-4" />
               <span>Audio</span>
-            </Button>
+            </Button> */}
 
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               className="flex items-center space-x-2 text-purple-600 hover:bg-purple-50"
@@ -71,7 +71,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
             >
               <FileText className="h-4 w-4" />
               <span>Document</span>
-            </Button>
+            </Button> */}
           </div>
         </CardContent>
       </Card>

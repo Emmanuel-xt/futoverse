@@ -33,6 +33,7 @@ export function CreatePostDialog({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [media, setMedia] = useState([]);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   const createPostMutation = useCreatePost();
@@ -81,17 +82,36 @@ export function CreatePostDialog({
     }
 
     try {
-      // In a real app, you'd upload files to your storage service first
-      // For now, we'll use placeholder URLs
-      const mediaData = media.map((item) => ({
-        url: item.url, // In production, replace with uploaded URL
-        type: item.type,
-      }));
+      setLoading(true);
+
+      const uploadedMedia = [];
+
+      for (const item of media) {
+        if (!item.file) continue;
+
+        const base64 = await convertToBase64(item.file);
+
+        const response = await fetch("/api/cloudinary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64 }),
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.url) {
+          throw new Error("Media upload failed");
+        }
+
+        uploadedMedia.push({
+          url: data.url,
+          type: item.type,
+        });
+      }
 
       await createPostMutation.mutateAsync({
         title: title.trim() || undefined,
         content: content.trim(),
-        media: mediaData.length > 0 ? mediaData : undefined,
+        media: uploadedMedia.length > 0 ? uploadedMedia : undefined,
         creatorId: userId,
       });
 
@@ -107,7 +127,18 @@ export function CreatePostDialog({
       toast.error(
         error instanceof Error ? error.message : "Failed to create post"
       );
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   const handleClose = () => {
@@ -244,7 +275,7 @@ export function CreatePostDialog({
                 <span>Photos/videos</span>
               </Button>
 
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="flex items-center space-x-2 text-blue-600 hover:bg-blue-50"
@@ -252,9 +283,9 @@ export function CreatePostDialog({
               >
                 <span>👥</span>
                 <span>Tag people</span>
-              </Button>
+              </Button> */}
 
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="flex items-center space-x-2 text-red-600 hover:bg-red-50"
@@ -262,9 +293,9 @@ export function CreatePostDialog({
               >
                 <span>📍</span>
                 <span>Location</span>
-              </Button>
+              </Button> */}
 
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="flex items-center space-x-2 text-yellow-600 hover:bg-yellow-50"
@@ -272,7 +303,7 @@ export function CreatePostDialog({
               >
                 <span>😊</span>
                 <span>Feeling</span>
-              </Button>
+              </Button> */}
             </div>
           </div>
 
