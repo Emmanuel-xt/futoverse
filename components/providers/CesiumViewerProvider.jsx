@@ -71,11 +71,11 @@ export const CesiumViewerProvider = ({ children }) => {
         // cesiumViewer.imageryLayers.addImageryProvider(imageryProvider);
 
         // Add your custom Cesium Ion imagery by assetId
-        // cesiumViewer.imageryLayers.addImageryProvider(
-        //   await IonImageryProvider.fromAssetId(4) // or replace 4 with your specific assetId
-        // );
+        cesiumViewer.imageryLayers.addImageryProvider(
+          await IonImageryProvider.fromAssetId(4) // or replace 4 with your specific assetId
+        );
 
-        cesiumViewer.scene.debugShowFramesPerSecond = true;
+        // cesiumViewer.scene.debugShowFramesPerSecond = true;
         // cesiumViewer.scene.globe.maximumScreenSpaceError = 2; increase to reduce quality , for future optimization sake
 
         cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(
