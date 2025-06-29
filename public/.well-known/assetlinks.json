@@ -3,9 +3,9 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.futoverse.app",
+      "package_name": "app.vercel.futo_verse.twa",
       "sha256_cert_fingerprints": [
-        "42:A6:DC:84:08:74:25:E7:4D:7F:8D:C3:36:BC:6C:C6:DD:38:8B:54:A6:5D:AA:DC:06:82:50:96:90:F0:EC:C0"
+        "99:97:6D:70:FC:08:78:69:6B:3C:4B:AF:E3:3D:D9:B3:65:B0:9D:DD:46:12:54:52:A1:30:8C:22:11:98:02:78"
       ]
     }
   }
