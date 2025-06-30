@@ -1,18 +1,22 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { login } from "@lib/actions/user.prisma";
+import {
+  login,
+  getUserByEmail,
+  createUserFromGoogle,
+  getUserById,
+} from "@lib/actions/user-actions";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
-    strategy: "jwt", // Using JWT sessions
+    strategy: "jwt",
   },
   pages: {
     signIn: "/login",
     signUp: "/sign-up",
   },
   providers: [
-    // Google OAuth Provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -24,7 +28,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
       },
     }),
-    // Credentials Provider for email/password login
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -47,23 +50,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Handle Google sign-in
       if (account?.provider === "google") {
         try {
-          // Check if user exists in your database
-          // If not, create a new user with Google profile data
-          // You'll need to implement this logic based on your database structure
+          console.log("Google sign-in initiated");
+          const existingUser = await getUserByEmail(user.email);
 
-          // Example:
-          // const existingUser = await getUserByEmail(user.email)
-          // if (!existingUser) {
-          //   await createUserFromGoogle({
-          //     email: user.email,
-          //     name: user.name,
-          //     image: user.image,
-          //     googleId: account.providerAccountId
-          //   })
-          // }
+          if (!existingUser) {
+            console.log("User doesnt exist at the db");
+            // Create new user from Google profile
+            const newUser = await createUserFromGoogle({
+              email: user.email,
+              name: user.name,
+              picture: user.image,
+              googleId: account.providerAccountId,
+            });
+
+            if (newUser) {
+              // Set user data for JWT
+              user.id = newUser.id.toString();
+              user.username = newUser.username;
+              user.needsOnboarding = newUser.needsOnboarding;
+              user.bio = newUser.bio;
+              user.department = null;
+              user.gender = newUser.gender;
+            }
+          } else {
+            console.log("User already exist at the db");
+            // User exists, set their data
+            user.id = existingUser.id;
+            user.name = existingUser.name;
+            user.email = existingUser.email;
+            user.image = existingUser.picture;
+            user.username = existingUser.username;
+            user.about = existingUser.about;
+            user.department = existingUser.department?.name;
+            user.level = existingUser.level?.name;
+            user.gender = existingUser.gender;
+            user.needsOnboarding = existingUser.needsOnboarding;
+          }
 
           return true;
         } catch (error) {
@@ -72,7 +96,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
-      // Handle credentials sign-in
       if (account?.provider === "credentials") {
         return user ? true : false;
       }
@@ -80,26 +103,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, user, account }) {
-      // Handle initial sign in
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.username = user.username;
         token.email = user.email;
         token.image = user.image || user.picture;
-        token.kingdom = user.kingdom;
-        token.bio = user.bio;
         token.about = user.about;
         token.department = user.department;
-        token.level = user.level;
         token.gender = user.gender;
+        token.needsOnboarding = user.needsOnboarding;
 
-        // Store provider info
         if (account) {
           token.provider = account.provider;
         }
       }
-
       return token;
     },
     async session({ session, token }) {
@@ -109,22 +127,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.email = token.email;
         session.user.image = token.image;
         session.user.username = token.username;
-        session.user.kingdom = token.kingdom;
         session.user.about = token.about;
-        session.user.bio = token.bio;
         session.user.department = token.department;
-        session.user.level = token.level;
         session.user.gender = token.gender;
         session.user.provider = token.provider;
+        session.user.needsOnboarding = token.needsOnboarding;
       }
+
+      console.log("Session data:", session);
 
       return session;
     },
   },
   events: {
     async signIn({ user, account, profile }) {
-      // Log successful sign-ins
-      console.log(`User ${user.email} signed in with ${account.provider}`);
+      console.log(`User ${user.email} signed in with ${account?.provider}`);
     },
   },
   debug: process.env.NODE_ENV === "development",

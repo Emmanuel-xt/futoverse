@@ -25,10 +25,8 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import { Alert, AlertDescription } from "@components/ui/alert";
+import { sendPasswordResetEmail } from "@lib/actions/auth-actions";
 
-/**
- * Forgot password form validation schema
- */
 const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -36,9 +34,6 @@ const forgotPasswordSchema = z.object({
     .email("Please enter a valid email address"),
 });
 
-/**
- * Forgot Password Form with original color scheme
- */
 export default function ForgotPasswordForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -50,24 +45,24 @@ export default function ForgotPasswordForm() {
     },
   });
 
-  /**
-   * Handle password reset request
-   * @param {Object} data - Form data containing email address
-   */
   const onSubmit = async (data) => {
     try {
       setSubmitError("");
 
-      // Simulate API call to send reset email
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const result = await sendPasswordResetEmail(data.email);
 
-      setIsSubmitted(true);
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(
+          result.error || "Failed to send reset email. Please try again."
+        );
+      }
     } catch (error) {
       setSubmitError("Failed to send reset email. Please try again.");
     }
   };
 
-  // Success state
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
@@ -105,7 +100,7 @@ export default function ForgotPasswordForm() {
 
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full bg-transparent"
               onClick={() => {
                 setIsSubmitted(false);
                 form.reset();
@@ -129,7 +124,6 @@ export default function ForgotPasswordForm() {
     );
   }
 
-  // Main form state
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <Card className="w-full max-w-md shadow-lg">
@@ -147,7 +141,6 @@ export default function ForgotPasswordForm() {
         <CardContent className="space-y-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Email Field */}
               <FormField
                 control={form.control}
                 name="email"
@@ -174,14 +167,12 @@ export default function ForgotPasswordForm() {
                 )}
               />
 
-              {/* Submit Error Alert */}
               {submitError && (
                 <Alert variant="destructive">
                   <AlertDescription>{submitError}</AlertDescription>
                 </Alert>
               )}
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full"
@@ -199,7 +190,6 @@ export default function ForgotPasswordForm() {
             </form>
           </Form>
 
-          {/* Back to Login Link */}
           <div className="text-center">
             <Link
               href="/login"

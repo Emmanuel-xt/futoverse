@@ -19,6 +19,7 @@ import { MessagePanel } from "./message-panel";
 import { getConversationByUserId } from "@lib/actions/Chat.prisma";
 import useConversation from "zustand/useConversation";
 import MessageContainer from "@components/chat/messages/MessageContainer";
+import { signOut } from "next-auth/react";
 
 export function ProfileHeader({
   user,
@@ -137,7 +138,10 @@ export function ProfileHeader({
                   3
                 </span>
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full">
+              <button
+                className="p-2 hover:bg-gray-100 rounded-full"
+                onClick={() => signOut()}
+              >
                 <MoreHorizontal size={20} />
               </button>
             </>
