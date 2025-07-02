@@ -52,11 +52,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
-          console.log("Google sign-in initiated");
+          // console.log("Google sign-in initiated");
           const existingUser = await getUserByEmail(user.email);
 
           if (!existingUser) {
-            console.log("User doesnt exist at the db");
+            // console.log("User doesnt exist at the db");
             // Create new user from Google profile
             const newUser = await createUserFromGoogle({
               email: user.email,
@@ -67,7 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
 
             if (newUser) {
-              console.log("New User created  at the db");
+              // console.log("New User created  at the db");
               // Set user data for JWT
               user.id = newUser.id.toString();
               user.username = newUser.username;
@@ -77,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               user.gender = newUser.gender;
             }
           } else {
-            console.log("User already exist at the db");
+            // console.log("User already exist at the db");
             // User exists, set their data
             user.id = existingUser.id;
             user.name = existingUser.name;
@@ -93,7 +93,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           return true;
         } catch (error) {
-          console.error("Google sign-in error:", error);
+          // console.error("Google sign-in error:", error);
           return false;
         }
       }
@@ -151,7 +151,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.needsOnboarding = token.needsOnboarding;
       }
 
-      console.log("Session data:", session);
+      // console.log("Session data:", session);
       return session;
     },
   },
