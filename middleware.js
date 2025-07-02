@@ -30,6 +30,7 @@ export default auth((req) => {
     req.auth?.user?.needsOnboarding &&
     nextUrl.pathname !== "/onboarding"
   ) {
+    console.log("User needs onboarding, redirecting to /onboarding");
     return NextResponse.redirect(new URL("/onboarding", nextUrl));
   }
 

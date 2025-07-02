@@ -34,7 +34,7 @@ import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group";
 import { toast } from "sonner";
 
 const EditProfile = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [user, setUser] = useState({});
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -135,7 +135,21 @@ const EditProfile = () => {
         img: updatedImageUrl,
       });
 
-      if (success) router.push("/profile");
+      if (success) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            name: form.name,
+            about: form.about,
+            department: form.department,
+            level: form.level,
+            gender: form.gender,
+            // needsOnboarding: false,
+          },
+        });
+        router.push("/profile");
+      }
     } catch (error) {
       console.error("Error updating user profile:", error);
       toast.error("Failed to update profile.");

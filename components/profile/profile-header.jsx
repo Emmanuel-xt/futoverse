@@ -226,7 +226,7 @@ export function ProfileHeader({
 
           {/* Bio */}
           {user.about && (
-            <p className="text-center text-sm text-gray-700 mt-4 max-w-sm">
+            <p className="text-center text-sm text-gray-700 mt-4 max-w-sm whitespace-pre-line">
               {user.about}
             </p>
           )}

@@ -8,18 +8,21 @@ datasource db {
 }
 
 model User {
-  id                 Int                  @id @default(autoincrement())
-  username           String               @unique
-  about              String?
-  departmentId       Int?
-  name               String?
-  picture            String?
-  email              String               @unique
-  password           String
-  bio                String?
-  levelId            Int?
-  conversationsIds   String[]
-  gender             String?
+  id               Int      @id @default(autoincrement())
+  username         String   @unique
+  about            String?
+  departmentId     Int?
+  name             String?
+  picture          String?
+  email            String   @unique
+  password         String
+  bio              String?
+  levelId          Int?
+  conversationsIds String[]
+  gender           String?
+  googleId         String?  @unique
+  needsOnboarding  Boolean  @default(false)
+
   createdAt          DateTime             @default(now())
   updatedAt          DateTime?            @updatedAt
   lastSeen           DateTime             @default(now())

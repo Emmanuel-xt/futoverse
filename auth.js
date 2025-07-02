@@ -62,14 +62,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               email: user.email,
               name: user.name,
               picture: user.image,
+
               googleId: account.providerAccountId,
             });
 
             if (newUser) {
+              console.log("New User created  at the db");
               // Set user data for JWT
               user.id = newUser.id.toString();
               user.username = newUser.username;
-              user.needsOnboarding = newUser.needsOnboarding;
+              user.needsOnboarding = true;
               user.bio = newUser.bio;
               user.department = null;
               user.gender = newUser.gender;
@@ -102,8 +104,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return true;
     },
-    async jwt({ token, user, account }) {
-      if (user) {
+
+    // Handle JWT token creation & update
+    async jwt({ token, user, account, trigger, session }) {
+      if (trigger === "update" && session?.user) {
+        // This runs when client calls update() with session data
+        // Update token fields from the updated session user
+        token.username = session.user.username;
+        token.about = session.user.about;
+        token.department = session.user.department;
+        token.gender = session.user.gender;
+        token.needsOnboarding = session.user.needsOnboarding;
+        // Add other fields you want to sync here
+      } else if (user) {
+        // Initial sign-in: populate token from user object
         token.id = user.id;
         token.name = user.name;
         token.username = user.username;
@@ -118,8 +132,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.provider = account.provider;
         }
       }
+
+      // console.log("token", token);
       return token;
     },
+
     async session({ session, token }) {
       if (token?.id) {
         session.user.id = token.id;
@@ -135,7 +152,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       console.log("Session data:", session);
-
       return session;
     },
   },
@@ -144,6 +160,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       console.log(`User ${user.email} signed in with ${account?.provider}`);
     },
   },
-  debug: process.env.NODE_ENV === "development",
+  // debug: process.env.NODE_ENV === "development",
   secret: process.env.AUTH_SECRET,
 });

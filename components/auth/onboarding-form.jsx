@@ -4,8 +4,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Loader2, User, AtSign, FileText } from "lucide-react";
+import {
+  Loader2,
+  User,
+  AtSign,
+  FileText,
+  Check,
+  ChevronsUpDown,
+} from "lucide-react";
 import { z } from "zod";
 
 import { Button } from "@components/ui/button";
@@ -33,8 +39,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@components/ui/command";
+import { cn } from "@lib/utils";
+
 import { Alert, AlertDescription } from "@components/ui/alert";
 import { completeUserProfile } from "@lib/actions/user-actions";
+import { useSession } from "next-auth/react";
+import { departments } from "@constants/arrays";
 
 const onboardingSchema = z.object({
   username: z
@@ -46,23 +69,29 @@ const onboardingSchema = z.object({
       /^[a-zA-Z0-9_]+$/,
       "Username can only contain letters, numbers, and underscores"
     ),
-  bio: z.string().max(160, "Bio must be less than 160 characters").optional(),
-  department: z.string().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  about: z.string().max(160, "About must be less than 160 characters"),
+  department: z.object({
+    name: z.string(),
+    initial: z.string(),
+  }),
+  gender: z.enum(["male", "female", "other"]),
+  level: z.string(), // if using level
 });
 
 export default function OnboardingForm() {
   const router = useRouter();
   const { data: session, update } = useSession();
   const [submitError, setSubmitError] = useState("");
+  const [open, setOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
       username: "",
-      bio: "",
-      department: "",
+      about: "",
+      department: undefined,
       gender: undefined,
+      level: "",
     },
   });
 
@@ -77,8 +106,10 @@ export default function OnboardingForm() {
 
       const result = await completeUserProfile(session.user.id, {
         username: data.username.trim().toLowerCase(),
-        bio: data.bio?.trim(),
-        department: data.department,
+        about: data.about?.trim(),
+        departmentName: data.department?.name,
+        departmentInitial: data.department?.initial,
+        level: data.level,
         gender: data.gender,
       });
 
@@ -89,11 +120,17 @@ export default function OnboardingForm() {
           user: {
             ...session.user,
             username: data.username,
-            bio: data.bio,
+            about: data.about,
             department: data.department,
+            level: data.level,
             gender: data.gender,
+            needsOnboarding: false,
           },
         });
+
+        console.log("Profile updated successfully:", result.user);
+
+        // await update();
 
         router.push("/profile");
       } else {
@@ -164,10 +201,10 @@ export default function OnboardingForm() {
 
               <FormField
                 control={form.control}
-                name="bio"
+                name="about"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel>About</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <FileText className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -190,26 +227,99 @@ export default function OnboardingForm() {
               <FormField
                 control={form.control}
                 name="department"
+                render={({ field }) => {
+                  const selectedDepartment = departments.find(
+                    (dept) => dept.name === field.value?.name
+                  );
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="w-full justify-between"
+                          >
+                            {selectedDepartment?.name || "Select department"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput placeholder="Search department..." />
+                            <CommandList>
+                              <CommandEmpty>No department found.</CommandEmpty>
+                              <CommandGroup>
+                                {departments.map((department) => (
+                                  <CommandItem
+                                    key={department.initial}
+                                    value={department.name}
+                                    onSelect={() => {
+                                      field.onChange({
+                                        name: department.name,
+                                        initial: department.initial,
+                                      });
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    {department.name}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto h-4 w-4",
+                                        field.value?.name === department.name
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="level" // ✅ not department
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Department</FormLabel>
+                    <FormLabel>Level</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select your department" />
+                          <SelectValue placeholder="Select your level" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="engineering">Engineering</SelectItem>
-                        <SelectItem value="design">Design</SelectItem>
-                        <SelectItem value="marketing">Marketing</SelectItem>
-                        <SelectItem value="sales">Sales</SelectItem>
-                        <SelectItem value="hr">Human Resources</SelectItem>
-                        <SelectItem value="finance">Finance</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                      <SelectContent className="border-primary-500">
+                        {[
+                          "100",
+                          "200",
+                          "300",
+                          "400",
+                          "500",
+                          "600",
+                          "Alumni",
+                          "Others",
+                        ].map((level) => (
+                          <SelectItem
+                            key={level}
+                            value={level}
+                            className="hover:bg-dark-3"
+                          >
+                            {level}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "@styles/globals.css";
+import Provider from "@components/providers/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,9 +17,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="bg-light">
-          <div className="">{children}</div>
-        </main>
+        <Provider>
+          <main className="bg-light">
+            <div className="">{children}</div>
+          </main>
+        </Provider>
       </body>
     </html>
   );
