@@ -1,26 +1,47 @@
-import { getToken } from "next-auth/jwt";
+import { auth } from "auth";
 import { NextResponse } from "next/server";
 
-export async function middleware(req) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
 
-  console.log("Middleware Request URL:", req.nextUrl.pathname);
-  // console.log("JWT Token in Middleware:", token);
+  // Public routes that don't require authentication
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+  ];
 
-  if (!token) {
-    console.log("No token found → Redirecting to login");
-    return NextResponse.redirect(new URL("/login", req.url));
+  // Check if the current path is public
+  const isPublicRoute = publicRoutes.some(
+    (route) => nextUrl.pathname === route || nextUrl.pathname.startsWith(route)
+  );
+
+  // If user is not logged in and trying to access protected route
+  if (!isLoggedIn && !isPublicRoute) {
+    return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  console.log("User is authenticated → Proceeding to requested page");
+  // If user is logged in and needs onboarding
+  if (
+    isLoggedIn &&
+    req.auth?.user?.needsOnboarding &&
+    nextUrl.pathname !== "/onboarding"
+  ) {
+    console.log("User needs onboarding, redirecting to /onboarding");
+    return NextResponse.redirect(new URL("/onboarding", nextUrl));
+  }
+
+  // If user is logged in and trying to access auth pages, redirect to profile
+  if (isLoggedIn && ["/login", "/sign-up"].includes(nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/profile", nextUrl));
+  }
+
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    // "/profile",
-    // "/profile/edit",
-    // "/profile/settings",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

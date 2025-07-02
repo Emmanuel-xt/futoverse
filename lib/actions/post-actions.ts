@@ -93,7 +93,7 @@ export async function getPosts(cursor?: string, limit = 10, userId?: number) {
         }
     } catch (error) {
         console.error("Error fetching posts:", error)
-        throw new Error("Failed to fetch posts")
+        // throw new Error("Failed to fetch posts")
     }
 }
 
