@@ -47,10 +47,12 @@ export function ProfileActions({
           toast.success("Request cancelled");
         }
       } else {
-        const success = await sendFriendRequest(currentUserId, userId);
-        if (success) {
+        const send = await sendFriendRequest(currentUserId, userId);
+        if (send.success) {
           setFriendStatus({ isFriend: false, hasSentRequest: true });
           toast.success("Request sent");
+        } else {
+          toast.error("Failed to send request");
         }
       }
     } catch (error) {

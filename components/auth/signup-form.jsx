@@ -351,7 +351,7 @@ export default function SignUpForm() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full  bg-primary"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (

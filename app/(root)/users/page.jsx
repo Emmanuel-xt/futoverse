@@ -50,7 +50,7 @@ const Users = () => {
     try {
       setfriendRequestLoad(id);
       const send = await sendFriendRequest(currentUserId, id);
-      if (send) {
+      if (send.success) {
         toast("Request Sent");
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
         setRequestSent(true);

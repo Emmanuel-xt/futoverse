@@ -160,7 +160,7 @@ export default function OnboardingForm() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
-            <User className="w-8 h-8 text-purple-600" />
+            <User className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">
             Complete Your Profile
@@ -361,7 +361,7 @@ export default function OnboardingForm() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-primary"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (

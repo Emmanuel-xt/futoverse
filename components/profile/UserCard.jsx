@@ -33,9 +33,11 @@ export function UserCard({
   const handleFollow = async () => {
     setLoading(true);
     try {
-      const success = await sendFriendRequest(currentUserId, user.id);
-      if (success) {
+      const send = await sendFriendRequest(currentUserId, user.id);
+      if (send.success) {
         toast.success("Request sent");
+      } else {
+        toast.error("Failed to send request");
       }
     } catch (error) {
       toast.error("Failed to send request");
@@ -47,8 +49,8 @@ export function UserCard({
   const handleAccept = async () => {
     setLoading(true);
     try {
-      const success = await acceptFriendRequest(currentUserId, user.id);
-      if (success) {
+      const accept = await acceptFriendRequest(currentUserId, user.id);
+      if (accept.success) {
         toast.success(`You are now friends with ${user.name}`);
         onRequestAction?.("accept");
       }
@@ -62,8 +64,8 @@ export function UserCard({
   const handleDecline = async () => {
     setLoading(true);
     try {
-      const success = await rejectFriendRequest(currentUserId, user.id);
-      if (success) {
+      const reject = await rejectFriendRequest(currentUserId, user.id);
+      if (reject.success) {
         toast.success("Request declined");
         onRequestAction?.("decline");
       }

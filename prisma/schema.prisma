@@ -46,8 +46,25 @@ model User {
   comments           Comment[]
   likes              Like[]
   views              View[]
+  Notification       Notification[]
+  sentNotifications  Notification[]       @relation("Sender") // Add this line
 
   @@map("User")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    Int // Recipient
+  senderId  Int? // Optional sender (e.g. for friend request)
+  type      String // e.g., "post", "friend_request", "event"
+  title     String
+  body      String?
+  link      String? // e.g., "/posts/xyz", "/friends"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user   User  @relation(fields: [userId], references: [id])
+  sender User? @relation("Sender", fields: [senderId], references: [id])
 }
 
 model PasswordResetToken {
