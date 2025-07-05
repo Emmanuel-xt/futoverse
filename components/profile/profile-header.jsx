@@ -20,6 +20,7 @@ import { getConversationByUserId } from "@lib/actions/Chat.prisma";
 import useConversation from "zustand/useConversation";
 import MessageContainer from "@components/chat/messages/MessageContainer";
 import { signOut } from "next-auth/react";
+import { sendPushNotification } from "@lib/notification/notification-action";
 
 export function ProfileHeader({
   user,
@@ -140,7 +141,14 @@ export function ProfileHeader({
               </button>
               <button
                 className="p-2 hover:bg-gray-100 rounded-full"
-                onClick={() => signOut()}
+                onClick={() =>
+                  sendPushNotification({
+                    token: "token",
+                    title: "Test Notification",
+                    message: "This is a test notification",
+                    link: "/contact",
+                  })
+                }
               >
                 <MoreHorizontal size={20} />
               </button>
