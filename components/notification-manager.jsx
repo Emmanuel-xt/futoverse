@@ -15,7 +15,7 @@ export default function NotificationManager() {
     const saveToken = async () => {
       if (token && user?.id && notificationPermissionStatus === "granted") {
         try {
-          const result = await saveFcmToken(token, user.id);
+          const result = await saveFcmToken(token, Number(user.id));
           if (result.success) {
             console.log("FCM token saved successfully");
           } else {

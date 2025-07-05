@@ -76,6 +76,29 @@ export class AppNotifications {
         })
     }
 
+    static async sendFriendRequestDeclined({
+        senderId,
+        receiverId,
+    }: {
+        senderId: string
+        receiverId: string
+    }) {
+        const sender = await prisma.user.findUnique({
+            where: { id: senderId },
+            select: { name: true },
+        })
+
+        await NotificationService.sendInlineNotification({
+            userId: receiverId,
+            senderId,
+            title: "Friend Request Declined",
+            body: `${sender?.name} declined your friend request`,
+            link: `/profile/${senderId}`,
+            type: "FRIEND_REQUEST_DECLINED",
+        })
+    }
+
+
     // QUEUED: Post likes (can be batched)
     static async sendPostLike({
         postId,
@@ -83,8 +106,8 @@ export class AppNotifications {
         postOwnerId,
     }: {
         postId: string
-        likerId: string
-        postOwnerId: string
+        likerId: number
+        postOwnerId: number
     }) {
         if (likerId === postOwnerId) return // Don't notify self
 

@@ -141,14 +141,7 @@ export function ProfileHeader({
               </button>
               <button
                 className="p-2 hover:bg-gray-100 rounded-full"
-                onClick={() =>
-                  sendPushNotification({
-                    token: "token",
-                    title: "Test Notification",
-                    message: "This is a test notification",
-                    link: "/contact",
-                  })
-                }
+                onClick={() => signOut()}
               >
                 <MoreHorizontal size={20} />
               </button>

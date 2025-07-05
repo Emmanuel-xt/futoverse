@@ -1,27 +1,30 @@
 import { Worker } from "bullmq"
 import { Redis } from "ioredis"
-import IORedis from "ioredis";
 import { sendPushNotification, createNotification } from "./notification-action"
 import prisma from "@prisma/prisma"
 
 
 // const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
-const redisConnection = new IORedis(process.env.REDIS_URL || "redis://localhost:6379", {
-    maxRetriesPerRequest: null, // Important for BullMQ
-    enableReadyCheck: false, // Disable if using Redis Cluster
-    reconnectOnError: (err) => {
-        console.error("Redis connection error:", err);
-        return true; // Reconnect on all errors
-    },
-});
 
-// Handle connection events
-redisConnection
-    .on("connect", () => console.log("Redis connecting..."))
-    .on("ready", () => console.log("Redis connected successfully"))
-    .on("error", (err) => console.error("Redis connection error:", err))
-    .on("close", () => console.log("Redis connection closed"))
-    .on("reconnecting", () => console.log("Redis reconnecting..."));
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
+
+// Logging Redis connection events
+redis.on("connect", () => {
+    console.log("[Redis] Connecting...")
+})
+
+redis.on("ready", () => {
+    console.log("[Redis] Connected and ready!")
+})
+
+redis.on("error", (err) => {
+    console.error("[Redis] Connection error:", err)
+})
+
+redis.on("end", () => {
+    console.log("[Redis] Connection closed.")
+})
+
 
 export const notificationWorker = new Worker(
     "notifications",
@@ -48,7 +51,7 @@ export const notificationWorker = new Worker(
         }
     },
     {
-        connection: redisConnection,
+        connection: redis,
         concurrency: 5, // Process 5 jobs concurrently
     },
 )
