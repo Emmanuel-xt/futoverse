@@ -5,9 +5,11 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, FileText, Volume2 } from "lucide-react";
 import { Button } from "@components/ui/button";
 import { cn } from "@lib/utils";
+import { FullscreenImageModal } from "./fullscreen-image-modal";
 
 export function MediaCarousel({ media }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
 
   if (media.length === 0) return null;
 
@@ -25,13 +27,18 @@ export function MediaCarousel({ media }) {
     switch (item.type) {
       case "IMAGE":
         return (
-          <Image
-            src={item.url || "/placeholder.svg"}
-            alt="Post media"
-            width={600}
-            height={400}
-            className="w-full h-auto max-h-96 object-cover rounded-lg"
-          />
+          <div
+            className="cursor-pointer"
+            onClick={() => setFullscreenImage(item.url)}
+          >
+            <Image
+              src={item.url || "/placeholder.svg"}
+              alt="Post media"
+              width={600}
+              height={400}
+              className="w-full h-auto max-h-96 object-cover rounded-lg"
+            />
+          </div>
         );
       case "VIDEO":
         return (
@@ -73,43 +80,52 @@ export function MediaCarousel({ media }) {
   };
 
   return (
-    <div className="relative">
-      {renderMedia(currentMedia)}
+    <>
+      <div className="relative">
+        {renderMedia(currentMedia)}
 
-      {media.length > 1 && (
-        <>
-          <Button
-            variant="secondary"
-            size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-white"
-            onClick={prevMedia}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+        {media.length > 1 && (
+          <>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-white"
+              onClick={prevMedia}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
 
-          <Button
-            variant="secondary"
-            size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-white"
-            onClick={nextMedia}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-white"
+              onClick={nextMedia}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
 
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
-            {media.map((_, index) => (
-              <button
-                key={index}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-colors",
-                  index === currentIndex ? "bg-white" : "bg-white/50"
-                )}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
+              {media.map((_, index) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-colors",
+                    index === currentIndex ? "bg-white" : "bg-white/50"
+                  )}
+                  onClick={() => setCurrentIndex(index)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      <FullscreenImageModal
+        open={!!fullscreenImage}
+        onOpenChange={(open) => !open && setFullscreenImage(null)}
+        imageUrl={fullscreenImage}
+        alt="Post media"
+      />
+    </>
   );
 }

@@ -272,15 +272,15 @@ model FriendRequest {
 }
 
 model Shop {
-  id             Int           @id
+  id             Int           @id @default(autoincrement())
   name           String        @unique
   description    String
   category       String
   requestedOrder String?
   size           Float         @default(0.0007)
   userId         Int
-  latitude       Float
-  longitude      Float
+  latitude       Float?
+  longitude      Float?
   image          String?
   coverImage     String?
   locationDesc   String?

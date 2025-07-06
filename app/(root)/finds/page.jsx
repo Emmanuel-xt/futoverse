@@ -45,22 +45,22 @@ const categories = [
     color: "bg-orange-500",
     href: "/finds/events",
   },
-  {
-    id: "lecture-halls",
-    name: "Lecture Halls",
-    description: "Locate classrooms and venues",
-    icon: GraduationCap,
-    color: "bg-red-500",
-    href: "/finds/lecture-halls",
-  },
-  {
-    id: "study-tools",
-    name: "Study Tools",
-    description: "Access learning resources",
-    icon: BookOpen,
-    color: "bg-indigo-500",
-    href: "/finds/study-tools",
-  },
+  // {
+  //   id: "lecture-halls",
+  //   name: "Lecture Halls",
+  //   description: "Locate classrooms and venues",
+  //   icon: GraduationCap,
+  //   color: "bg-red-500",
+  //   href: "/finds/lecture-halls",
+  // },
+  // {
+  //   id: "study-tools",
+  //   name: "Study Tools",
+  //   description: "Access learning resources",
+  //   icon: BookOpen,
+  //   color: "bg-indigo-500",
+  //   href: "/finds/study-tools",
+  // },
 ];
 
 // Server-side component

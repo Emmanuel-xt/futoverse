@@ -28,7 +28,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
               className="flex-1 justify-start text-muted-foreground hover:bg-muted/50 h-12 rounded-full"
               onClick={() => setShowCreatePost(true)}
             >
-              What's happening in FUTO?
+              Hello FUTO !
             </Button>
           </div>
 
@@ -43,7 +43,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
               <span>Photo</span>
             </Button>
 
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               className="flex items-center space-x-2 text-blue-600 hover:bg-blue-50"
@@ -51,7 +51,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
             >
               <Video className="h-4 w-4" />
               <span>Video</span>
-            </Button>
+            </Button> */}
             {/* 
             <Button
               variant="ghost"

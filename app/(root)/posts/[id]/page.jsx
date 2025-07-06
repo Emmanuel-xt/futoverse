@@ -11,6 +11,7 @@ export async function generateMetadata({ params }) {
         select: {
           name: true,
           username: true,
+          picture: true,
         },
       },
     },

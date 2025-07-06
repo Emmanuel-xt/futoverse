@@ -4,9 +4,9 @@ import { PostSkeleton } from "@components/post/post-skeleton";
 import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
+import { InstallButton } from "@components/InstallButton";
 
 export default async function HomePage() {
-  // Pre-fetch initial posts for SSR
   const session = await auth();
   const CURRENT_USER = {
     id: Number(session?.user?.id) || null,
@@ -18,32 +18,40 @@ export default async function HomePage() {
   const initialData = await getPosts(undefined, 10, CURRENT_USER_ID);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Campus Feed</h1>
-        <p className="text-muted-foreground">
-          Stay connected with your campus community
-        </p>
+    <div className="container mx-auto px-4 max-w-2xl">
+      {/* Sticky Futoverse banner */}
+      <div className="sticky top-0 z-50 bg-white border-b py-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">
+          futoverse
+        </h1>
+        <InstallButton />
       </div>
 
-      <WhatsHappening
-        userId={CURRENT_USER.id}
-        userCanPost={CURRENT_USER.canPost}
-        userName={CURRENT_USER.name}
-        userPicture={CURRENT_USER.picture}
-      />
+      {/* Rest of the scrollable content */}
+      <div className="py-6 space-y-2">
+        <div>
+          <h2 className="text-xl font-semibold mb-1">Campus Feed</h2>
+        </div>
 
-      <Suspense
-        fallback={
-          <div className="space-y-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <PostSkeleton key={i} />
-            ))}
-          </div>
-        }
-      >
-        <PostFeed userId={CURRENT_USER_ID} initialPosts={initialData} />
-      </Suspense>
+        <WhatsHappening
+          userId={CURRENT_USER.id}
+          userCanPost={CURRENT_USER.canPost}
+          userName={CURRENT_USER.name}
+          userPicture={CURRENT_USER.picture}
+        />
+
+        <Suspense
+          fallback={
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <PostSkeleton key={i} />
+              ))}
+            </div>
+          }
+        >
+          <PostFeed userId={CURRENT_USER_ID} initialPosts={initialData} />
+        </Suspense>
+      </div>
     </div>
   );
 }
