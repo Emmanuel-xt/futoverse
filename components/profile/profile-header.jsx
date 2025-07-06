@@ -6,6 +6,7 @@ import { Button } from "@components/ui/button";
 import {
   ArrowLeft,
   Bell,
+  LogOut,
   MessageCircle,
   MoreHorizontal,
   UserPlus,
@@ -20,6 +21,7 @@ import { getConversationByUserId } from "@lib/actions/Chat.prisma";
 import useConversation from "zustand/useConversation";
 import MessageContainer from "@components/chat/messages/MessageContainer";
 import { signOut } from "next-auth/react";
+import { sendPushNotification } from "@lib/notification/notification-action";
 
 export function ProfileHeader({
   user,
@@ -142,7 +144,7 @@ export function ProfileHeader({
                 className="p-2 hover:bg-gray-100 rounded-full"
                 onClick={() => signOut()}
               >
-                <MoreHorizontal size={20} />
+                <LogOut size={20} />
               </button>
             </>
           )}

@@ -2,15 +2,21 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllShops } from "@lib/actions/shops.prisma";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createStore, fetchAllShops } from "@lib/actions/shops.prisma";
+// import { createStore } from "@lib/actions/create-store";
 import { useScrollPosition } from "hooks/use-scroll-position";
 import { useDebounce } from "hooks/use-debounce";
+import { Button } from "@components/ui/button";
+import { Plus } from "lucide-react";
 import StoresPageSkeleton from "./stores-page-skeleton";
 import SearchFilters from "./search-filters";
 import StoresGrid from "./stores-grid";
 import EmptyState from "./empty-state";
 import ErrorState from "./error-state";
+import CreateStoreDrawer from "./create-store-drawer";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function StoresPageClient({
   initialSearch,
@@ -19,13 +25,18 @@ export default function StoresPageClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const { saveScrollPosition, restoreScrollPosition } =
     useScrollPosition("stores-list");
+
+  const { data: session } = useSession();
+  const userId = Number(session?.user?.id) || null;
 
   // State management
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCreateDrawer, setShowCreateDrawer] = useState(false);
 
   // Debounce search query to reduce API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -59,6 +70,28 @@ export default function StoresPageClient({
     gcTime: 1000 * 60 * 30, // 30 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: false, // Don't refetch on mount since we have prefetched data
+  });
+
+  // Create store mutation
+  const createStoreMutation = useMutation({
+    mutationFn: createStore,
+    onSuccess: (newStore) => {
+      // Optimistically update the cache
+      queryClient.setQueryData(["allStores"], (oldStores) => [
+        ...(oldStores || []),
+        newStore,
+      ]);
+
+      toast.success("Store created successfully!");
+      setShowCreateDrawer(false);
+
+      // Navigate to the new store
+      router.push(`/shops/${newStore.id}`);
+    },
+    onError: (error) => {
+      console.error("Failed to create store:", error);
+      toast.error("Failed to create store. Please try again.");
+    },
   });
 
   // Update URL params when filters change (debounced)
@@ -120,6 +153,16 @@ export default function StoresPageClient({
     setSelectedCategory(value);
   }, []);
 
+  const handleCreateStore = useCallback(
+    (storeData) => {
+      createStoreMutation.mutate({
+        ...storeData,
+        userId,
+      });
+    },
+    [createStoreMutation, userId]
+  );
+
   // Loading state
   if (isLoading) {
     return <StoresPageSkeleton />;
@@ -152,6 +195,15 @@ export default function StoresPageClient({
               <span className="ml-2 text-blue-600">(updating...)</span>
             )}
           </p>
+          {userId && (
+            <Button
+              onClick={() => setShowCreateDrawer(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create Store
+            </Button>
+          )}
         </div>
 
         {filteredStores.length > 0 ? (
@@ -164,6 +216,15 @@ export default function StoresPageClient({
           />
         )}
       </div>
+
+      <CreateStoreDrawer
+        open={showCreateDrawer}
+        onOpenChange={setShowCreateDrawer}
+        onCreateStore={handleCreateStore}
+        categories={categories}
+        isLoading={createStoreMutation.isPending}
+        userId={userId}
+      />
     </>
   );
 }

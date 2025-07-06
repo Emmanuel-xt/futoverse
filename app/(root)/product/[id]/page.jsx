@@ -173,7 +173,7 @@ const ProductDynamicPage = ({ params }) => {
         <Image
           src={product.image}
           alt={product.name}
-          layout="fill" /* Makes the image take full width & height */
+          // layout="fill" /* Makes the image take full width & height */
           objectFit="contain" /* Ensures the image covers the entire space */
           className=""
         />
@@ -248,7 +248,7 @@ const ProductDynamicPage = ({ params }) => {
         </div>
       </div>
 
-      <div className="p-4 w-full">
+      {/* <div className="p-4 w-full">
         <div className="grid grid-cols-4 gap-2">
           {products.relatedImages?.map((img, index) => (
             <Image
@@ -261,7 +261,7 @@ const ProductDynamicPage = ({ params }) => {
             />
           ))}
         </div>
-      </div>
+      </div> */}
 
       {openDeleteModal && (
         <Modal

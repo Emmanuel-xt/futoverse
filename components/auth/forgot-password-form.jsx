@@ -129,7 +129,7 @@ export default function ForgotPasswordForm() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-4">
-            <Send className="w-8 h-8 text-pink-600" />
+            <Send className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Forgot Password?</CardTitle>
           <CardDescription>
@@ -175,7 +175,7 @@ export default function ForgotPasswordForm() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-primary hover:bg-primary"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (

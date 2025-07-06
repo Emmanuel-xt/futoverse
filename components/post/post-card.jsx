@@ -6,7 +6,6 @@ import {
   Heart,
   MessageCircle,
   Share2,
-  Eye,
   MoreHorizontal,
   Edit2,
   Trash2,
@@ -18,7 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Badge } from "@components/ui/badge";
 import { useLikeMutation, useTrackView } from "hooks/use-posts";
 import { MediaCarousel } from "./media-carousel";
-import { CommentSection } from "./comment-section";
 import { ShareDialog } from "./share-dialog";
 import { cn } from "@lib/utils";
 import {
@@ -30,14 +28,16 @@ import {
 } from "@components/ui/dropdown-menu";
 import { EditPostDialog } from "./edit-post-dialog";
 import { DeletePostDialog } from "./delete-post-dialog.jsx";
+import Link from "next/link";
+import { CommentDrawer } from "./comment-drawer";
 
 export function PostCard({ post, userId }) {
-  const [showComments, setShowComments] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showCommentDrawer, setShowCommentDrawer] = useState(false);
 
   const likeMutation = useLikeMutation(userId);
   const trackViewMutation = useTrackView();
@@ -56,17 +56,42 @@ export function PostCard({ post, userId }) {
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title || "Campus Post",
-          text: post.content.slice(0, 100) + "...",
-          url: `${window.location.origin}/posts/${post.id}`,
-        });
-      } catch (error) {
-        setShowShareDialog(true);
+    if (!navigator.share) {
+      setShowShareDialog(true);
+      return;
+    }
+
+    try {
+      const firstImageUrl = Array.isArray(post.images)
+        ? post.images[0]
+        : post.image;
+
+      let shareData = {
+        title: post.title || "Campus Post",
+        text: post.content.slice(0, 100) + "...",
+        url: `${window.location.origin}/posts/${post.id}`,
+      };
+
+      if (firstImageUrl) {
+        try {
+          const response = await fetch(firstImageUrl);
+          const blob = await response.blob();
+          const file = new File([blob], "post-image.jpg", { type: blob.type });
+
+          if (navigator.canShare?.({ files: [file] })) {
+            shareData = {
+              ...shareData,
+              files: [file],
+            };
+          }
+        } catch (error) {
+          console.warn("Failed to fetch post image for sharing:", error);
+          // fallback silently
+        }
       }
-    } else {
+
+      await navigator.share(shareData);
+    } catch (error) {
       setShowShareDialog(true);
     }
   };
@@ -81,7 +106,10 @@ export function PostCard({ post, userId }) {
     <Card className="w-full">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <Link
+            href={`/profile/${post.creator.username}`}
+            className="flex items-center space-x-3"
+          >
             <Avatar className="h-10 w-10">
               <AvatarImage src={post.creator.picture || undefined} />
               <AvatarFallback>
@@ -105,7 +133,7 @@ export function PostCard({ post, userId }) {
                 })}
               </p>
             </div>
-          </div>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -160,17 +188,6 @@ export function PostCard({ post, userId }) {
         {post.media.length > 0 && <MediaCarousel media={post.media} />}
 
         <div className="flex items-center justify-between pt-2 border-t">
-          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-            <Eye className="h-3 w-3" />
-            <span>{post._count.views.toLocaleString()}</span>
-          </div>
-          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-            <span>{post._count.likes.toLocaleString()} likes</span>
-            <span>{post._count.comments.toLocaleString()} comments</span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t">
           <Button
             variant="ghost"
             size="sm"
@@ -182,17 +199,23 @@ export function PostCard({ post, userId }) {
             disabled={!userId || likeMutation.isPending}
           >
             <Heart className={cn("h-4 w-4", post.isLiked && "fill-current")} />
-            <span>Like</span>
+            <div className="space-x-1">
+              <span>Like</span>
+              <span>{post._count.likes.toLocaleString()}</span>
+            </div>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             className="flex items-center space-x-2"
-            onClick={() => setShowComments(!showComments)}
+            onClick={() => setShowCommentDrawer(true)}
           >
             <MessageCircle className="h-4 w-4" />
-            <span>Comment</span>
+            <div className="space-x-1">
+              <span>Comment</span>
+              <span>{post._count.comments.toLocaleString()} </span>
+            </div>
           </Button>
 
           <Button
@@ -205,8 +228,6 @@ export function PostCard({ post, userId }) {
             <span>Share</span>
           </Button>
         </div>
-
-        {showComments && <CommentSection postId={post.id} userId={userId} />}
       </CardContent>
 
       <ShareDialog
@@ -226,6 +247,12 @@ export function PostCard({ post, userId }) {
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         post={post}
+        userId={userId}
+      />
+      <CommentDrawer
+        isOpen={showCommentDrawer}
+        onClose={() => setShowCommentDrawer(false)}
+        postId={post.id}
         userId={userId}
       />
     </Card>

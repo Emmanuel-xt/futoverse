@@ -8,7 +8,6 @@ import {
 } from "cesium";
 
 import { checkIfTileOccupied } from "@constants/functions";
-import { fetchOnlyShop, fetchOnlyShops } from "@lib/actions/shops.prisma";
 
 export const setupEventHandlers = (viewer, handlers) => {
   const {

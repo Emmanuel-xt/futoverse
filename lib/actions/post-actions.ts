@@ -1,5 +1,6 @@
 "use server"
 
+import { AppNotifications } from "@lib/notification/app-notifications"
 import prisma from "@prisma/prisma"
 import { revalidatePath } from "next/cache"
 
@@ -144,6 +145,7 @@ export async function createPost(data: {
     }
 }
 
+
 export async function toggleLike(postId: string, userId: number) {
     try {
         const existingLike = await prisma.like.findUnique({
@@ -163,19 +165,38 @@ export async function toggleLike(postId: string, userId: number) {
             })
             return { liked: false }
         } else {
-            await prisma.like.create({
+            const like = await prisma.like.create({
                 data: {
                     userId,
                     postId,
                 },
+                include: {
+                    post: {
+                        select: {
+                            creatorId: true, // Needed to notify the post owner
+                        },
+                    },
+                },
             })
+
+            // ⚠️ Only send notification if user is not liking their own post
+            console.log("Like created:", like)
+            // if (like.post.userId !== userId) {
+            await AppNotifications.sendPostLike({
+                postId,
+                likerId: userId,
+                postOwnerId: like.post.userId,
+            })
+            // }
+
             return { liked: true }
         }
     } catch (error) {
         console.error("Error toggling like:", error)
-        throw new Error("Failed to toggle like")
+        // throw new Error("Failed to toggle like")
     }
 }
+
 
 export async function trackView(postId: string, userId?: number) {
     try {

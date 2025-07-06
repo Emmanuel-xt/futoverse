@@ -12,6 +12,7 @@ import { CartProvider } from "@components/providers/CartProvider";
 import CesiumMapB from "@components/cesium/Cesium";
 import CesiumMapBWrapper from "@components/cesium/CesiumWrapper";
 import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
+import NotificationManager from "@components/notification-manager";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -34,6 +34,7 @@ export function CreatePostDialog({
   const [content, setContent] = useState("");
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const fileInputRef = useRef(null);
 
   const createPostMutation = useCreatePost();
@@ -83,6 +84,7 @@ export function CreatePostDialog({
 
     try {
       setLoading(true);
+      setUploadingFiles(media.length > 0);
 
       const uploadedMedia = [];
 
@@ -108,6 +110,8 @@ export function CreatePostDialog({
         });
       }
 
+      setUploadingFiles(false);
+
       await createPostMutation.mutateAsync({
         title: title.trim() || undefined,
         content: content.trim(),
@@ -124,11 +128,10 @@ export function CreatePostDialog({
         "Post created successfully! It will be visible after approval."
       );
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create post"
-      );
+      toast.error("Failed to create post");
     } finally {
       setLoading(false);
+      setUploadingFiles(false);
     }
   };
 
@@ -159,14 +162,14 @@ export function CreatePostDialog({
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
           <DialogTitle>Create post</DialogTitle>
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
             onClick={handleClose}
           >
             <X className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </DialogHeader>
 
         <div className="space-y-4">
@@ -178,10 +181,10 @@ export function CreatePostDialog({
             </Avatar>
             <div>
               <p className="font-semibold text-sm">{userName || "User"}</p>
-              <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+              {/* <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                 <Globe className="h-3 w-3" />
                 <span>Public</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -260,7 +263,7 @@ export function CreatePostDialog({
                 ref={fileInputRef}
                 type="file"
                 multiple
-                accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+                accept="image/*"
                 onChange={handleFileSelect}
                 className="hidden"
               />
@@ -272,7 +275,7 @@ export function CreatePostDialog({
                 onClick={() => fileInputRef.current?.click()}
               >
                 <ImageIcon className="h-4 w-4" />
-                <span>Photos/videos</span>
+                <span>Photos only</span>
               </Button>
 
               {/* <Button
@@ -310,11 +313,17 @@ export function CreatePostDialog({
           {/* Submit Button */}
           <Button
             onClick={handleSubmit}
-            disabled={!content.trim() || createPostMutation.isPending}
+            disabled={
+              !content.trim() || createPostMutation.isPending || uploadingFiles
+            }
             className="w-full"
             size="lg"
           >
-            {createPostMutation.isPending ? "Posting..." : "POST"}
+            {uploadingFiles
+              ? "Uploading images..."
+              : createPostMutation.isPending
+                ? "Posting..."
+                : "POST"}
           </Button>
         </div>
       </DialogContent>

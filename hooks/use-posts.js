@@ -11,7 +11,7 @@ export function usePosts(userId) {
   return useInfiniteQuery({
     queryKey: ["posts", userId],
     queryFn: ({ pageParam }) => getPosts(pageParam, 10, userId),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage?.nextCursor,
     initialPageParam: undefined,
   });
 }

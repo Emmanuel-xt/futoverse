@@ -7,6 +7,7 @@ import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
 import { ProfileHeader } from "@components/profile/profile-header";
 import { auth } from "auth";
 import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
+import NotificationManager from "@components/notification-manager";
 
 async function getProfileData(username) {
   const [user, friendCount] = await Promise.all([
@@ -42,6 +43,8 @@ export default async function ProfilePage() {
             friendCount={friendCount}
             isOwnProfile={true}
           />
+          <NotificationManager />
+
           <ProfileTabs
             userId={userId}
             username={session.user.username}

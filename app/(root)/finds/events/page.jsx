@@ -28,106 +28,106 @@ import Image from "next/image";
 
 // Mock events data
 const mockEvents = [
-  {
-    id: 1,
-    title: "Tech Innovation Summit 2024",
-    description:
-      "Join us for a day of cutting-edge technology presentations and networking",
-    date: "2024-02-15T09:00:00Z",
-    endDate: "2024-02-15T17:00:00Z",
-    location: "Main Auditorium",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Technology",
-    organizer: "Computer Science Department",
-    attendees: 150,
-    maxAttendees: 200,
-    price: 0,
-    isOnline: false,
-    tags: ["tech", "innovation", "networking"],
-  },
-  {
-    id: 2,
-    title: "Career Fair 2024",
-    description: "Meet with top employers and explore career opportunities",
-    date: "2024-02-20T10:00:00Z",
-    endDate: "2024-02-20T16:00:00Z",
-    location: "Sports Complex",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Career",
-    organizer: "Career Services",
-    attendees: 300,
-    maxAttendees: 500,
-    price: 0,
-    isOnline: false,
-    tags: ["career", "jobs", "networking"],
-  },
-  {
-    id: 3,
-    title: "Annual Science Symposium",
-    description:
-      "Showcase of student research projects and scientific discoveries",
-    date: "2024-03-01T08:30:00Z",
-    endDate: "2024-03-01T18:00:00Z",
-    location: "Science Building",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Academic",
-    organizer: "Faculty of Sciences",
-    attendees: 80,
-    maxAttendees: 120,
-    price: 15,
-    isOnline: false,
-    tags: ["science", "research", "academic"],
-  },
-  {
-    id: 4,
-    title: "Student Orientation Week",
-    description:
-      "Welcome new students with activities, tours, and information sessions",
-    date: "2024-01-25T09:00:00Z",
-    endDate: "2024-01-29T17:00:00Z",
-    location: "Various Locations",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Social",
-    organizer: "Student Affairs",
-    attendees: 450,
-    maxAttendees: 600,
-    price: 0,
-    isOnline: false,
-    tags: ["orientation", "welcome", "social"],
-  },
-  {
-    id: 5,
-    title: "Entrepreneurship Workshop",
-    description: "Learn the basics of starting your own business",
-    date: "2024-02-28T14:00:00Z",
-    endDate: "2024-02-28T17:00:00Z",
-    location: "Business School",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Workshop",
-    organizer: "Business Department",
-    attendees: 45,
-    maxAttendees: 60,
-    price: 25,
-    isOnline: true,
-    tags: ["business", "entrepreneurship", "workshop"],
-  },
-  {
-    id: 6,
-    title: "Cultural Festival",
-    description:
-      "Celebrate diversity with music, dance, and food from around the world",
-    date: "2024-03-15T12:00:00Z",
-    endDate: "2024-03-15T22:00:00Z",
-    location: "Campus Grounds",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Cultural",
-    organizer: "International Students Association",
-    attendees: 200,
-    maxAttendees: 400,
-    price: 10,
-    isOnline: false,
-    tags: ["culture", "festival", "international"],
-  },
+  // {
+  //   id: 1,
+  //   title: "Tech Innovation Summit 2024",
+  //   description:
+  //     "Join us for a day of cutting-edge technology presentations and networking",
+  //   date: "2024-02-15T09:00:00Z",
+  //   endDate: "2024-02-15T17:00:00Z",
+  //   location: "Main Auditorium",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Technology",
+  //   organizer: "Computer Science Department",
+  //   attendees: 150,
+  //   maxAttendees: 200,
+  //   price: 0,
+  //   isOnline: false,
+  //   tags: ["tech", "innovation", "networking"],
+  // },
+  // {
+  //   id: 2,
+  //   title: "Career Fair 2024",
+  //   description: "Meet with top employers and explore career opportunities",
+  //   date: "2024-02-20T10:00:00Z",
+  //   endDate: "2024-02-20T16:00:00Z",
+  //   location: "Sports Complex",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Career",
+  //   organizer: "Career Services",
+  //   attendees: 300,
+  //   maxAttendees: 500,
+  //   price: 0,
+  //   isOnline: false,
+  //   tags: ["career", "jobs", "networking"],
+  // },
+  // {
+  //   id: 3,
+  //   title: "Annual Science Symposium",
+  //   description:
+  //     "Showcase of student research projects and scientific discoveries",
+  //   date: "2024-03-01T08:30:00Z",
+  //   endDate: "2024-03-01T18:00:00Z",
+  //   location: "Science Building",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Academic",
+  //   organizer: "Faculty of Sciences",
+  //   attendees: 80,
+  //   maxAttendees: 120,
+  //   price: 15,
+  //   isOnline: false,
+  //   tags: ["science", "research", "academic"],
+  // },
+  // {
+  //   id: 4,
+  //   title: "Student Orientation Week",
+  //   description:
+  //     "Welcome new students with activities, tours, and information sessions",
+  //   date: "2024-01-25T09:00:00Z",
+  //   endDate: "2024-01-29T17:00:00Z",
+  //   location: "Various Locations",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Social",
+  //   organizer: "Student Affairs",
+  //   attendees: 450,
+  //   maxAttendees: 600,
+  //   price: 0,
+  //   isOnline: false,
+  //   tags: ["orientation", "welcome", "social"],
+  // },
+  // {
+  //   id: 5,
+  //   title: "Entrepreneurship Workshop",
+  //   description: "Learn the basics of starting your own business",
+  //   date: "2024-02-28T14:00:00Z",
+  //   endDate: "2024-02-28T17:00:00Z",
+  //   location: "Business School",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Workshop",
+  //   organizer: "Business Department",
+  //   attendees: 45,
+  //   maxAttendees: 60,
+  //   price: 25,
+  //   isOnline: true,
+  //   tags: ["business", "entrepreneurship", "workshop"],
+  // },
+  // {
+  //   id: 6,
+  //   title: "Cultural Festival",
+  //   description:
+  //     "Celebrate diversity with music, dance, and food from around the world",
+  //   date: "2024-03-15T12:00:00Z",
+  //   endDate: "2024-03-15T22:00:00Z",
+  //   location: "Campus Grounds",
+  //   image: "/placeholder.svg?height=200&width=300",
+  //   category: "Cultural",
+  //   organizer: "International Students Association",
+  //   attendees: 200,
+  //   maxAttendees: 400,
+  //   price: 10,
+  //   isOnline: false,
+  //   tags: ["culture", "festival", "international"],
+  // },
 ];
 
 const categories = [
@@ -289,20 +289,9 @@ export default function EventsPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="mb-6 space-y-2">
-        <Link href="/finds">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Categories
-          </Button>
-        </Link>
-
-        <div>
-          <h1 className="text-2xl font-bold">Find Events</h1>
-          <p className="text-muted-foreground">
-            Discover upcoming campus events
-          </p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold">Events</h1>
+        <p className="text-muted-foreground">Discover upcoming FUTO events</p>
       </div>
 
       {/* Search and Filters */}
@@ -379,12 +368,12 @@ export default function EventsPage() {
 
       {/* Results */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             {filteredEvents.length} event
             {filteredEvents.length !== 1 ? "s" : ""} found
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((event) => (
@@ -468,11 +457,9 @@ export default function EventsPage() {
 
         {filteredEvents.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              No events found matching your criteria.
-            </p>
+            <p className="text-muted-foreground">No events Found</p>
             <Button variant="ghost" onClick={clearFilters} className="mt-2">
-              Clear filters to see all events
+              Stay Tuned
             </Button>
           </div>
         )}

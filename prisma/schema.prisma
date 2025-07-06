@@ -48,6 +48,7 @@ model User {
   views              View[]
   Notification       Notification[]
   sentNotifications  Notification[]       @relation("Sender") // Add this line
+  fcmTokens          FcmToken[]
 
   @@map("User")
 }
@@ -65,6 +66,15 @@ model Notification {
 
   user   User  @relation(fields: [userId], references: [id])
   sender User? @relation("Sender", fields: [senderId], references: [id])
+}
+
+model FcmToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PasswordResetToken {
@@ -262,15 +272,15 @@ model FriendRequest {
 }
 
 model Shop {
-  id             Int           @id
+  id             Int           @id @default(autoincrement())
   name           String        @unique
   description    String
   category       String
   requestedOrder String?
   size           Float         @default(0.0007)
   userId         Int
-  latitude       Float
-  longitude      Float
+  latitude       Float?
+  longitude      Float?
   image          String?
   coverImage     String?
   locationDesc   String?

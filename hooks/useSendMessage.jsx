@@ -21,7 +21,7 @@ const useSendMessage = () => {
       const data = await sendMessageToUser({
         message: message,
         receiverId: selectedConversation.id,
-        senderId: session.user.id,
+        senderId: Number(session.user.id),
       });
 
       // Emit the event to send a private message.

@@ -21,8 +21,6 @@ const MapPage = () => {
       {!viewerReady && (
         <p className="font-bold text-3xl text-center">{mapLoadingMessage}</p>
       )}
-      {/* <CesiumMapB /> */}
-      {/* No need to render CesiumMapB here, it's already in the layout */}
     </div>
   );
 };
