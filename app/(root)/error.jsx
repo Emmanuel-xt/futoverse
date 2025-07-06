@@ -1,34 +1,47 @@
 "use client";
 
 import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 
-// Global error handler component
 export default function GlobalError({ error, reset }) {
-  // Optional: Log the error for debugging
   useEffect(() => {
-    console.error("Global error caught:", error);
+    // Optionally log error for developers
+    console.error("Global Error:", error);
   }, [error]);
 
+  const handleRetry = () => {
+    // You could also use router.refresh() if using Next router
+    window.location.reload(); // hard reload the page
+  };
+
   return (
-    // <body className="flex flex-col items-center justify-center h-screen bg-white text-center">
-    <div className="max-w-md px-4 py-6">
-      <h2 className="text-3xl font-bold text-red-600 mb-4">
-        Oops! Something went wrong.
-      </h2>
-      <p className="text-lg text-gray-500 mb-6">
-        We encountered an issue on our end. Please try again later or refresh
-        the page.
-      </p>
-      <button
-        className="px-6 py-3 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
-        onClick={() => reset()} // Retry button to reset the error
-      >
-        Try Again
-      </button>
-      <p className="mt-4 text-sm text-gray-400">
-        If the issue persists, please contact support.
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <Card className="w-full max-w-md shadow-md border border-red-200">
+        <CardHeader className="flex flex-col items-center text-center">
+          <div className="bg-red-100 p-4 rounded-full mb-4">
+            <AlertTriangle className="h-8 w-8 text-red-500" />
+          </div>
+          <CardTitle className="text-xl font-bold text-red-600">
+            Something Went Wrong
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <p className="text-gray-600">
+            We're sorry, an unexpected error occurred. You can try again below.
+          </p>
+          <Button
+            onClick={handleRetry}
+            className="w-full bg-red-500 hover:bg-red-600"
+          >
+            Try Again
+          </Button>
+          <p className="text-sm text-gray-400 mt-2">
+            If the issue persists, please contact support.
+          </p>
+        </CardContent>
+      </Card>
     </div>
-    // </body>
   );
 }

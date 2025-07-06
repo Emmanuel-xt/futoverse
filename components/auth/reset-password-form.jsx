@@ -290,7 +290,7 @@ export default function ResetPasswordForm() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-primary hover:bg-primary"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (

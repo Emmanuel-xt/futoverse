@@ -6,6 +6,7 @@ import { Button } from "@components/ui/button";
 import {
   ArrowLeft,
   Bell,
+  LogOut,
   MessageCircle,
   MoreHorizontal,
   UserPlus,
@@ -143,7 +144,7 @@ export function ProfileHeader({
                 className="p-2 hover:bg-gray-100 rounded-full"
                 onClick={() => signOut()}
               >
-                <MoreHorizontal size={20} />
+                <LogOut size={20} />
               </button>
             </>
           )}

@@ -24,8 +24,8 @@ export function ProfileTabs({
     <div className="bg-white">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList
-          className={`grid w-full grid-cols-3 bg-gray-50 rounded-none border-b ${
-            isPanel ? "sticky top-0" : "sticky top-[64px]"
+          className={`grid w-full grid-cols-3 bg-gray-50 border-b rounded-none ${
+            isPanel ? "sticky top-[52px]" : "sticky top-[52px] py-3"
           } z-20`}
         >
           <TabsTrigger

@@ -88,7 +88,7 @@ export default function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
@@ -96,7 +96,7 @@ export default function LoginForm() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <Button
+          {/* <Button
             type="button"
             variant="outline"
             className="w-full bg-transparent"
@@ -128,16 +128,16 @@ export default function LoginForm() {
                 Continue with Google
               </>
             )}
-          </Button>
+          </Button> */}
 
-          <div className="relative">
+          {/* <div className="relative">
             <Separator />
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="bg-white px-4 text-sm text-gray-500">
                 or continue with email
               </span>
             </div>
-          </div>
+          </div> */}
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -223,7 +223,7 @@ export default function LoginForm() {
 
               <Button
                 type="submit"
-                className="w-full  bg-primary"
+                className="w-full  bg-primary hover:bg-blue-600"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (
