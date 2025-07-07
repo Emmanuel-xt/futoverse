@@ -102,7 +102,7 @@ const MessageContainer = () => {
             Keep your phone connected
           </h2>
           <p className="text-gray-500 max-w-md mx-auto">
-            WhatsApp connects to your phone to sync messages. To reduce data
+            Futoverse connects to your phone to sync messages. To reduce data
             usage, connect your phone to Wi-Fi.
           </p>
         </div>
@@ -162,8 +162,8 @@ const MessageContainer = () => {
                 {selectedConversation.isGroup
                   ? `${selectedConversation.participantCount || 0} participants`
                   : isOnline
-                  ? "online"
-                  : "last seen recently"}
+                    ? "online"
+                    : "last seen recently"}
               </p>
             </div>
           </div>

@@ -324,7 +324,7 @@ export default function UsersPage() {
         {!displayedUsers.length && !isLoading && !isError && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              No users found matching your criteria.
+              No user found matching your criteria.
             </p>
             <Button variant="ghost" onClick={clearFilters} className="mt-2">
               Clear filters to see all users

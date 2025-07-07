@@ -26,6 +26,7 @@ import { clearChatDB } from "@lib/indexedDB";
 
 export function ProfileHeader({
   user,
+  userPop,
   friendCount,
   isOwnProfile,
   isFriend,
@@ -39,6 +40,8 @@ export function ProfileHeader({
   const [showConnections, setShowConnections] = useState(false);
   const router = useRouter();
   const { selectedConversation, setSelectedConversation } = useConversation();
+
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleClickMessage = async (recieverId) => {
     if (!showMessageContainer) {
@@ -141,15 +144,29 @@ export function ProfileHeader({
                   3
                 </span> */}
               </button>
-              <button
+              <Button
+                variant="ghost"
                 className="p-2 hover:bg-gray-100 rounded-full"
+                disabled={isSigningOut}
                 onClick={async () => {
-                  await clearChatDB(); // 🧹 clear the DB first
-                  await signOut(); // 🚪 then sign out
+                  try {
+                    setIsSigningOut(true);
+                    await clearChatDB(); // 🧹 Clear IndexedDB
+                    await signOut({ redirect: false }); // Sign out silently
+                    router.push("/"); // Navigate away immediately
+                  } catch (err) {
+                    console.error("Error signing out:", err);
+                  } finally {
+                    setIsSigningOut(false);
+                  }
                 }}
               >
-                <LogOut size={20} />
-              </button>
+                {isSigningOut ? (
+                  <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <LogOut size={20} />
+                )}
+              </Button>
             </>
           )}
         </div>
@@ -190,7 +207,7 @@ export function ProfileHeader({
             </button>
             <div className="text-center">
               <div className="text-lg font-bold">
-                {user?._count?.shops || 0}
+                {user?._count?.shops || userPop?._count?.shops || 0}
               </div>
               <div className="text-sm text-gray-600">Store</div>
             </div>

@@ -38,7 +38,7 @@ export default async function ProfilePage() {
       <ProfilePanelProvider currentUserId={userId}>
         <Suspense fallback={<ProfileSkeleton />}>
           <ProfileHeader
-            user={session.user}
+            user={user}
             userPop={user}
             friendCount={friendCount}
             isOwnProfile={true}
