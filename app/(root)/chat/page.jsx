@@ -7,7 +7,7 @@ import { auth } from "auth";
 const ChatPage = async () => {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session.user) {
     redirect("/login");
   }
 

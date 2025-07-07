@@ -57,7 +57,7 @@ const ProductDynamicPage = ({ params }) => {
     };
     fetchProduct();
   }, [productId]);
-  console.log("PrOdUct ", product);
+  // console.log("PrOdUct ", product);
 
   const handleAddToCart = (item) => {
     // console.log("item", item);

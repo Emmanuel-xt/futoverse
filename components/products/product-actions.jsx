@@ -62,14 +62,18 @@ export function ProductActions({ product }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button onClick={handleAddToCart} className="flex-1" size="lg">
-          <ShoppingCart className="h-4 w-4 mr-2" />
+      <div className="flex  sm:flex-row gap-3">
+        <Button
+          onClick={handleAddToCart}
+          className="flex-1 bg-primary"
+          size="lg"
+        >
+          <ShoppingCart className="h-4 w-4 mr-2 bg-primary" />
           Add to Cart
         </Button>
 
         <Button
-          onClick={() => router.push(`/chat?receiverId=${product.userId}`)}
+          onClick={() => router.push(`/profile/${product.shop.username}`)}
           variant="outline"
           className="flex-1"
           size="lg"

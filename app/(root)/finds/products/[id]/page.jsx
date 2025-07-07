@@ -50,9 +50,9 @@ export default async function ProductPage({ params }) {
         </div>
 
         {/* Related Products */}
-        <Suspense fallback={<ProductDetailsLoading />}>
+        {/* <Suspense fallback={<ProductDetailsLoading />}>
           <RelatedProducts productId={product.id} category={product.category} />
-        </Suspense>
+        </Suspense> */}
       </div>
     </div>
   );

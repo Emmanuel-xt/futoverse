@@ -51,47 +51,47 @@ export const SettingsDrawer = ({ open, onOpenChange }) => {
   };
 
   const settingsItems = [
-    {
-      id: "location-visibility",
-      title: "Location Visibility",
-      description: "Choose who can see your location",
-      icon: Eye,
-      content: (
-        <div className="space-y-4 mt-4">
-          {locationOptions.map((option) => {
-            const IconComponent = option.icon;
-            return (
-              <div key={option.id} className="flex items-start space-x-3">
-                <Checkbox
-                  id={option.id}
-                  checked={locationVisibility === option.id}
-                  onCheckedChange={() =>
-                    handleLocationVisibilityChange(option.id)
-                  }
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <label
-                    htmlFor={option.id}
-                    className="flex items-center gap-2 text-sm font-medium cursor-pointer"
-                  >
-                    <IconComponent className="h-4 w-4" />
-                    {option.label}
-                  </label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {option.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ),
-    },
+    // {
+    //   id: "location-visibility",
+    //   title: "Location Visibility",
+    //   description: "Choose who can see your location",
+    //   icon: Eye,
+    //   content: (
+    //     <div className="space-y-4 mt-4">
+    //       {locationOptions.map((option) => {
+    //         const IconComponent = option.icon;
+    //         return (
+    //           <div key={option.id} className="flex items-start space-x-3">
+    //             <Checkbox
+    //               id={option.id}
+    //               checked={locationVisibility === option.id}
+    //               onCheckedChange={() =>
+    //                 handleLocationVisibilityChange(option.id)
+    //               }
+    //               className="mt-1"
+    //             />
+    //             <div className="flex-1">
+    //               <label
+    //                 htmlFor={option.id}
+    //                 className="flex items-center gap-2 text-sm font-medium cursor-pointer"
+    //               >
+    //                 <IconComponent className="h-4 w-4" />
+    //                 {option.label}
+    //               </label>
+    //               <p className="text-xs text-gray-500 mt-1">
+    //                 {option.description}
+    //               </p>
+    //             </div>
+    //           </div>
+    //         );
+    //       })}
+    //     </div>
+    //   ),
+    // },
     {
       id: "outfit-changer",
-      title: "Outfit Changer",
-      description: "Customize your avatar appearance",
+      title: "Model",
+      description: "Select your choice model",
       icon: Shirt,
       action: () => setOpenOutfitChanger(true),
     },
@@ -152,7 +152,7 @@ export const SettingsDrawer = ({ open, onOpenChange }) => {
                               size="sm"
                               onClick={item.action}
                             >
-                              Configure
+                              Choose
                             </Button>
                           )}
                         </div>
@@ -169,7 +169,10 @@ export const SettingsDrawer = ({ open, onOpenChange }) => {
 
             {/* Save Button */}
             <div className="pt-4">
-              <Button className="w-full" onClick={() => onOpenChange(false)}>
+              <Button
+                className="w-full bg-primary hover:bg-primary"
+                onClick={() => onOpenChange(false)}
+              >
                 Save Settings
               </Button>
             </div>

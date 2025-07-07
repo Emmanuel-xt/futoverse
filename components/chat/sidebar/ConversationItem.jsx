@@ -59,7 +59,7 @@ const ConversationItem = ({ conversation }) => {
         senderId,
         readerId: userId,
       });
-      console.log("Emmitted markRead");
+      // console.log("Emmitted markRead");
 
       markLastMessageAsRead(conversationId);
     }

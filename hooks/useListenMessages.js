@@ -38,7 +38,7 @@ const useListenMessages = () => {
         senderId,
         readerId: userId,
       });
-      console.log("Emmitted markRead");
+      // console.log("Emmitted markRead");
 
       // ✅ Update the reader’s own sidebar UI
       markLastMessageAsRead(conversationId);
@@ -47,7 +47,7 @@ const useListenMessages = () => {
 
       // Optionally play sound here too if you want
       const sound = new Audio("/sounds/notification.mp3");
-      sound.play();
+      // sound.play();
     });
 
     return () => {

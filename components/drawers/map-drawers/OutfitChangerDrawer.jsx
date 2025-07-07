@@ -32,56 +32,6 @@ const AVATAR_DATA = {
       name: "Ben",
       image: "https://randomuser.me/api/portraits/men/2.jpg",
     },
-    {
-      id: 3,
-      name: "Chris",
-      image: "https://randomuser.me/api/portraits/men/3.jpg",
-    },
-    {
-      id: 4,
-      name: "David",
-      image: "https://randomuser.me/api/portraits/men/4.jpg",
-    },
-    {
-      id: 5,
-      name: "Ethan",
-      image: "https://randomuser.me/api/portraits/men/5.jpg",
-    },
-    {
-      id: 6,
-      name: "Felix",
-      image: "https://randomuser.me/api/portraits/men/6.jpg",
-    },
-    {
-      id: 7,
-      name: "George",
-      image: "https://randomuser.me/api/portraits/men/7.jpg",
-    },
-    {
-      id: 8,
-      name: "Henry",
-      image: "https://randomuser.me/api/portraits/men/8.jpg",
-    },
-    {
-      id: 9,
-      name: "Ian",
-      image: "https://randomuser.me/api/portraits/men/9.jpg",
-    },
-    {
-      id: 10,
-      name: "Jack",
-      image: "https://randomuser.me/api/portraits/men/10.jpg",
-    },
-    {
-      id: 11,
-      name: "Kyle",
-      image: "https://randomuser.me/api/portraits/men/11.jpg",
-    },
-    {
-      id: 12,
-      name: "Luke",
-      image: "https://randomuser.me/api/portraits/men/12.jpg",
-    },
   ],
   girls: [
     {
@@ -93,56 +43,6 @@ const AVATAR_DATA = {
       id: 2,
       name: "Bella",
       image: "https://randomuser.me/api/portraits/women/2.jpg",
-    },
-    {
-      id: 3,
-      name: "Chloe",
-      image: "https://randomuser.me/api/portraits/women/3.jpg",
-    },
-    {
-      id: 4,
-      name: "Diana",
-      image: "https://randomuser.me/api/portraits/women/4.jpg",
-    },
-    {
-      id: 5,
-      name: "Emma",
-      image: "https://randomuser.me/api/portraits/women/5.jpg",
-    },
-    {
-      id: 6,
-      name: "Fiona",
-      image: "https://randomuser.me/api/portraits/women/6.jpg",
-    },
-    {
-      id: 7,
-      name: "Grace",
-      image: "https://randomuser.me/api/portraits/women/7.jpg",
-    },
-    {
-      id: 8,
-      name: "Hannah",
-      image: "https://randomuser.me/api/portraits/women/8.jpg",
-    },
-    {
-      id: 9,
-      name: "Iris",
-      image: "https://randomuser.me/api/portraits/women/9.jpg",
-    },
-    {
-      id: 10,
-      name: "Julia",
-      image: "https://randomuser.me/api/portraits/women/10.jpg",
-    },
-    {
-      id: 11,
-      name: "Kate",
-      image: "https://randomuser.me/api/portraits/women/11.jpg",
-    },
-    {
-      id: 12,
-      name: "Luna",
-      image: "https://randomuser.me/api/portraits/women/12.jpg",
     },
   ],
 };
@@ -165,7 +65,7 @@ export const OutfitChangerDrawer = ({ open, onOpenChange }) => {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh]">
+      <DrawerContent className="max-h-[60vh]">
         <DrawerHeader className="border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -173,7 +73,7 @@ export const OutfitChangerDrawer = ({ open, onOpenChange }) => {
                 <Shirt className="h-6 w-6" />
               </div>
               <DrawerTitle className="text-xl font-semibold">
-                Choose Your Avatar
+                Choose Your Model
               </DrawerTitle>
             </div>
             <DrawerClose asChild>
@@ -193,7 +93,7 @@ export const OutfitChangerDrawer = ({ open, onOpenChange }) => {
               className="flex items-center gap-2 flex-1"
             >
               <User className="h-4 w-4" />
-              Boys
+              Male
             </Button>
             <Button
               variant={selectedGender === "girls" ? "default" : "outline"}
@@ -201,7 +101,7 @@ export const OutfitChangerDrawer = ({ open, onOpenChange }) => {
               className="flex items-center gap-2 flex-1"
             >
               <Users className="h-4 w-4" />
-              Girls
+              Female
             </Button>
           </div>
 

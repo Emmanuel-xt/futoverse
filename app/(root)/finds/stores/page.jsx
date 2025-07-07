@@ -24,9 +24,9 @@ export default async function StoresPage({ searchParams }) {
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="mb-6 space-y-2">
         <div>
-          <h1 className="text-2xl font-bold">Find Stores</h1>
+          <h1 className="text-2xl font-bold">Stores</h1>
           <p className="text-muted-foreground">
-            Discover campus shops and vendors
+            Discover campus online stores and vendors
           </p>
         </div>
       </div>

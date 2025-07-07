@@ -81,7 +81,7 @@ const useGetConversations = () => {
         try {
           if (session) {
             const fetchedConversations = await getUsersForSidebar(userId);
-            console.log("Fetched new conversations:", fetchedConversations);
+            // console.log("Fetched new conversations:", fetchedConversations);
 
             if (fetchedConversations.length > 0) {
               setConversations(fetchedConversations);

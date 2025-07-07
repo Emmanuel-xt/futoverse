@@ -18,12 +18,12 @@ export function ProfilePanelProvider({ children, currentUserId }) {
 
   useEffect(() => {
     const handlePopState = (event) => {
-      console.log("Popstate event:", event);
-      console.log("Popstate event state:", event?.state);
+      // console.log("Popstate event:", event);
+      // console.log("Popstate event state:", event?.state);
       // If the state has profilePanels, set them
       if (event.state?.profilePanels) {
         setPanels(event.state.profilePanels);
-        console.log("panels dey==>", panels.length());
+        // console.log("panels dey==>", panels.length());
       } else if (!event.state?.panel) {
         // Only close profile panels if it's not another type of panel
         setPanels([]);
@@ -44,7 +44,7 @@ export function ProfilePanelProvider({ children, currentUserId }) {
     const newUrl = `/profile?panels=${panelUsernames}`;
 
     window.history.pushState({ profilePanels: newPanels }, "", newUrl);
-    console.log("event.state==>", window.history.state);
+    // console.log("event.state==>", window.history.state);
   };
 
   const closePanel = (panelIndex) => {

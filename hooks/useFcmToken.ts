@@ -9,7 +9,7 @@ import { fetchToken, messaging } from "@lib/firebase";
 async function getNotificationPermissionAndToken() {
   // Step 1: Check if Notifications are supported in the browser.
   if (!("Notification" in window)) {
-    console.info("This browser does not support desktop notification");
+    // console.info("This browser does not support desktop notification");
     return null;
   }
 
@@ -20,15 +20,15 @@ async function getNotificationPermissionAndToken() {
 
   // Step 3: If permission is not denied, request permission from the user.
   if (Notification.permission !== "denied") {
-    console.info("Requesting notification permission...");
+    // console.info("Requesting notification permission...");
     const permission = await Notification.requestPermission();
-    console.info("Notification permission status:", permission);
+    // console.info("Notification permission status:", permission);
     if (permission === "granted") {
       return await fetchToken();
     }
   }
 
-  console.log("Notification permission not granted.");
+  // console.log("Notification permission not granted.");
   return null;
 }
 
@@ -100,7 +100,7 @@ const useFcmToken = () => {
     const setupListener = async () => {
       if (!token) return; // Exit if no token is available.
 
-      console.log(`onMessage registered with token ${token}`);
+      // console.log(`onMessage registered with token ${token}`);
       const m = await messaging();
       if (!m) return;
 

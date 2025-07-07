@@ -198,7 +198,7 @@ export default function StoresPageClient({
           {userId && (
             <Button
               onClick={() => setShowCreateDrawer(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-primary hover:bg-primary"
             >
               <Plus className="h-4 w-4" />
               Create Store

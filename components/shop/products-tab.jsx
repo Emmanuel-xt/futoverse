@@ -20,7 +20,7 @@ export default function ProductsTab({ shopItems }) {
         <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
           {filteredItems.map((product, index) => (
             <Link
-              href={`/product/${product.id}`}
+              href={`/finds/products/${product.id}`}
               key={index}
               className="bg-slate-100 border p-2 rounded shadow-sm h-24 relative hover:shadow-md transition-shadow"
             >

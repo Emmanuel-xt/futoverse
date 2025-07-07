@@ -48,9 +48,9 @@ export default function ShopPageClient({ shopId }) {
   } = useQuery({
     queryKey: ["shop", shopId],
     queryFn: async () => {
-      console.log("🔄 Fetching shop data for:", shopId);
+      // console.log("🔄 Fetching shop data for:", shopId);
       const result = await fetchUserShopById(shopId);
-      console.log("✅ Shop data fetched:", result);
+      // console.log("✅ Shop data fetched:", result);
       return result;
     },
     retry: (failureCount, error) => {
