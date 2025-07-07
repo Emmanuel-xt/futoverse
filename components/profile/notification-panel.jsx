@@ -10,27 +10,27 @@ import { X, Bell } from "lucide-react";
 
 export function NotificationPanel({ isOpen, onClose }) {
   const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "friend_request",
-      message: "John Doe sent you a friend request",
-      time: "2 minutes ago",
-      read: false,
-    },
-    {
-      id: 2,
-      type: "friend_accept",
-      message: "Jane Smith accepted your friend request",
-      time: "1 hour ago",
-      read: false,
-    },
-    {
-      id: 3,
-      type: "message",
-      message: "You have a new message from Mike",
-      time: "3 hours ago",
-      read: true,
-    },
+    // {
+    //   id: 1,
+    //   type: "friend_request",
+    //   message: "John Doe sent you a friend request",
+    //   time: "2 minutes ago",
+    //   read: false,
+    // },
+    // {
+    //   id: 2,
+    //   type: "friend_accept",
+    //   message: "Jane Smith accepted your friend request",
+    //   time: "1 hour ago",
+    //   read: false,
+    // },
+    // {
+    //   id: 3,
+    //   type: "message",
+    //   message: "You have a new message from Mike",
+    //   time: "3 hours ago",
+    //   read: true,
+    // },
   ]);
 
   return (

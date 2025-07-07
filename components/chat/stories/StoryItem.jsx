@@ -31,7 +31,7 @@ const StoryItem = ({ userStories, onClick }) => {
       )} */}
 
       <p className="text-xs text-center mt-1 text-gray-600 truncate w-16">
-        {/* {user?.name || "Unknown"} */}
+        {user?.name || "Unknown"}
       </p>
     </div>
   );

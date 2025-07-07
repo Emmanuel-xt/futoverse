@@ -6,16 +6,25 @@ import { auth } from "auth";
 
 async function getProduct(id, userId) {
   try {
+    console.log("about to get product for editing");
     const product = await fetchProductById(decodeURIComponent(id));
     if (!product) {
+      console.log("product not found");
       notFound();
     }
+    console.log("product wasfound");
 
     // Check if user owns the product
-    if (product.userId !== userId) {
+    if (product.userId !== Number(userId)) {
+      console.log(
+        "product doesnt belong to the authenticated user ",
+        product.userId,
+        userId
+      );
       redirect("/products");
     }
 
+    console.log("product was found and it belongs to the auth user ");
     return product;
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -35,15 +44,15 @@ export default async function EditProductPage({ params }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <BackButton />
-        </div>
+        </div> */}
 
         <div className="min-h-screen bg-gray-50">
           <div className="container mx-auto px-4 py-6">
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <BackButton />
-            </div>
+            </div> */}
 
             <div className="max-w-4xl mx-auto">
               <EditProductForm product={product} />

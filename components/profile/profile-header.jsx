@@ -22,6 +22,7 @@ import useConversation from "zustand/useConversation";
 import MessageContainer from "@components/chat/messages/MessageContainer";
 import { signOut } from "next-auth/react";
 import { sendPushNotification } from "@lib/notification/notification-action";
+import { clearChatDB } from "@lib/indexedDB";
 
 export function ProfileHeader({
   user,
@@ -136,13 +137,16 @@ export function ProfileHeader({
                 className="p-2 hover:bg-gray-100 rounded-full relative"
               >
                 <Bell size={20} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   3
-                </span>
+                </span> */}
               </button>
               <button
                 className="p-2 hover:bg-gray-100 rounded-full"
-                onClick={() => signOut()}
+                onClick={async () => {
+                  await clearChatDB(); // 🧹 clear the DB first
+                  await signOut(); // 🚪 then sign out
+                }}
               >
                 <LogOut size={20} />
               </button>

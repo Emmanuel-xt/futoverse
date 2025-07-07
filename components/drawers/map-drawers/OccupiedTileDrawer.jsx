@@ -36,12 +36,15 @@ import { toast } from "sonner";
 import { useLocation } from "@components/providers/LocationProvider";
 import { useQuery } from "@tanstack/react-query";
 import { fetchOnlyShop } from "@lib/actions/shops.prisma";
+import { useRouter } from "next/navigation";
 
 export const OccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const { viewer } = useCesiumViewer();
   const { currentPosition } = useLocation();
   const [loadingDirections, setLoadingDirections] = useState(false);
+
+  const router = useRouter();
 
   const {
     data: tileDetails,
@@ -206,9 +209,9 @@ export const OccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
           <Button
             variant="outline"
             className="w-full justify-between"
-            onClick={() => setShowDetailsPanel(true)}
+            onClick={() => router.push(`/shops/${tileDetails.name}`)}
           >
-            <span>View Full Store Details</span>
+            <span>Enter Store</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
 

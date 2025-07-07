@@ -17,17 +17,17 @@ export default function ProductsPage({ searchParams }) {
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
+          {/* <div className="lg:w-64 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-6">
               <ProductsFilters />
             </div>
-          </div>
+          </div> */}
 
           {/* Main Content */}
           <div className="flex-1">
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <ProductsSearch />
-            </div>
+            </div> */}
 
             <Suspense fallback={<ProductsLoading />}>
               <ProductsGrid searchParams={searchParams} />

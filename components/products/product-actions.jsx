@@ -31,7 +31,8 @@ export function ProductActions({ product }) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const isOwner = session?.user?.id === product.userId;
+  const isOwner = Number(session?.user?.id) === product.userId;
+  console.lo;
 
   const handleAddToCart = () => {
     if (product.shopId) {
@@ -73,7 +74,7 @@ export function ProductActions({ product }) {
         </Button>
 
         <Button
-          onClick={() => router.push(`/profile/${product.shop.username}`)}
+          onClick={() => router.push(`/profile/${product.user.username}`)}
           variant="outline"
           className="flex-1"
           size="lg"
@@ -103,7 +104,9 @@ export function ProductActions({ product }) {
             {isOwner && (
               <>
                 <DropdownMenuItem
-                  onClick={() => router.push(`/products/${product.id}/edit`)}
+                  onClick={() =>
+                    router.push(`/finds/products/${product.id}/edit`)
+                  }
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Product
