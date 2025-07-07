@@ -64,7 +64,7 @@ export default function ShopPageClient({ shopId }) {
   });
 
   // Derived state
-  const userId = session?.user?.id;
+  const userId = Number(session?.user?.id);
   const isShopMyOwn = shop?.userId === userId;
   const isShopActive = onlineShops.some(
     (onlineShop) => onlineShop.name === shopId

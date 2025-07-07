@@ -182,7 +182,7 @@ export const OccupiedTileDrawer = ({ open, onOpenChange, tileInfo }) => {
                 <div className="flex items-center gap-1 rounded-lg">
                   <MapPin className="h-3 w-3 text-gray-600 mt-0.5" />
                   <p className="text-xs text-gray-600">
-                    {tileDetails.locationDesc} Opposite Munalux Hotel, Umuchima
+                    {tileDetails.locationDesc}
                   </p>
                 </div>
               )}
