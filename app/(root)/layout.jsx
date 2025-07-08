@@ -35,17 +35,17 @@ export default function RootLayout({ children }) {
               <OnlineUsersProvider>
                 <OnlineShopsProvider>
                   <LocationProvider>
-                    <CesiumViewerProvider>
-                      <CartProvider>
-                        <main className="bg-light">
-                          <div className="">{children}</div>
-                          <Toaster />
-                          <ButtomNav />
-                          {/* <CesiumMapB /> */}
-                          <CesiumMapBWrapper />
-                        </main>
-                      </CartProvider>
-                    </CesiumViewerProvider>
+                    {/* <CesiumViewerProvider> */}
+                    <CartProvider>
+                      <main className="bg-light">
+                        <div className="">{children}</div>
+                        <Toaster />
+                        <ButtomNav />
+                        {/* <CesiumMapB /> */}
+                        {/* <CesiumMapBWrapper /> */}
+                      </main>
+                    </CartProvider>
+                    {/* </CesiumViewerProvider> */}
                   </LocationProvider>
                 </OnlineShopsProvider>
               </OnlineUsersProvider>
