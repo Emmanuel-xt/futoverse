@@ -31,6 +31,15 @@ import { DeletePostDialog } from "./delete-post-dialog.jsx";
 import Link from "next/link";
 import { CommentDrawer } from "./comment-drawer";
 
+import Linkify from "linkify-react";
+// import "linkify-plugin-url"; // optional if you want to handle URLs only
+
+const linkifyOptions = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+  className: "text-blue-600 underline break-all",
+};
+
 export function PostCard({ post, userId }) {
   const [showFullContent, setShowFullContent] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -118,7 +127,8 @@ export function PostCard({ post, userId }) {
             </Avatar>
             <div>
               <div className="flex items-center space-x-2">
-                <p className="font-semibold text-sm">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words break-all overflow-hidden">
+                  {" "}
                   {post.creator.name || post.creator.username}
                 </p>
                 {post.isPinned && (
@@ -171,7 +181,7 @@ export function PostCard({ post, userId }) {
 
         <div className="space-y-2">
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
-            {displayContent}
+            <Linkify options={linkifyOptions}>{displayContent}</Linkify>
           </p>
           {shouldTruncate && (
             <Button
@@ -199,9 +209,9 @@ export function PostCard({ post, userId }) {
             disabled={!userId || likeMutation.isPending}
           >
             <Heart className={cn("h-4 w-4", post.isLiked && "fill-current")} />
-            <div className="space-x-1">
-              <span>Like</span>
-              <span>{post._count.likes.toLocaleString()}</span>
+            <div className="">
+              <span>{post._count.likes.toLocaleString()} </span>
+              <span>Like{post._count.likes > 1 && "s"}</span>
             </div>
           </Button>
 
@@ -212,9 +222,9 @@ export function PostCard({ post, userId }) {
             onClick={() => setShowCommentDrawer(true)}
           >
             <MessageCircle className="h-4 w-4" />
-            <div className="space-x-1">
-              <span>Comment</span>
+            <div className="">
               <span>{post._count.comments.toLocaleString()} </span>
+              <span>Comment{post._count.comments > 1 && "s"}</span>
             </div>
           </Button>
 

@@ -33,7 +33,8 @@ export default function ProductPage() {
   }, []);
 
   const router = useRouter();
-  const { viewer } = useCesiumViewer();
+  // const { viewer } = useCesiumViewer();
+  const viewer = null;
 
   const pushToRelativeMap = (lon, lat) => {
     router.push("/map");
