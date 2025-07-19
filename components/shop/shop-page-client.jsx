@@ -26,7 +26,7 @@ import ShopError from "./shop-error";
 export default function ShopPageClient({ shopId }) {
   const router = useRouter();
   const { data: session } = useSession();
-  const { viewer, setMapVisible } = useCesiumViewer();
+  // const { viewer, setMapVisible } = useCesiumViewer();
   const onlineShops = useOnlineShops();
   const queryClient = useQueryClient();
 
@@ -108,8 +108,8 @@ export default function ShopPageClient({ shopId }) {
   const pushToRelativeMap = () => {
     if (!shop) return;
     router.push("/map");
-    setMapVisible(true);
-    flytoDestination(viewer, shop.longitude, shop.latitude);
+    // setMapVisible(true);
+    // flytoDestination(viewer, shop.longitude, shop.latitude);
   };
 
   const handleTabChange = (tab) => {
