@@ -37,9 +37,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         try {
           const user = await login(credentials);
-          if (!user) {
+          if (!user || user.isDeleted) {
+            console.error("User not found or deleted");
             return null;
           }
+          console.log("User authenticated:", user);
           return user;
         } catch (error) {
           console.error("Auth error:", error);

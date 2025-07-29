@@ -6,9 +6,11 @@ import { Button } from "@components/ui/button";
 import {
   ArrowLeft,
   Bell,
+  Delete,
   LogOut,
   MessageCircle,
   MoreHorizontal,
+  Settings,
   UserPlus,
 } from "lucide-react";
 import { NotificationPanel } from "./notification-panel";
@@ -129,7 +131,7 @@ export function ProfileHeader({
           )}
         </div>
         <div className="flex items-center gap-4 ">
-          <h1 className="text-lg text-center font-bold">{user.name}</h1>
+          <h1 className="text-lg text-center font-bold">{user?.name}</h1>
         </div>
 
         <div className="flex items-center gap-3  w-20">
@@ -144,7 +146,16 @@ export function ProfileHeader({
                   3
                 </span> */}
               </button>
-              <Button
+              <button
+                onClick={() => router.push("/profile/settings")}
+                className="p-2 hover:bg-gray-100 rounded-full relative"
+              >
+                <Settings size={20} />
+                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  3
+                </span> */}
+              </button>
+              {/* <Button
                 variant="ghost"
                 className="p-2 hover:bg-gray-100 rounded-full"
                 disabled={isSigningOut}
@@ -166,7 +177,7 @@ export function ProfileHeader({
                 ) : (
                   <LogOut size={20} />
                 )}
-              </Button>
+              </Button> */}
             </>
           )}
         </div>

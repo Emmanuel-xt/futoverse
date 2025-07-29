@@ -37,6 +37,7 @@ export async function getPosts(cursor?: string, limit = 10, userId?: number) {
         const posts = await prisma.post.findMany({
             where: {
                 isApproved: true,
+                isDeleted: false, // Exclude deleted posts
             },
             include: {
                 creator: {

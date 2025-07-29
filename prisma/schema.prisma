@@ -22,6 +22,7 @@ model User {
   gender           String?
   googleId         String?  @unique
   needsOnboarding  Boolean  @default(false)
+  isDeleted        Boolean  @default(false)
 
   createdAt          DateTime             @default(now())
   updatedAt          DateTime?            @updatedAt
@@ -98,6 +99,7 @@ model Post {
   updatedAt  DateTime    @updatedAt
   isApproved Boolean     @default(false)
   isPinned   Boolean     @default(false)
+  isDeleted  Boolean     @default(false)
 
   creator  User      @relation(fields: [creatorId], references: [id])
   comments Comment[]
@@ -131,16 +133,18 @@ enum MediaType {
 }
 
 model Comment {
-  id              String    @id @default(cuid())
+  id              String   @id @default(cuid())
   content         String
   creatorId       Int
-  creator         User      @relation(fields: [creatorId], references: [id])
+  creator         User     @relation(fields: [creatorId], references: [id])
   postId          String
-  post            Post      @relation(fields: [postId], references: [id])
-  createdAt       DateTime  @default(now())
+  post            Post     @relation(fields: [postId], references: [id])
+  createdAt       DateTime @default(now())
   parentCommentId String?
-  parentComment   Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
-  replies         Comment[] @relation("CommentReplies")
+  isDeleted       Boolean  @default(false)
+
+  parentComment Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("CommentReplies")
 
   @@index([creatorId])
   @@index([postId])
@@ -287,6 +291,8 @@ model Shop {
   model          String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime?     @updatedAt
+  isDeleted      Boolean       @default(false)
+  deletedAt      DateTime?
   orders         Order[]
   user           User          @relation(fields: [userId], references: [id])
   shopItems      ShopItem[]
