@@ -1,4 +1,3 @@
-// components/cesium/CesiumMapBWrapper.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
