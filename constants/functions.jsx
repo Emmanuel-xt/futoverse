@@ -575,7 +575,6 @@ export const getMapboxDirections = async (
     "pk.eyJ1IjoiZWF6eiIsImEiOiJjbTM5ZTVqeXUxMHJuMnBzY3Jpa3RpcjV6In0.4jWwsMi42zaIedqwlmVjXg";
   const profile = "driving";
   const url = `https://car-kfey.onrender.com/route/v1/${profile}/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
-
   try {
     console.log("sending this url to mapbox", url);
     const response = await fetch(url);

@@ -190,7 +190,7 @@ export function ProfileHeader({
           <div className="relative mb-4">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
               <Image
-                src={user.picture || user.image || "/images/noProfile.png"}
+                src={user?.picture || user.image || "/images/noProfile.png"}
                 alt={user.name}
                 width={96}
                 height={96}

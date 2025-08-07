@@ -12,6 +12,38 @@ const pathBuilder = (subpath) => path.join(process.cwd(), subpath);
 
 /** @type {import('next').NextConfig} */
 const baseConfig = {
+  async headers() {
+    return [
+      {
+        source: "/tilesets/:path*", // for 3D Tiles
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // {
+      //   source: "/terrain/:path*", // for custom terrain
+      //   headers: [
+      //     {
+      //       key: "Cache-Control",
+      //       value: "public, max-age=31536000, immutable",
+      //     },
+      //   ],
+      // },
+      {
+        source: "/cesium/:path*", // for Cesium core assets (Widgets, Workers, etc.)
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+
   webpack: (config, { webpack }) => {
     config.plugins.push(
       new CopyWebpackPlugin({
