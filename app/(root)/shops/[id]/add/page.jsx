@@ -22,7 +22,6 @@ const AddProductPage = ({ params }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  const [wasNewImageUploaded, setWasNewImageUploaded] = useState(false);
   const [product, setProduct] = useState({
     name: "",
     image: "",

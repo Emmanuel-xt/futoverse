@@ -439,3 +439,23 @@ enum Gender {
   male
   female
 }
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  date         DateTime
+  endDate      DateTime
+  location     String
+  image        String
+  category     String
+  organizer    String
+  attendees    Int      @default(0) // current attendees count
+  maxAttendees Int?
+  price        Float    @default(0)
+  isOnline     Boolean  @default(false)
+  tags         String[] // array of tags
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
