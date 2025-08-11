@@ -14,6 +14,15 @@ export async function generateMetadata({ params }) {
           picture: true,
         },
       },
+      media: {
+        select: {
+          url: true,
+          type: true,
+        },
+        orderBy: {
+          id: "asc",
+        },
+      },
     },
   });
 
@@ -23,9 +32,14 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  // console.log("Post", post);
+
   const title =
     post.title || `Post by ${post.creator.name || post.creator.username}`;
   const description = post.content.slice(0, 160);
+
+  // Select first image URL if available (and is image type)
+  const ogImage = post.media?.find((m) => m.type.startsWith("image"))?.url;
 
   return {
     title,
@@ -36,11 +50,20 @@ export async function generateMetadata({ params }) {
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       authors: [post.creator.name || post.creator.username],
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              alt: title,
+            },
+          ]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
