@@ -24,9 +24,14 @@ model User {
   needsOnboarding  Boolean  @default(false)
   isDeleted        Boolean  @default(false)
 
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime?            @updatedAt
-  lastSeen           DateTime             @default(now())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime?       @updatedAt
+  lastSeen        DateTime        @default(now())
+  points          Int             @default(0) // total campus points
+  invitesSent     InviteHistory[] @relation("InviterHistory")
+  invitesReceived InviteHistory[] @relation("InviteeHistory")
+
+  pointsHistory      PointsHistory[]
   receivedRequests   FriendRequest[]      @relation("ReceivedRequests")
   sentRequests       FriendRequest[]      @relation("SentRequests")
   messages           Message[]
@@ -52,6 +57,26 @@ model User {
   fcmTokens          FcmToken[]
 
   @@map("User")
+}
+
+model PointsHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String // e.g. "PROFILE_COMPLETE", "POST_LIKE", "NEW_FRIEND"
+  points    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model InviteHistory {
+  id        Int      @id @default(autoincrement())
+  inviterId Int
+  inviteeId Int
+  createdAt DateTime @default(now())
+
+  inviter User @relation("InviterHistory", fields: [inviterId], references: [id])
+  invitee User @relation("InviteeHistory", fields: [inviteeId], references: [id])
 }
 
 model Notification {

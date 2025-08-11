@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Loader2, Mail, Lock, User, AtSign } from "lucide-react";
 import Link from "next/link";
@@ -68,6 +68,9 @@ export default function SignUpForm() {
   const [submitError, setSubmitError] = useState("");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+  const searchParams = useSearchParams();
+  const invite = searchParams.get("invite"); // e.g., inviter username
+
   const form = useForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -88,6 +91,7 @@ export default function SignUpForm() {
         username: data.username.trim().toLowerCase(),
         email: data.email.trim().toLowerCase(),
         password: data.password,
+        invite,
       };
 
       const result = await createUser(sanitizedData);

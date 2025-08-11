@@ -11,6 +11,7 @@ import {
   MessageCircle,
   MoreHorizontal,
   Settings,
+  Share2,
   UserPlus,
 } from "lucide-react";
 import { NotificationPanel } from "./notification-panel";
@@ -25,6 +26,8 @@ import MessageContainer from "@components/chat/messages/MessageContainer";
 import { signOut } from "next-auth/react";
 import { sendPushNotification } from "@lib/notification/notification-action";
 import { clearChatDB } from "@lib/indexedDB";
+import { ClipboardCopy } from "lucide-react"; // Or any copy icon you prefer
+import { toast } from "sonner";
 
 export function ProfileHeader({
   user,
@@ -44,6 +47,48 @@ export function ProfileHeader({
   const { selectedConversation, setSelectedConversation } = useConversation();
 
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const inviteLink = `${window.location.origin}/sign-up?invite=${user.id}`;
+
+  const copyInviteLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      toast("Invite link copied!");
+    } catch {
+      toast("Failed to copy invite link");
+    }
+  };
+
+  const shareInviteLink = async () => {
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [] })) {
+        // Try fetching the image
+        const response = await fetch(
+          user.picture || user.image || "/images/mainflier.jpg"
+        );
+        const blob = await response.blob();
+        const file = new File([blob], "invite.png", { type: blob.type });
+
+        // Attempt to share with image
+        await navigator.share({
+          title: "Join me on the Futoverse!",
+          text: "Sign up using my invite link and get points!",
+          url: inviteLink,
+          files: [file],
+        });
+      } else {
+        // Fallback to share without image
+        await navigator.share({
+          title: "Join me on the Campus App!",
+          text: "Sign up using my invite link and get points!",
+          url: inviteLink,
+        });
+      }
+    } catch (error) {
+      // If share fails or is cancelled, fallback to simple alert or do nothing
+      console.warn("Share failed or cancelled:", error);
+    }
+  };
 
   const handleClickMessage = async (recieverId) => {
     if (!showMessageContainer) {
@@ -223,8 +268,8 @@ export function ProfileHeader({
               <div className="text-sm text-gray-600">Store</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold">0</div>
-              <div className="text-sm text-gray-600">Product</div>
+              <div className="text-lg font-bold">{user.points}</div>
+              <div className="text-sm text-gray-600">Points</div>
             </div>
           </div>
 
@@ -273,6 +318,27 @@ export function ProfileHeader({
               {user.level && <span>{user.level.name} Level</span>}
             </div>
           )}
+
+          <div className="mt-4">
+            <p className="">Invite a friend to get 100points </p>
+            <div className="flex gap-2 ">
+              <Button
+                onClick={copyInviteLink}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                Copy Link <ClipboardCopy size={16} />
+              </Button>
+
+              <Button
+                onClick={shareInviteLink}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                Share <Share2 size={16} />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       {/* </div> */}
