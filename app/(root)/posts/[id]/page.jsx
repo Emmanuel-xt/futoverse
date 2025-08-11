@@ -39,7 +39,7 @@ export async function generateMetadata({ params }) {
   const description = post.content.slice(0, 160);
 
   // Select first image URL if available (and is image type)
-  const ogImage = post.media?.find((m) => m.type.startsWith("image"))?.url;
+  const ogImage = post.media?.find((m) => m.type.startsWith("IMAGE"))?.url;
 
   return {
     title,
