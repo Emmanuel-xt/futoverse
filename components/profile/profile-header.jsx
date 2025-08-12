@@ -28,6 +28,7 @@ import { sendPushNotification } from "@lib/notification/notification-action";
 import { clearChatDB } from "@lib/indexedDB";
 import { ClipboardCopy } from "lucide-react"; // Or any copy icon you prefer
 import { toast } from "sonner";
+import Link from "next/link";
 
 export function ProfileHeader({
   user,
@@ -267,22 +268,31 @@ export function ProfileHeader({
               </div>
               <div className="text-sm text-gray-600">Store</div>
             </div>
-            <div className="text-center">
-              <div className="text-lg font-bold">{user.points}</div>
-              <div className="text-sm text-gray-600">Points</div>
-            </div>
+            <Link href={"/leaderboard"}>
+              <div className="text-center">
+                <div className="text-lg font-bold">{user.points}</div>
+                <div className="text-sm text-gray-600">Points</div>
+              </div>
+            </Link>
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3 w-full max-w-sm">
             {isOwnProfile ? (
-              <Button
-                variant="outline"
-                className="flex-1 bg-gray-200"
-                onClick={() => router.push("/profile/edit")}
-              >
-                Edit profile
-              </Button>
+              <div className="flex items-center w-full gap-2">
+                {!user.department && (
+                  <p className="text-xs">
+                    finish your profile setup to earn 50points
+                  </p>
+                )}
+                <Button
+                  variant="outline"
+                  className="flex-1 bg-gray-200"
+                  onClick={() => router.push("/profile/edit")}
+                >
+                  Edit profile
+                </Button>
+              </div>
             ) : (
               <ProfileActions
                 userId={user.id}
@@ -319,26 +329,30 @@ export function ProfileHeader({
             </div>
           )}
 
-          <div className="mt-4">
-            <p className="">Invite a friend to get 100points </p>
-            <div className="flex gap-2 ">
-              <Button
-                onClick={copyInviteLink}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                Copy Link <ClipboardCopy size={16} />
-              </Button>
+          {isOwnProfile && (
+            <div className="mt-4">
+              <p className="text-xs text-center">
+                Invite a friend to get 100points{" "}
+              </p>
+              <div className="flex gap-2 ">
+                <Button
+                  onClick={copyInviteLink}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  Copy Link <ClipboardCopy size={16} />
+                </Button>
 
-              <Button
-                onClick={shareInviteLink}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                Share <Share2 size={16} />
-              </Button>
+                <Button
+                  onClick={shareInviteLink}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  Share <Share2 size={16} />
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       {/* </div> */}

@@ -6,6 +6,15 @@ import { Calendar, MapPin, Users, Clock, DollarSign } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import Linkify from "linkify-react";
+// import "linkify-plugin-url"; // optional if you want to handle URLs only
+
+const linkifyOptions = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+  className: "text-blue-600 underline break-all",
+};
+
 export default function EventCard({ event }) {
   const router = useRouter();
 
@@ -77,7 +86,7 @@ export default function EventCard({ event }) {
           </div>
 
           <p className="text-sm text-gray-600 line-clamp-3">
-            {event.description}
+            <Linkify options={linkifyOptions}>{event.description}</Linkify>
           </p>
 
           <div className="space-y-2">

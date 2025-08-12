@@ -132,6 +132,11 @@ const EditProfile = () => {
       }
     }
 
+    // Require image only if user has no existing one
+    if (!user?.picture && (!form.img || form.img.trim() === "")) {
+      newErrors.img = "Profile image is required";
+    }
+
     // Additional validations
     if (form.name && form.name.length < 2) {
       newErrors.name = "Name must be at least 2 characters";
@@ -314,6 +319,9 @@ const EditProfile = () => {
                   <FaCamera className="text-white text-xs" />
                 </div>
               </label>
+              {errors.img && (
+                <p className="text-sm text-red-500 mt-2">{errors.img}</p>
+              )}
             </div>
 
             {/* Name Field */}

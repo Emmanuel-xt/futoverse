@@ -157,7 +157,7 @@ export default function TikTokSettings() {
 
   if (currentScreen === "main") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen pb-20 bg-gray-50">
         <div className="flex items-center justify-between p-4 border-b bg-white">
           <h1 className="text-lg font-semibold">Settings and privacy</h1>
         </div>
@@ -176,7 +176,7 @@ export default function TikTokSettings() {
           <SettingsItem
             icon={Lock}
             title="Privacy"
-            onClick={() => setCurrentScreen("privacy")}
+            // onClick={() => setCurrentScreen("privacy")}
           />
         </div>
 
@@ -237,17 +237,17 @@ export default function TikTokSettings() {
         {renderHeader("Manage account")}
 
         <div className="bg-white">
-          <SettingsItem icon={User} title="Switch to Pro account" />
+          {/* <SettingsItem icon={User} title="Switch to Pro account" />
           <SettingsItem icon={User} title="Account control" />
           <SettingsItem
             icon={User}
             title="Username"
             rightElement={<span className="text-gray-500">@yourname</span>}
-          />
-          <SettingsItem icon={User} title="Phone number" />
+          /> */}
+          {/* <SettingsItem icon={User} title="Phone number" />
           <SettingsItem icon={User} title="Email" />
           <SettingsItem icon={User} title="Password" />
-          <SettingsItem icon={User} title="Download your data" />
+          <SettingsItem icon={User} title="Download your data" /> */}
           <SettingsItem
             icon={Trash2}
             title="Delete account"

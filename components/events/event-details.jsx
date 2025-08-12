@@ -18,9 +18,40 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+import Linkify from "linkify-react";
+// import "linkify-plugin-url"; // optional if you want to handle URLs only
+
+const linkifyOptions = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+  className: "text-blue-600 underline break-all",
+};
+
 export default function EventDetailsClient({ event }) {
   const router = useRouter();
   const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+
+  const shareEventLink = async (eventId) => {
+    // Construct the URL to your event page
+    const eventLink = `${window.location.origin}/finds/events/${eventId}`;
+
+    try {
+      await navigator.share({
+        title: "🎉 You're Invited!",
+        text: "\nCheck out this awesome event happening soon on Futoverse!",
+        url: eventLink,
+      });
+    } catch (error) {
+      console.warn("Share failed or cancelled:", error);
+      // Fallback: copy link to clipboard
+      try {
+        await navigator.clipboard.writeText(eventLink);
+        alert("Event link copied to clipboard!");
+      } catch (clipboardError) {
+        console.error("Failed to copy link:", clipboardError);
+      }
+    }
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -61,7 +92,7 @@ export default function EventDetailsClient({ event }) {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 py-6 pb-16 max-w-4xl">
         {/* Back button */}
         <Button
           variant="ghost"
@@ -98,7 +129,7 @@ export default function EventDetailsClient({ event }) {
                       {event.isOnline && (
                         <Badge variant="secondary">
                           <Globe className="w-3 h-3 mr-1" />
-                          Online
+                          Happening Now
                         </Badge>
                       )}
                       {isEventPast(event.endDate) && (
@@ -112,7 +143,9 @@ export default function EventDetailsClient({ event }) {
 
                 <div className="prose max-w-none">
                   <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                    {event.description}
+                    <Linkify options={linkifyOptions}>
+                      {event.description}
+                    </Linkify>
                   </p>
                 </div>
               </CardContent>
@@ -272,6 +305,7 @@ export default function EventDetailsClient({ event }) {
             <Card>
               <CardContent className="p-6">
                 <Button
+                  onClick={() => shareEventLink(event.id)}
                   variant="outline"
                   className="w-full h-12 text-lg bg-transparent"
                 >

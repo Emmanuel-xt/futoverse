@@ -51,7 +51,7 @@ export async function generateMetadata({ params }) {
       title,
       description,
       type: "website",
-      url: `/events/${params.id}`,
+      url: `/finds/events/${params.id}`,
       images: [
         {
           url: event.image,
