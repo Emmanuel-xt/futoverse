@@ -8,6 +8,7 @@ import {
   Calendar,
   GraduationCap,
   BookOpen,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -28,6 +29,14 @@ const categories = [
     icon: Store,
     color: "bg-green-500",
     href: "/finds/stores",
+  },
+  {
+    id: "leaderboard",
+    name: "Ponits Leaderboard",
+    description: "Rule the Space with your points",
+    icon: Trophy,
+    color: "bg-orange-500",
+    href: "/leaderboard",
   },
   {
     id: "products",

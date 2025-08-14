@@ -292,7 +292,7 @@ export default function EventDetailsClient({ event }) {
                     Event Full
                   </Button>
                 ) : (
-                  <Button className="w-full h-12 text-lg bg-blue-600 hover:bg-blue-700">
+                  <Button className="w-full hidden h-12 text-lg bg-blue-600 hover:bg-blue-700">
                     {event.price === 0
                       ? "Register for Free"
                       : `Register - ₦${event.price.toLocaleString()}`}

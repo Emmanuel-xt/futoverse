@@ -42,7 +42,7 @@ export function LeaderboardCard({ user, isCurrentUser = false }) {
         {/* Rank */}
         <div className="flex flex-col items-center">
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${getRankColor(user.rank)}`}
+            className={`w-6 h-5 rounded-full flex items-center justify-center text-white font-bold text-sm ${getRankColor(user.rank)}`}
           >
             {user.rank}
           </div>
@@ -90,7 +90,7 @@ export function LeaderboardCard({ user, isCurrentUser = false }) {
 
         {/* Points */}
         <div className="text-right">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {user.totalPoints.toLocaleString()}
           </div>
           <div className="text-sm text-muted-foreground">points</div>

@@ -21,7 +21,7 @@ export default async function LeaderboardPage() {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Trophy className="h-8 w-8 text-yellow-500" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
             Futoverse Leaderboard
           </h1>
         </div>
@@ -44,8 +44,8 @@ export default async function LeaderboardPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 mb-6">
           <Trophy className="h-6 w-6 text-yellow-500" />
-          <h2 className="text-2xl font-bold">Top 20 Members</h2>
-          <Badge variant="outline" className="ml-auto">
+          <h2 className="text-lg font-bold">Top 20 Members</h2>
+          <Badge variant="outline" className="ml-auto text-xs">
             Updated in real-time
           </Badge>
         </div>
