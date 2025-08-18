@@ -25,7 +25,7 @@ export class AppNotifications {
             senderId,
             title: `New message from ${sender?.name}`,
             body: message.length > 50 ? `${message.substring(0, 50)}...` : message,
-            link: `/chat/${chatId}`,
+            link: `/chats`,
             type: "CHAT_MESSAGE",
         })
     }
@@ -48,7 +48,7 @@ export class AppNotifications {
             senderId,
             title: "New Friend Request",
             body: `${sender?.name} sent you a friend request`,
-            link: `/friends/requests`,
+            link: `/profile`,
             type: "FRIEND_REQUEST",
         })
     }
@@ -71,7 +71,7 @@ export class AppNotifications {
             senderId,
             title: "Friend Request Accepted",
             body: `${sender?.name} accepted your friend request`,
-            link: `/profile/${senderId}`,
+            link: `/profile`,
             type: "FRIEND_REQUEST_ACCEPTED",
         })
     }
@@ -93,7 +93,7 @@ export class AppNotifications {
             senderId,
             title: "Friend Request Declined",
             body: `${sender?.name} declined your friend request`,
-            link: `/profile/${senderId}`,
+            link: `/profile`,
             type: "FRIEND_REQUEST_DECLINED",
         })
     }

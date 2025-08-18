@@ -13,6 +13,7 @@ import CesiumMapB from "@components/cesium/Cesium";
 import CesiumMapBWrapper from "@components/cesium/CesiumWrapper";
 import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
 import NotificationManager from "@components/notification-manager";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
