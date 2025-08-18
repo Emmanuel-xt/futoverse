@@ -28,7 +28,7 @@ export function WhatsHappening({ userId, userCanPost, userName, userPicture }) {
               className="flex-1 justify-start text-muted-foreground hover:bg-muted/50 h-12 rounded-full"
               onClick={() => setShowCreatePost(true)}
             >
-              Hello FUTO !
+              Add Post
             </Button>
           </div>
 
