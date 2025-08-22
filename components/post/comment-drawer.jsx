@@ -32,6 +32,8 @@ import { useComments, useCreateComment } from "hooks/use-comments";
 import { useDeleteComment, useUpdateComment } from "hooks/use-post-mutation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Input } from "@components/ui/input";
+import { AutoResizeTextarea } from "./auto-resize-textarea";
 
 export function CommentDrawer({ isOpen, onClose, postId, userId }) {
   const [newComment, setNewComment] = useState("");
@@ -147,9 +149,9 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
           )}
 
           {comments?.map((comment) => (
-            <div key={comment.id} className="space-y-2">
+            <div key={comment.id} className="space-y-2 mb-2">
               {/* Main comment */}
-              <div className="flex space-x-3">
+              <div className="flex space-x-1">
                 <Link href={`/profile/${comment.creator.username}`}>
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={comment.creator.picture} />
@@ -165,7 +167,7 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
                         <p className="text-sm font-medium">
                           {comment.creator.name}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-slate-700 text-muted-foreground">
                           {formatDistanceToNow(new Date(comment.createdAt), {
                             addSuffix: true,
                           })}
@@ -226,7 +228,9 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
                         </div>
                       </>
                     ) : (
-                      <p className="text-sm mt-2">{comment.content}</p>
+                      <p className="text-sm font-medium whitespace-pre-wrap">
+                        {comment.content}
+                      </p>
                     )}
                   </div>
 
@@ -235,7 +239,7 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="text-xs mt-2"
+                      className="text-xs"
                       onClick={() => setReplyingTo(comment.id)}
                     >
                       Reply
@@ -248,10 +252,11 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
               {replyingTo === comment.id && (
                 <div className="ml-10 mt-2">
                   <form onSubmit={(e) => handleSubmitReply(e, comment.id)}>
-                    <Textarea
+                    <AutoResizeTextarea
                       value={replyContent}
                       onChange={(e) => setReplyContent(e.target.value)}
                       placeholder="Write a reply..."
+                      className="border-gray-200 focus:border-blue-500"
                     />
                     <div className="flex gap-2 mt-2">
                       <Button size="sm" type="submit">
@@ -276,7 +281,7 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
               {comment.replies?.length > 0 && (
                 <div className="ml-10 space-y-3 mt-2">
                   {comment.replies.map((reply) => (
-                    <div key={reply.id} className="flex space-x-3">
+                    <div key={reply.id} className="flex space-x-1">
                       <Link href={`/profile/${reply.creator.username}`}>
                         <Avatar className="h-6 w-6">
                           <AvatarImage src={reply.creator.picture} />
@@ -375,15 +380,18 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
         <div className="border-t p-4 bg-background">
           {userId ? (
             <form onSubmit={handleSubmitComment} className="flex space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-2 flex">
-                <Textarea
+              {/* <Avatar className="h-8 w-8">
+                <AvatarImage src={userPicture || undefined} />
+                <AvatarFallback>{userName?.[0] || "U"}</AvatarFallback>
+              </Avatar> */}
+              <div className="flex-1 space-y-2 space-x-2 flex">
+                <AutoResizeTextarea
                   placeholder="Write a comment..."
                   value={newComment}
+                  className="border-gray-200 focus:border-blue-500"
                   onChange={(e) => setNewComment(e.target.value)}
                 />
+
                 <Button
                   type="submit"
                   size="sm"

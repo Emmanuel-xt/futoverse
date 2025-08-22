@@ -250,6 +250,8 @@ export async function getComments(postId: string) {
             },
         })
 
+        // console.log("Fetched comments for post:", postId, comments)
+
         return comments
     } catch (error) {
         console.error("Error fetching comments:", error)

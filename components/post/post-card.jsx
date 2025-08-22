@@ -144,14 +144,14 @@ export function PostCard({ post, userId }) {
               </p>
             </div>
           </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {userId === post.creator.id && (
+          {userId === post.creator.id && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
                 <>
                   <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
                     <Edit2 className="h-4 w-4 mr-2" />
@@ -166,13 +166,13 @@ export function PostCard({ post, userId }) {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
-              )}
-              <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                 <Flag className="h-4 w-4 mr-2" />
                 Report post
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </DropdownMenuItem> */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </CardHeader>
 

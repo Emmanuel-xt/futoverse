@@ -219,6 +219,7 @@ const EditProfile = () => {
         });
 
         if (!res.ok) {
+          toast.error("Failed to upload image");
           throw new Error("Image upload failed");
         }
 
