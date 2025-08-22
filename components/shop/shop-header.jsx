@@ -82,7 +82,7 @@ export default function ShopHeader({
               </>
             ) : (
               <Link
-                href={`/chat?receiverId=${shop?.userId}`}
+                href={`/profile/${shop?.user.username}`}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Message store owner
