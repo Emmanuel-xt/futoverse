@@ -30,7 +30,7 @@ export function ProductsSearch() {
     }
 
     startTransition(() => {
-      router.push(`/products?${params.toString()}`);
+      router.push(`/finds/products?${params.toString()}`);
     });
   };
 
@@ -75,7 +75,7 @@ export function ProductsSearch() {
           {isPending ? "Searching..." : "Search"}
         </Button>
 
-        <Select
+        {/* <Select
           onValueChange={handleSort}
           defaultValue={searchParams.get("sort") || "default"}
         >
@@ -88,7 +88,7 @@ export function ProductsSearch() {
             <SelectItem value="price-high">Price: High to Low</SelectItem>
             <SelectItem value="name">Name A-Z</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
     </div>
   );

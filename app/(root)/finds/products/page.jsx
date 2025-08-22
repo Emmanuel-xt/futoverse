@@ -6,7 +6,7 @@ import { ProductsLoading } from "@components/products/products-loading";
 
 export default function ProductsPage({ searchParams }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-16">
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Products</h1>
@@ -25,9 +25,9 @@ export default function ProductsPage({ searchParams }) {
 
           {/* Main Content */}
           <div className="flex-1">
-            {/* <div className="mb-6">
+            <div className="mb-6">
               <ProductsSearch />
-            </div> */}
+            </div>
 
             <Suspense fallback={<ProductsLoading />}>
               <ProductsGrid searchParams={searchParams} />

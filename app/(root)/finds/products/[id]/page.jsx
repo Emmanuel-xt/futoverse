@@ -61,13 +61,72 @@ export default async function ProductPage({ params }) {
 export async function generateMetadata({ params }) {
   const product = await getProduct(params.id);
 
+  const formattedPrice = `₦${product.price.toLocaleString()}`;
+  const shopName = product.shop.name;
+  const sellerName = product.user.name;
+
+  // Create compelling title and description
+  const title = `${product.name} - ${formattedPrice} | Premium Quality at ${shopName}`;
+  const description = `🔥 Get your hands on these premium ${product.name} for just ${formattedPrice}! ${product.description.replace(/\n/g, " ")} Available now at ${shopName} by ${sellerName}. Limited stock - Order today!`;
+
+  // Extract key features for keywords
+  const keywords = [product.name.toLowerCase(), shopName.toLowerCase()];
+
   return {
-    title: `${product.name} - ₦${product.price}`,
-    description: product.description,
+    title,
+    description,
+    keywords: keywords.join(", "),
+    authors: [{ name: sellerName, url: `/@${product.user.username}` }],
+    creator: sellerName,
+    publisher: shopName,
+
     openGraph: {
-      title: product.name,
-      description: product.description,
+      title: `🛍️ ${product.name} - Premium Quality ${formattedPrice}`,
+      description: `Discover premium ${product.name} at ${shopName}! ${product.description.replace(/\n/g, " ")} Perfect quality, unbeatable price. Shop now!`,
+      images: [
+        {
+          url: product.image,
+          width: 800,
+          height: 600,
+          alt: `${product.name} - Premium quality footwear from ${shopName}`,
+        },
+      ],
+      type: "website",
+      siteName: shopName,
+      locale: "en_US",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} - ${formattedPrice} at ${shopName}`,
+      description: `Premium ${product.name} available now! ${product.description.replace(/\n/g, " ")} Shop at ${shopName} 🛒`,
       images: [product.image],
+      creator: `@${product.user.username}`,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+
+    alternates: {
+      canonical: `/product/${product.id}`,
+    },
+
+    other: {
+      "product:price:amount": product.price.toString(),
+      "product:price:currency": "NGN",
+      "product:availability":
+        product.quantity > 0 ? "in stock" : "out of stock",
+      "product:condition": "new",
+      "product:retailer": shopName,
     },
   };
 }

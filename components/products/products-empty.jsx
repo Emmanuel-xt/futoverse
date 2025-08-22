@@ -26,7 +26,7 @@ export function ProductsEmpty() {
           Clear Filters
         </Button>
         <Button asChild>
-          <Link href="/products/create">Add New Product</Link>
+          <Link href="/finds/stores">Create Store & New Product</Link>
         </Button>
       </div>
     </div>

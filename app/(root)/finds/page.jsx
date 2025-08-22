@@ -83,10 +83,10 @@ export default async function FindsPage({ searchParams }) {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 m pb-16 max-w-6xl">
       <div className="text-center mb-8">
         <h1 className="text-lg font-bold mb-4">Find Anything on Campus</h1>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground text-sm mb-6">
           Search for users, stores, products, events, and more
         </p>
       </div>
