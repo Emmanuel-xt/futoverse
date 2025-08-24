@@ -404,9 +404,12 @@ export function CommentDrawer({ isOpen, onClose, postId, userId }) {
               </div>
             </form>
           ) : (
-            <p className="text-sm text-muted-foreground text-center">
+            <Link
+              href={"/sign-up"}
+              className="text-sm text-muted-foreground text-center"
+            >
               Log in to comment
-            </p>
+            </Link>
           )}
         </div>
       </DrawerContent>

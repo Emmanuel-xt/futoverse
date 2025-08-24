@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 // import { prisma } from "@lib/prisma"
 import { PostCard } from "@components/post/post-card";
 import prisma from "@prisma/prisma";
+import { auth } from "auth";
 
 export async function generateMetadata({ params }) {
   const post = await prisma.post.findUnique({
@@ -101,9 +102,12 @@ export default async function PostPage({ params }) {
     notFound();
   }
 
+  const session = await auth();
+  const CURRENT_USER_ID = Number(session?.user?.id) || null;
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <PostCard post={post} userId={1} />
+      <PostCard post={post} userId={CURRENT_USER_ID} />
     </div>
   );
 }
