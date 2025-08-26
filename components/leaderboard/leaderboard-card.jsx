@@ -71,18 +71,19 @@ export function LeaderboardCard({ user, isCurrentUser = false }) {
                     You
                   </Badge>
                 )}
-                {user.rank <= 3 && (
+                {/* {user.rank <= 3 && (
                   <Badge
                     variant="outline"
                     className="text-xs bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-950 dark:border-yellow-800 dark:text-yellow-200"
                   >
                     Top {user.rank}
                   </Badge>
-                )}
+                )} */}
               </div>
               <p className="text-sm text-muted-foreground truncate">
-                {user.user.department.initial || ""} (
-                {user.user.level.name || ""})
+                {user.user.department?.initial || ""}
+
+                {`(${user.user.level?.name})` || ""}
               </p>
             </div>
           </div>

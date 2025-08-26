@@ -10,11 +10,13 @@ import { PointsGuide } from "@components/leaderboard/point-guide";
 // Mock current user ID - replace with actual auth
 
 export default async function LeaderboardPage() {
-  const session = auth();
+  const session = await auth();
+  // console.log("session:", (await session).user);
   const CURRENT_USER_ID = session?.user?.id || null;
+  // console.log("Current User ID:", CURRENT_USER_ID);
   const leaderboardData = await getLeaderboardData(CURRENT_USER_ID);
+  // console.log("Leaderboard Data:", leaderboardData);
   const { topUsers, currentUser, totalUsers } = leaderboardData;
-  
 
   return (
     <div className="container mx-auto px-4 py-8 pb-16 max-w-4xl">

@@ -34,7 +34,7 @@ export function CurrentUserPosition({ user, totalUsers }) {
 
         <div className="flex-1">
           <h3 className="text-xl font-bold">{user.user.name}</h3>
-          <p className="text-muted-foreground">{user.user.email}</p>
+          {/* <p className="text-muted-foreground">{user.user.email}</p> */}
         </div>
 
         <div className="text-right">
