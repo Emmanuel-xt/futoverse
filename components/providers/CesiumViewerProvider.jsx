@@ -7,6 +7,8 @@ const CesiumViewerContext = createContext(null);
 
 export const useCesiumViewer = () => useContext(CesiumViewerContext);
 
+const GLOBAL_VIEWER_KEY = "__cesium_viewer_instance__";
+
 export const CesiumViewerProvider = ({ children }) => {
   const viewerRef = useRef(null);
   const [viewerReady, setViewerReady] = useState(false);
@@ -18,6 +20,15 @@ export const CesiumViewerProvider = ({ children }) => {
     const initializeViewer = async () => {
       try {
         if (typeof window === "undefined") return;
+
+        if (
+          window[GLOBAL_VIEWER_KEY] &&
+          !window[GLOBAL_VIEWER_KEY].isDestroyed()
+        ) {
+          viewerRef.current = window[GLOBAL_VIEWER_KEY];
+          setViewerReady(true);
+          return;
+        }
 
         Ion.defaultAccessToken =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
@@ -35,7 +46,7 @@ export const CesiumViewerProvider = ({ children }) => {
           navigationHelpButton: false,
           navigationInstructionsInitiallyVisible: false,
           requestRenderMode: true,
-          maximumRenderTimeChange: Infinity,
+          maximumRenderTimeChange: Number.POSITIVE_INFINITY,
         });
 
         cesiumViewer.imageryLayers.removeAll();
@@ -63,6 +74,7 @@ export const CesiumViewerProvider = ({ children }) => {
 
         if (!destroyed) {
           viewerRef.current = cesiumViewer;
+          window[GLOBAL_VIEWER_KEY] = cesiumViewer;
           setViewerReady(true);
         }
       } catch (error) {
@@ -75,8 +87,24 @@ export const CesiumViewerProvider = ({ children }) => {
 
     return () => {
       destroyed = true;
-      viewerRef.current?.destroy();
+      // Only clean up the ref
+      viewerRef.current = null;
     };
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (
+        window[GLOBAL_VIEWER_KEY] &&
+        !window[GLOBAL_VIEWER_KEY].isDestroyed()
+      ) {
+        window[GLOBAL_VIEWER_KEY].destroy();
+        delete window[GLOBAL_VIEWER_KEY];
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
   return (

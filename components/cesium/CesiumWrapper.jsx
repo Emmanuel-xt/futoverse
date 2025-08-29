@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import CesiumMapB from "./Cesium";
 import { Progress } from "@components/ui/progress";
 import { Button } from "@components/ui/button";
@@ -9,16 +8,21 @@ import { Card } from "@components/ui/card";
 import { ExternalLink, MapPin, Globe, Zap } from "lucide-react";
 import Image from "next/image";
 
-export default function CesiumMapBWrapper() {
-  const pathname = usePathname();
-  const isMapPage = pathname === "/map";
+const FIRST_VISIT_KEY = "cesium_map_first_visit";
 
-  const [showOverlay, setShowOverlay] = useState(true);
+export default function CesiumMapBWrapper() {
+  const [showOverlay, setShowOverlay] = useState(false);
   const [progress, setProgress] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   useEffect(() => {
-    if (isMapPage) {
+    const isFirstVisit = !sessionStorage.getItem(FIRST_VISIT_KEY);
+
+    if (isFirstVisit) {
+      setShowOverlay(true);
+      // Mark that user has visited the maps page
+      sessionStorage.setItem(FIRST_VISIT_KEY, "true");
+
       const progressInterval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
@@ -28,25 +32,25 @@ export default function CesiumMapBWrapper() {
           }
           return prev + 1;
         });
-      }, 100); // 100ms intervals for smooth 10-second progress
+      }, 50); // 50ms intervals for smooth 5-second progress
 
       return () => clearInterval(progressInterval);
     }
-  }, [isMapPage]);
+  }, []);
 
   const handleDismiss = () => {
     setShowOverlay(false);
   };
 
   const handleAdClick = () => {
-    window.open("https://bit.ly/ASWN2025REG", "_blank");
+    window.open("https://bit.ly/ASWN2025REGISTRATIONS", "_blank");
   };
 
   return (
     <div id="cesium-map-wrapper" className="relative w-full h-full">
-      {isMapPage && <CesiumMapB />}
+      {<CesiumMapB />}
 
-      {isMapPage && showOverlay && (
+      {showOverlay && (
         <div className="absolute inset-0 z-50 bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col items-center justify-center transition-opacity">
           <div className="max-w-md w-full mx-4 space-y-6">
             {/* Header Section */}
