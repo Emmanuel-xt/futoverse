@@ -43,18 +43,6 @@ export const useMapInitialization = ({
 
     try {
       // Camera start position
-      viewer.camera.flyTo({
-        destination: Cartesian3.fromDegrees(
-          6.996121931660761,
-          5.383035004589935,
-          600
-        ),
-        orientation: {
-          heading: 0,
-          pitch: -Math.PI / 3,
-          roll: 0,
-        },
-      });
 
       // Restrict camera to bounds
       const futoBounds = Rectangle.fromDegrees(
@@ -72,6 +60,23 @@ export const useMapInitialization = ({
       const urlParams = new URLSearchParams(window.location.search);
       const lat = urlParams.get("lat");
       const lng = urlParams.get("lng");
+      if (viewer.scene) {
+        console.log("Flying to default location");
+
+        viewer.camera.flyTo({
+          destination: Cartesian3.fromDegrees(
+            6.996121931660761,
+            5.383035004589935,
+            600
+          ),
+          orientation: {
+            heading: 0,
+            pitch: -Math.PI / 3,
+            roll: 0,
+          },
+        });
+        console.log("it did flew");
+      }
 
       if (lat && lng) {
         flytoDestination(viewer, parseFloat(lng), parseFloat(lat));

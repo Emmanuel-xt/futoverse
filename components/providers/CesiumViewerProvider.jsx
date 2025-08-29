@@ -21,14 +21,49 @@ export const CesiumViewerProvider = ({ children }) => {
       try {
         if (typeof window === "undefined") return;
 
+        console.log("[v0] Initializing viewer...");
+
+        const containerElement = document.getElementById("cesiumContainer");
+        if (!containerElement) {
+          console.log("[v0] Container not found, retrying...");
+          setTimeout(initializeViewer, 100);
+          return;
+        }
+
+        console.log("[v0] Container found:", containerElement);
+
+        // Check if we have an existing viewer
         if (
           window[GLOBAL_VIEWER_KEY] &&
           !window[GLOBAL_VIEWER_KEY].isDestroyed()
         ) {
-          viewerRef.current = window[GLOBAL_VIEWER_KEY];
-          setViewerReady(true);
-          return;
+          const existingViewer = window[GLOBAL_VIEWER_KEY];
+          console.log("[v0] Found existing viewer:", existingViewer);
+
+          // Check if the existing viewer's container is still in the DOM
+          const existingContainer = existingViewer.container;
+          console.log("[v0] Existing container:", existingContainer);
+          console.log(
+            "[v0] Is existing container in DOM:",
+            document.contains(existingContainer)
+          );
+
+          if (!document.contains(existingContainer)) {
+            console.log(
+              "[v0] Existing container not in DOM, destroying old viewer..."
+            );
+            existingViewer.destroy();
+            delete window[GLOBAL_VIEWER_KEY];
+          } else {
+            // Container is still valid, reuse the viewer
+            console.log("[v0] Reusing existing viewer");
+            viewerRef.current = existingViewer;
+            setViewerReady(true);
+            return;
+          }
         }
+
+        console.log("[v0] Creating new viewer...");
 
         Ion.defaultAccessToken =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
@@ -73,6 +108,7 @@ export const CesiumViewerProvider = ({ children }) => {
         );
 
         if (!destroyed) {
+          console.log("[v0] Viewer created successfully");
           viewerRef.current = cesiumViewer;
           window[GLOBAL_VIEWER_KEY] = cesiumViewer;
           setViewerReady(true);
