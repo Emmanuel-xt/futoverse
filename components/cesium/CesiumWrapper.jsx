@@ -32,7 +32,7 @@ export default function CesiumMapBWrapper() {
           }
           return prev + 1;
         });
-      }, 50); // 50ms intervals for smooth 5-second progress
+      }, 100); // 50ms intervals for smooth 5-second progress
 
       return () => clearInterval(progressInterval);
     }
