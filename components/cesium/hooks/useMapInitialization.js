@@ -53,7 +53,7 @@ export const useMapInitialization = ({
       );
 
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10;
-      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 2000;
+      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3000;
       viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
       // Handle optional fly-to from URL
@@ -67,7 +67,7 @@ export const useMapInitialization = ({
           destination: Cartesian3.fromDegrees(
             6.996121931660761,
             5.383035004589935,
-            600
+            3000
           ),
           orientation: {
             heading: 0,
