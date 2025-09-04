@@ -52,8 +52,8 @@ export const useMapInitialization = ({
         5.410862571178967 // north
       );
 
-      viewer.scene.screenSpaceCameraController.minimumZoomDistance = 5;
-      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 1500;
+      viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10;
+      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3000;
       viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
       // Handle optional fly-to from URL
@@ -61,13 +61,13 @@ export const useMapInitialization = ({
       const lat = urlParams.get("lat");
       const lng = urlParams.get("lng");
       if (viewer.scene) {
-        console.log("Flying to default location");
+        // console.log("Flying to default location");
 
         viewer.camera.flyTo({
           destination: Cartesian3.fromDegrees(
             6.996121931660761,
             5.383035004589935,
-            600
+            3000
           ),
           orientation: {
             heading: 0,
@@ -75,7 +75,7 @@ export const useMapInitialization = ({
             roll: 0,
           },
         });
-        console.log("it did flew");
+        // console.log("it did flew");
       }
 
       if (lat && lng) {

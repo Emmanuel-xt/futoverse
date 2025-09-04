@@ -225,7 +225,7 @@ export default function TikTokSettings() {
         </div>
 
         <div className="p-4 text-center text-xs text-gray-400">
-          v39.6.6 (390606)
+          Arinzechukwu's Execution
         </div>
       </div>
     );
