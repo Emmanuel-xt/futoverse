@@ -24,10 +24,16 @@ model User {
   needsOnboarding  Boolean  @default(false)
   isDeleted        Boolean  @default(false)
 
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime?       @updatedAt
-  lastSeen        DateTime        @default(now())
-  points          Int             @default(0) // total campus points
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime?          @updatedAt
+  lastSeen          DateTime           @default(now())
+  points            Int                @default(0) // total campus points
+  // Election relations
+  // Election relations
+  electionComments  ElectionComment[]  @relation("ElectionComments")
+  electionReactions ElectionReaction[] @relation("ElectionReactions")
+  candidatesCreated Candidate[]        @relation("CandidateCreator")
+
   invitesSent     InviteHistory[] @relation("InviterHistory")
   invitesReceived InviteHistory[] @relation("InviteeHistory")
 
@@ -483,4 +489,46 @@ model Event {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Candidate {
+  id        String   @id @default(cuid())
+  name      String
+  picture   String // profile image URL
+  position  String
+  slogan    String?
+  manifesto String? // plain text or link to uploaded PDF
+  bio       String?
+  userId    Int // User who created this candidate profile
+  approved  Boolean  @default(false) // Only approved candidates are shown
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User               @relation("CandidateCreator", fields: [userId], references: [id], onDelete: Cascade)
+  comments  ElectionComment[]
+  reactions ElectionReaction[]
+}
+
+model ElectionComment {
+  id          Int      @id @default(autoincrement())
+  content     String
+  createdAt   DateTime @default(now())
+  userId      Int
+  candidateId String
+
+  user      User      @relation("ElectionComments", fields: [userId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+}
+
+model ElectionReaction {
+  id          Int      @id @default(autoincrement())
+  type        String // "🔥", "❤️", "💡"
+  userId      Int
+  candidateId String
+  createdAt   DateTime @default(now())
+
+  user      User      @relation("ElectionReactions", fields: [userId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, candidateId, type])
 }
