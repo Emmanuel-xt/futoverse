@@ -39,7 +39,7 @@ export function ReactionButton({ candidateId, type, count, label }) {
       size="sm"
       onClick={handleReaction}
       disabled={isLoading}
-      className="flex items-center gap-2"
+      className="flex items-center gap-1"
     >
       <span className="text-lg">{type}</span>
       <span className="text-sm">{currentCount}</span>

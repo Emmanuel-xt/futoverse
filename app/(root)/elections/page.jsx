@@ -1,5 +1,6 @@
 import { getCandidates } from "@lib/actions/election";
 import { CandidateCard } from "@components/elections/candidates-card";
+import Link from "next/link";
 
 export default async function ElectionsPage() {
   const result = await getCandidates();
@@ -31,15 +32,18 @@ export default async function ElectionsPage() {
   const positions = Object.keys(candidatesByPosition);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
-      <div className="container px-2 py-8">
-        <div className="mb-8 border w-full">
+    <div className="min-h-screen mb-14 bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
+      <div className=" mx-auto px-4 py-8">
+        <div className="mb-8 text-center w-full">
           <h1 className="text-2xl font-bold text-white text-balance mb-2">
             SUG Elections 2024
           </h1>
           <p className="text-green-200">
             Meet the candidates running for Student Union Government positions
           </p>
+          <Link href="/elections/register" className="text-blue-700 underline">
+            Register a Candidate
+          </Link>
         </div>
 
         {candidates && candidates.length > 0 ? (
@@ -99,3 +103,36 @@ export default async function ElectionsPage() {
     </div>
   );
 }
+
+export const metadata = {
+  title: "SUG Elections 2025 | Futoverse",
+  description:
+    "Meet the candidates running for Student Union Government positions at FUTO. View their profiles, manifestos, and show your support through reactions and comments.",
+  keywords: [
+    "SUG Elections",
+    "FUTO",
+    "Student Union Government",
+    "Candidates",
+    "University Elections",
+  ],
+  openGraph: {
+    title: "SUG Elections 2025 | Futoverse",
+    description:
+      "Meet the candidates running for Student Union Government positions at FUTO",
+    type: "website",
+    images: [
+      {
+        url: "/election.jpg",
+        width: 1200,
+        height: 630,
+        alt: "SUG Elections 2025",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SUG Elections 2025 | Futoverse",
+    description:
+      "Meet the candidates running for Student Union Government positions at FUTO",
+  },
+};

@@ -8,7 +8,7 @@ import Link from "next/link";
 export function CandidateCard({ candidate }) {
   return (
     <Link href={`/elections/${candidate.id}`}>
-      <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer h-full bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 hover:border-green-300 hover:shadow-green-100/50 min-w-[280px] max-w-[300px]">
+      <Card className=" transition-all duration-300 cursor-pointer h-full bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 hover:border-green-300 hover:shadow-green-100/50 min-w-[280px] max-w-[300px]">
         <CardContent className="p-4">
           {/* Profile Image - Rectangular like Facebook */}
           <div className="relative mb-3">

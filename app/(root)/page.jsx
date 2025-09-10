@@ -5,6 +5,7 @@ import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
 import { InstallButton } from "@components/InstallButton";
+import { SUGCandidatesHomeRow } from "@components/elections/sug-candidates-home-row";
 
 export default async function HomePage() {
   const session = await auth();
@@ -41,6 +42,7 @@ export default async function HomePage() {
           userPicture={CURRENT_USER.picture}
         />
 
+        <SUGCandidatesHomeRow />
         <Suspense
           fallback={
             <div className="space-y-6">

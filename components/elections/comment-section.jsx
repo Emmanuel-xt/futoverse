@@ -55,7 +55,7 @@ export function CommentSection({ candidateId, comments }) {
           <Button
             type="submit"
             disabled={!newComment.trim() || isSubmitting}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-green-800"
           >
             <Send className="w-4 h-4 mr-2" />
             {isSubmitting ? "Posting..." : "Post Comment"}

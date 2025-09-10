@@ -9,11 +9,20 @@ import {
   GraduationCap,
   BookOpen,
   Trophy,
+  Vote,
 } from "lucide-react";
 import Link from "next/link";
 
 // Static data
 const categories = [
+  {
+    id: "elections",
+    name: "SUG Election",
+    description: "Discover SUG Election candidates",
+    icon: Vote,
+    color: "bg-green-800",
+    href: "/elections",
+  },
   {
     id: "users",
     name: "Users",

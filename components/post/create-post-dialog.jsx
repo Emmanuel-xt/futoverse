@@ -112,6 +112,7 @@ export function CreatePostDialog({
 
       setUploadingFiles(false);
 
+      console.log("userId", userId);
       await createPostMutation.mutateAsync({
         title: title.trim() || undefined,
         content: content.trim(),
