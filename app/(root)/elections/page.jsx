@@ -18,6 +18,7 @@ export default async function ElectionsPage() {
   }
 
   const candidates = result.data;
+  //   console.log("candidates", candidates);
 
   const candidatesByPosition =
     candidates?.reduce((acc, candidate) => {
@@ -76,6 +77,10 @@ export default async function ElectionsPage() {
                     ))}
                   </div>
                 </div>
+
+                <p className="text-xs text-gray-300">
+                  Arinzechukwu's Execution
+                </p>
               </div>
             ))}
           </div>

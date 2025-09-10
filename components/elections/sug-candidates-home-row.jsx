@@ -29,41 +29,41 @@ export async function SUGCandidatesHomeRow() {
 
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {candidates?.slice(0, 6).map((candidate) => (
-          <Card
-            key={candidate.id}
-            className="flex-shrink-0 w-40 p-3 border border-gray-200"
-          >
-            <div className="text-center">
-              <div className="relative w-20 h-20 mx-auto mb-2">
-                <Image
-                  src={
-                    candidate.picture ||
-                    "/placeholder.svg?height=80&width=80&query=candidate"
-                  }
-                  alt={candidate.name}
-                  fill
-                  className="rounded-full object-cover"
-                />
-              </div>
+          <Link href={`/elections/${candidate.id}`}>
+            <Card
+              key={candidate.id}
+              className="flex-shrink-0 w-40 p-3 border border-gray-200"
+            >
+              <div className="text-center">
+                <div className="relative w-20 h-20 mx-auto mb-2">
+                  <Image
+                    src={
+                      candidate.picture ||
+                      "/placeholder.svg?height=80&width=80&query=candidate"
+                    }
+                    alt={candidate.name}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
 
-              <h4 className="font-medium text-sm text-gray-900 mb-1 truncate">
-                {candidate.name}
-              </h4>
+                <h4 className="font-medium text-sm text-gray-900 mb-1 truncate">
+                  {candidate.name}
+                </h4>
 
-              <p className="text-xs text-gray-600 mb-2 truncate">
-                {candidate.position}
-              </p>
+                <p className="text-xs text-gray-600 mb-2 truncate">
+                  {candidate.position}
+                </p>
 
-              <Link href={`/elections/${candidate.id}`}>
                 <Button
                   size="sm"
                   className="w-full text-xs bg-blue-600 hover:bg-blue-700"
                 >
                   View Profile
                 </Button>
-              </Link>
-            </div>
-          </Card>
+              </div>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

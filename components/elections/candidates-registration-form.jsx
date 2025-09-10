@@ -21,11 +21,16 @@ const positions = [
   "President",
   "Vice President",
   "Secretary General",
+  "Assistant Secretary General",
   "Financial Secretary",
+  "Tresurer",
   "Public Relations Officer",
   "Social Director",
   "Sports Director",
   "Welfare Director",
+  "Transport Director",
+  "Information Director",
+  "Health Director",
 ];
 
 const convertToBase64 = (file) => {
