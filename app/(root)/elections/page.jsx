@@ -126,7 +126,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/images/dday.jpg",
+        url: "https://res.cloudinary.com/daueleyul/image/upload/v1757583971/your_folder_name/a95wcl9o5el8kucehhww.jpg",
         width: 1200,
         height: 630,
         alt: "SUG Elections 2025",
