@@ -42,9 +42,9 @@ export default async function ElectionsPage() {
           <p className="text-green-200">
             Meet the candidates running for Student Union Government positions
           </p>
-          <Link href="/elections/register" className="text-blue-700 underline">
+          {/* <Link href="/elections/register" className="text-blue-700 underline">
             Register a Candidate
-          </Link>
+          </Link> */}
         </div>
 
         {candidates && candidates.length > 0 ? (
@@ -77,10 +77,6 @@ export default async function ElectionsPage() {
                     ))}
                   </div>
                 </div>
-
-                <p className="text-xs text-gray-300">
-                  Arinzechukwu's Execution
-                </p>
               </div>
             ))}
           </div>
@@ -94,6 +90,9 @@ export default async function ElectionsPage() {
             </div>
           </div>
         )}
+        <p className="text-xs text-center text-gray-300">
+          Arinzechukwu's Execution
+        </p>
       </div>
 
       {/* <style jsx global>{`
@@ -127,7 +126,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/election.jpg",
+        url: "/images/dday.jpg",
         width: 1200,
         height: 630,
         alt: "SUG Elections 2025",
