@@ -342,7 +342,7 @@ const MessageInput = () => {
       className="fixed bottom-0 inset-x-0 z-30 px-2 bg-inherit"
       onSubmit={handleSubmit}
     >
-      <div className="flex gap-1 relative">
+      <div className="flex gap-1 py-4 relative">
         <div className="w-full flex gap-1 items-end  ">
           <textarea
             className=" text-sm block w-full p-2.5 bg-slate-200 rounded-2xl border-gray-600 text-black resize-none overflow-hidden outline-none"
@@ -351,6 +351,17 @@ const MessageInput = () => {
             onChange={handleChange}
             rows={rows} // Dynamically adjust rows
           />
+          <div className="flex items-center pr-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="p-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowEmoji(!showEmoji)}
+            >
+              <Smile className="w-7 h-7" />
+            </Button>
+          </div>
           {message.trim() && (
             <Button
               type="submit"
@@ -371,17 +382,6 @@ const MessageInput = () => {
               )}
             </Button>
           )}
-          <div className="flex items-center pr-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="p-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowEmoji(!showEmoji)}
-            >
-              <Smile className="w-5 h-5" />
-            </Button>
-          </div>
         </div>
         {showEmoji && (
           <div className="absolute bottom-full right-0 mb-2 z-50">

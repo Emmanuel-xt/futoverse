@@ -16,14 +16,6 @@ import Link from "next/link";
 // Static data
 const categories = [
   {
-    id: "elections",
-    name: "SUG Election",
-    description: "Discover SUG Election candidates",
-    icon: Vote,
-    color: "bg-green-800",
-    href: "/elections",
-  },
-  {
     id: "users",
     name: "Users",
     description: "Find students and connect with peers",
@@ -63,6 +55,14 @@ const categories = [
     color: "bg-orange-500",
     href: "/finds/events",
   },
+  {
+    id: "elections",
+    name: "SUG Election",
+    description: "Discover SUG Election candidates",
+    icon: Vote,
+    color: "bg-green-800",
+    href: "/elections",
+  },
   // {
   //   id: "lecture-halls",
   //   name: "Lecture Halls",
@@ -92,7 +92,7 @@ export default async function FindsPage({ searchParams }) {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 m pb-16 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 m pb-20 max-w-6xl">
       <div className="text-center mb-8">
         <h1 className="text-lg font-bold mb-4">Find Anything on Campus</h1>
         <p className="text-muted-foreground text-sm mb-6">

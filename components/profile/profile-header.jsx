@@ -10,6 +10,7 @@ import {
   LogOut,
   MessageCircle,
   MoreHorizontal,
+  Search,
   Settings,
   Share2,
   UserPlus,
@@ -183,15 +184,24 @@ export function ProfileHeader({
         <div className="flex items-center gap-3  w-20">
           {isOwnProfile && (
             <>
-              <button
+              {/* <button
                 onClick={handleNotificationToggle}
                 className="p-2 hover:bg-gray-100 rounded-full relative"
               >
                 <Bell size={20} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  3
+                </span>
+              </button> */}
+              <Link
+                href={"/finds"}
+                className="p-2 hover:bg-gray-100 rounded-full relative"
+              >
+                <Search size={20} />
                 {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   3
                 </span> */}
-              </button>
+              </Link>
               <button
                 onClick={() => router.push("/profile/settings")}
                 className="p-2 hover:bg-gray-100 rounded-full relative"
@@ -280,17 +290,16 @@ export function ProfileHeader({
           <div className="flex gap-3 w-full max-w-sm">
             {isOwnProfile ? (
               <div className="flex items-center w-full gap-2">
-                {!user.department && (
-                  <p className="text-xs">
-                    finish your profile setup to earn 50points
-                  </p>
-                )}
                 <Button
                   variant="outline"
                   className="flex-1 bg-gray-200"
                   onClick={() => router.push("/profile/edit")}
                 >
-                  Edit profile
+                  {!user.department ? (
+                    <p className="text-xs">Complete Profile (50points)</p>
+                  ) : (
+                    "Edit profile"
+                  )}
                 </Button>
               </div>
             ) : (

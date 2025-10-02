@@ -42,7 +42,6 @@ export default async function HomePage() {
           userPicture={CURRENT_USER.picture}
         />
 
-        <SUGCandidatesHomeRow />
         <Suspense
           fallback={
             <div className="space-y-6">

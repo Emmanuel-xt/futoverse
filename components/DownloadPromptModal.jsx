@@ -39,7 +39,7 @@ export function DownloadPromptModal({ open, onClose }) {
           </ul>
 
           <button
-            onClick={() => setlaunchAppModal(false)}
+            onClick={() => onClose(false)}
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm transition"
           >
             Alright

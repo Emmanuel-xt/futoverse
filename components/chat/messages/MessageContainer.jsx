@@ -111,9 +111,9 @@ const MessageContainer = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen ">
+    <div className="flex flex-col h-[100dvh] ">
       {/* Header */}
-      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 sticky top-0 z-50">
+      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 sticky top-0  z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button
