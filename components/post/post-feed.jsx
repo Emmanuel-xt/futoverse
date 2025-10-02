@@ -7,7 +7,6 @@ import { PostCard } from "./post-card";
 import { PostSkeleton } from "./post-skeleton";
 import { Alert, AlertDescription } from "@components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { SUGCandidatesHomeRow } from "@components/elections/sug-candidates-home-row";
 
 export function PostFeed({ userId, initialPosts }) {
   const {
@@ -64,10 +63,7 @@ export function PostFeed({ userId, initialPosts }) {
   return (
     <div className="space-y-6">
       {posts.map((post, i) => (
-        <div className="" key={post.id}>
-          <PostCard post={post} userId={userId} />
-          {i === 4 && <SUGCandidatesHomeRow />}
-        </div>
+        <PostCard key={post.id} post={post} userId={userId} />
       ))}
 
       {hasNextPage && (
