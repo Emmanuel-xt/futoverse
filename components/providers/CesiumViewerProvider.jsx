@@ -41,7 +41,7 @@ export const CesiumViewerProvider = ({ children }) => {
         cesiumViewer.imageryLayers.removeAll();
 
         cesiumViewer.imageryLayers.addImageryProvider(
-          await IonImageryProvider.fromAssetId(3830184)
+          await IonImageryProvider.fromAssetId(4)
         );
 
         // Add a basic tile load error handler
