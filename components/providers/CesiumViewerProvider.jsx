@@ -34,15 +34,19 @@ export const CesiumViewerProvider = ({ children }) => {
           timeline: false,
           navigationHelpButton: false,
           navigationInstructionsInitiallyVisible: false,
-          requestRenderMode: true,
-          maximumRenderTimeChange: Infinity,
+          // requestRenderMode: true,
+          // maximumRenderTimeChange: Infinity,
         });
 
         cesiumViewer.imageryLayers.removeAll();
 
-        cesiumViewer.imageryLayers.addImageryProvider(
-          await IonImageryProvider.fromAssetId(4)
+        const imageryLayer = cesiumViewer.imageryLayers.addImageryProvider(
+          await IonImageryProvider.fromAssetId(3830184)
         );
+
+        imageryLayer.imageryProvider.errorEvent.addEventListener((err) => {
+          console.error("ImageryProvider error:", err);
+        });
 
         // Add a basic tile load error handler
         cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(

@@ -79,7 +79,7 @@ export function PostFeed({ userId, initialPosts }) {
 
       {!hasNextPage && posts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">You've reached the end!</p>
+          <p className="text-muted-foreground">Arinzechukwu's Execution</p>
         </div>
       )}
     </div>

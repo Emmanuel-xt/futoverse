@@ -10,6 +10,7 @@ import {
   Edit2,
   Trash2,
   Flag,
+  Eye,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@components/ui/card";
 import { Button } from "@components/ui/button";
@@ -201,6 +202,19 @@ export function PostCard({ post, userId }) {
           <Button
             variant="ghost"
             size="sm"
+            className={cn("flex items-center space-x-2")}
+            // onClick={handleLike}
+            disabled={!userId || likeMutation.isPending}
+          >
+            <Eye className={cn("h-4 w-4")} />
+            <div className="">
+              <span>{post._count.views.toLocaleString()} </span>
+              <span>View{post._count.views > 1 && "s"}</span>
+            </div>
+          </Button>
+          {/* <Button
+            variant="ghost"
+            size="sm"
             className={cn(
               "flex items-center space-x-2",
               post.isLiked && "text-red-500"
@@ -208,12 +222,12 @@ export function PostCard({ post, userId }) {
             onClick={handleLike}
             disabled={!userId || likeMutation.isPending}
           >
-            <Heart className={cn("h-4 w-4", post.isLiked && "fill-current")} />
+            <Eye className={cn("h-4 w-4", post.isLiked && "fill-current")} />
             <div className="">
-              <span>{post._count.likes.toLocaleString()} </span>
-              <span>Like{post._count.likes > 1 && "s"}</span>
+              <span>{post._count.views.toLocaleString()} </span>
+              <span>View{post._count.views > 1 && "s"}</span>
             </div>
-          </Button>
+          </Button> */}
 
           <Button
             variant="ghost"
