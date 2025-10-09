@@ -13,6 +13,7 @@ export const CesiumViewerProvider = ({ children }) => {
   const [isMapVisible, setMapVisible] = useState(false);
 
   useEffect(() => {
+    // if (viewerRef.current) return;
     let destroyed = false;
 
     const initializeViewer = async () => {
@@ -34,8 +35,8 @@ export const CesiumViewerProvider = ({ children }) => {
           timeline: false,
           navigationHelpButton: false,
           navigationInstructionsInitiallyVisible: false,
-          // requestRenderMode: true,
-          // maximumRenderTimeChange: Infinity,
+          requestRenderMode: true,
+          maximumRenderTimeChange: Infinity,
         });
 
         cesiumViewer.imageryLayers.removeAll();

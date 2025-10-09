@@ -1,3 +1,5 @@
+"use client";
+
 import CesiumMapBWrapper from "@components/cesium/CesiumWrapper";
 import { CesiumViewerProvider } from "@components/providers/CesiumViewerProvider";
 import React from "react";

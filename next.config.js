@@ -101,6 +101,7 @@ const baseConfig = {
 
     return config;
   },
+  reactStrictMode: false,
   experimental: {
     serverComponentsExternalPackages: ["mongoose"],
   },
