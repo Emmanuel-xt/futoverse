@@ -19,7 +19,7 @@ export default function CesiumMapBWrapper() {
     const isFirstVisit = !sessionStorage.getItem(FIRST_VISIT_KEY);
 
     if (isFirstVisit) {
-      setShowOverlay(true);
+      setShowOverlay(false);
       // Mark that user has visited the maps page
       sessionStorage.setItem(FIRST_VISIT_KEY, "true");
 

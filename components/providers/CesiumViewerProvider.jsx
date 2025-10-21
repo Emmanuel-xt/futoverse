@@ -1,7 +1,13 @@
 "use client";
 
 import { createContext, useContext, useRef, useState, useEffect } from "react";
-import { Viewer, Ion, IonImageryProvider } from "cesium";
+import {
+  Viewer,
+  Ion,
+  IonImageryProvider,
+  UrlTemplateImageryProvider,
+  WebMercatorTilingScheme,
+} from "cesium";
 
 const CesiumViewerContext = createContext(null);
 
@@ -39,15 +45,22 @@ export const CesiumViewerProvider = ({ children }) => {
           maximumRenderTimeChange: Infinity,
         });
 
-        cesiumViewer.imageryLayers.removeAll();
-
-        const imageryLayer = cesiumViewer.imageryLayers.addImageryProvider(
-          await IonImageryProvider.fromAssetId(3830184)
-        );
-
-        imageryLayer.imageryProvider.errorEvent.addEventListener((err) => {
-          console.error("ImageryProvider error:", err);
+        const googleMapsProvider = new UrlTemplateImageryProvider({
+          url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+          tilingScheme: new WebMercatorTilingScheme(),
+          maximumLevel: 20,
         });
+
+        cesiumViewer.imageryLayers.removeAll();
+        cesiumViewer.imageryLayers.addImageryProvider(googleMapsProvider);
+
+        // const imageryLayer = cesiumViewer.imageryLayers.addImageryProvider(
+        //   await IonImageryProvider.fromAssetId(3830184)
+        // );
+
+        // imageryLayer.imageryProvider.errorEvent.addEventListener((err) => {
+        //   console.error("ImageryProvider error:", err);
+        // });
 
         // Add a basic tile load error handler
         cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(

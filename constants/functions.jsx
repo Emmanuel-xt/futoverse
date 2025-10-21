@@ -203,7 +203,7 @@ export const createTileWithProperties = (viewer, x, y, size, properties) => {
       extrudedHeight: 0,
       outline: true,
       outlineColor: Color.BLACK,
-      outlineWidth: 1.0,
+      outlineWidth: 0.1,
     },
     properties,
   });
