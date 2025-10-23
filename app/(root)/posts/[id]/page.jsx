@@ -106,7 +106,7 @@ export default async function PostPage({ params }) {
   const CURRENT_USER_ID = Number(session?.user?.id) || null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto py-8 pb-16 max-w-2xl">
       <PostCard post={post} userId={CURRENT_USER_ID} />
     </div>
   );

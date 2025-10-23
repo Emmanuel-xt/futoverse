@@ -6,6 +6,7 @@ import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
 import { InstallButton } from "@components/InstallButton";
 import { SUGCandidatesHomeRow } from "@components/elections/sug-candidates-home-row";
+import { PostFeedCompact } from "@components/post/post-feed-compact";
 
 export default async function HomePage() {
   const session = await auth();
@@ -31,10 +32,6 @@ export default async function HomePage() {
 
       {/* Rest of the scrollable content */}
       <div className="py-6 space-y-2">
-        {/* <div>
-          <h2 className="text-xl font-semibold mb-1">Campus Feed</h2>
-        </div> */}
-
         <WhatsHappening
           userId={CURRENT_USER.id}
           userCanPost={CURRENT_USER.canPost}
@@ -51,7 +48,19 @@ export default async function HomePage() {
             </div>
           }
         >
-          <PostFeed userId={CURRENT_USER_ID} initialPosts={initialData} />
+          {/* <PostFeed userId={CURRENT_USER_ID} initialPosts={initialData} /> */}
+          <PostFeedCompact
+            userId={CURRENT_USER_ID}
+            initialPosts={initialData}
+            // featureComponents={
+            //   {
+            //     // candidates: SUGCandidatesHomeRow,
+            //     // events: EventsHomeRow,
+            //     // products: ProductsHomeRow,
+            //     // Add more features as needed
+            //   }
+            // }
+          />
         </Suspense>
       </div>
     </div>
