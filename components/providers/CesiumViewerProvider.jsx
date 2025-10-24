@@ -55,7 +55,7 @@ export const CesiumViewerProvider = ({ children }) => {
         // cesiumViewer.imageryLayers.addImageryProvider(googleMapsProvider);
 
         const imageryLayer = cesiumViewer.imageryLayers.addImageryProvider(
-          await IonImageryProvider.fromAssetId(3830184)
+          await IonImageryProvider.fromAssetId(4)
         );
 
         imageryLayer.imageryProvider.errorEvent.addEventListener((err) => {
