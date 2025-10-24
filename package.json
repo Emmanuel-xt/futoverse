@@ -34,7 +34,7 @@
     "@trigger.dev/sdk": "^3.3.17",
     "@vercel/analytics": "^1.5.0",
     "bullmq": "^5.56.1",
-    "cesium": "^1.123.0",
+    "cesium": "^1.134.0",
     "class-variance-authority": "^0.7.0",
     "client": "^0.0.1",
     "cloudinary": "^2.5.1",
