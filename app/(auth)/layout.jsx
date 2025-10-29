@@ -10,18 +10,18 @@ export const metadata = {
     "Join the Futoverse app — the ultimate 3D campus experience awaits you!",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/logo-192x192.png",
+    icon: "/favicon.ico",
     apple: "/icons/logo-192x192.png",
   },
   openGraph: {
     title: "Futo Verse",
     description:
       "Join the Futoverse app — the ultimate 3D campus experience awaits you!",
-    url: "https://futo-verse.vercel.app/signup", // your full signup URL here
+    url: "https://futoverse.com/signup", // your full signup URL here
     siteName: "Futo Verse",
     images: [
       {
-        url: "https://futo-verse.vercel.app/images/mainflier.jpg", // image for social preview
+        url: "https://futoverse.com/images/mainflier.jpg", // image for social preview
         width: 1200,
         height: 630,
         alt: "Futo Verse - 3D Campus Experience",
@@ -35,7 +35,7 @@ export const metadata = {
     title: "Futo Verse",
     description:
       "Join the Futoverse app — the ultimate 3D campus experience awaits you!",
-    images: ["https://futo-verse.vercel.app/images/mainflier.jpg"],
+    images: ["https://futoverse.com/images/mainflier.jpg"],
   },
 };
 

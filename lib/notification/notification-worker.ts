@@ -4,9 +4,8 @@ import { sendPushNotification, createNotification } from "./notification-action"
 import prisma from "@prisma/prisma"
 
 
-// const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
 
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
+const redis = new Redis(process.env.REDIS_URL )
 
 // Logging Redis connection events
 redis.on("connect", () => {

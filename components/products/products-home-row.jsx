@@ -52,7 +52,7 @@ export function ProductsHomeRow() {
           <h3 className="font-semibold text-lg">Shop</h3>
         </div>
         <Link
-          href="/shop"
+          href="/finds/products"
           className="flex items-center gap-1 text-sm text-primary hover:underline"
         >
           See all

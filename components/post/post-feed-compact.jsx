@@ -31,9 +31,9 @@ export function PostFeedCompact({ userId, initialPosts }) {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const featureComponents = {
+    events: EventsHomeRow,
     candidates: SUGCandidatesHomeRow,
     // candidates: SUGCandidatesHomeRow,
-    events: EventsHomeRow,
     products: ProductsHomeRow,
     // Add more features as needed
   };
@@ -44,9 +44,6 @@ export function PostFeedCompact({ userId, initialPosts }) {
   });
 
   useEffect(() => {
-    if (inView) {
-      console.log("🔍 inView triggered", { hasNextPage, isFetchingNextPage });
-    }
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }

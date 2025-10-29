@@ -44,7 +44,7 @@ export function EventsHomeRow() {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold text-gray-900">UPCOMING EVENTS</h3>
         <Link
-          href="/events"
+          href="/finds/events"
           className="text-blue-600 hover:text-blue-700 text-sm font-medium"
         >
           See all →

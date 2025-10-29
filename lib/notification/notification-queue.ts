@@ -2,7 +2,7 @@ import { Queue } from "bullmq"
 import { Redis } from "ioredis"
 
 // Initialize Redis connection
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
+const redis = new Redis(process.env.REDIS_URL)
 
 // // Logging Redis connection events
 redis.on("connect", () => {

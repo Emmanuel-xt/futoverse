@@ -72,7 +72,7 @@ export function PostFeedCard({
   };
 
   return (
-    <article className="bg-background text-foreground">
+    <div className="bg-background text-foreground">
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <Link
           href={`/profile/${post.creator.username}`}
@@ -118,15 +118,14 @@ export function PostFeedCard({
       </div>
 
       {firstImage && (
-        <Link href={`/posts/${post.id}`} className="block w-full">
-          <div className="relative w-full overflow-hidden rounded-lg">
+        <Link href={`/posts/${post.id}`} className="w-full">
+          <div className="">
             <Image
               src={firstImage || "/placeholder.svg"}
-              alt={heading}
+              alt="Post media"
               width={800} // give a max reference width
-              height={0} // height will scale automatically because of h-auto
-              unoptimized // prevents distortion when using external URLs
-              className="w-full h-auto max-h-96 object-cover rounded-lg hover:opacity-90 transition-opacity"
+              height={400} // height will scale automatically because of h-auto
+              className="w-full h-auto  max-h-96 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
           </div>
         </Link>
@@ -190,6 +189,6 @@ export function PostFeedCard({
           </DropdownMenu> */}
         </div>
       </div>
-    </article>
+    </div>
   );
 }

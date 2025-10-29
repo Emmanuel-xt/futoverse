@@ -354,28 +354,31 @@ export async function updatePost(
 }
 
 export async function deletePost(postId: string, userId: number) {
-    try {
-        // Verify ownership
-        const existingPost = await prisma.post.findUnique({
-            where: { id: postId },
-            select: { creatorId: true },
-        })
+  try {
+    // Verify ownership
+    const existingPost = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { creatorId: true },
+    });
 
-        if (!existingPost || existingPost.creatorId !== userId) {
-            throw new Error("Unauthorized to delete this post")
-        }
-
-        await prisma.post.delete({
-            where: { id: postId },
-        })
-
-        revalidatePath("/")
-        return { success: true }
-    } catch (error) {
-        console.error("Error deleting post:", error)
-        throw new Error("Failed to delete post")
+    if (!existingPost || existingPost.creatorId !== userId) {
+      throw new Error("Unauthorized to delete this post");
     }
+
+    // ✅ Soft delete
+    await prisma.post.update({
+      where: { id: postId },
+      data: { isDeleted: true },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw new Error("Failed to delete post");
+  }
 }
+
 
 export async function updateComment(commentId: string, content: string, userId: number) {
     try {

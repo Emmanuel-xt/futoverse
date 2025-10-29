@@ -5,7 +5,6 @@ import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
 import { InstallButton } from "@components/InstallButton";
-import { SUGCandidatesHomeRow } from "@components/elections/sug-candidates-home-row";
 import { PostFeedCompact } from "@components/post/post-feed-compact";
 
 export default async function HomePage() {
@@ -27,6 +26,10 @@ export default async function HomePage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-primary">
           futoverse
         </h1>
+        <p className="hidden">
+          Futoverse lets you explore FUTO campus in 3D, connect with students,
+          and discover stores — all in one immersive platform.
+        </p>
         <InstallButton />
       </div>
 

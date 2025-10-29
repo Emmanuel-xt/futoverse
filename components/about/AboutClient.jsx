@@ -1,54 +1,62 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card"
-import { Badge } from "@components/ui/badge"
-import { Button } from "@components/ui/button"
-import { useEffect, useState, useRef } from "react"
-import Image from "next/image"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui/card";
+import { Badge } from "@components/ui/badge";
+import { Button } from "@components/ui/button";
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function AboutPage() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [visibleCards, setVisibleCards] = useState(new Set())
-  const cardRefs = useRef([])
+  const [isVisible, setIsVisible] = useState(false);
+  const [visibleCards, setVisibleCards] = useState(new Set());
+  const cardRefs = useRef([]);
 
   useEffect(() => {
-    setIsVisible(true)
+    setIsVisible(true);
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const cardIndex = Number.parseInt(entry.target.dataset.cardIndex)
-            setVisibleCards((prev) => new Set([...prev, cardIndex]))
+            const cardIndex = Number.parseInt(entry.target.dataset.cardIndex);
+            setVisibleCards((prev) => new Set([...prev, cardIndex]));
           }
-        })
+        });
       },
-      { threshold: 0.2, rootMargin: "50px" },
-    )
+      { threshold: 0.2, rootMargin: "50px" }
+    );
 
     cardRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
+      if (ref) observer.observe(ref);
+    });
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 text-center  text-white bg-blue-600">
+      <section className="relative py-5 px-4 text-center  text-white">
         <div
           className={`max-w-4xl mx-auto transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
         >
           <h1
-            className={`text-4xl animate-pulse md:text-6xl font-bold text-balance mb-6 transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`text-4xl text-primary animate-pulse md:text-6xl font-bold text-balance mb-6 transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
           >
-            Campus Connect 3D
+            FUTOVERSE
           </h1>
           <p
-            className={`text-xl text-muted-foreground text-pretty max-w-2xl mx-auto mb-8 transition-all duration-1000 delay-400 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`text-xl text-black text-muted-foreground text-pretty max-w-2xl mx-auto mb-8 transition-all duration-1000 delay-400 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
           >
-            Your ultimate university companion featuring 3D campus mapping, social networking, and marketplace - all in one App
+            Your ultimate university companion featuring 3D campus mapping,
+            social networking, and marketplace - all in one App
           </p>
           <div
             className={`flex flex-wrap justify-center gap-2 transition-all duration-1000 delay-600 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
@@ -81,7 +89,8 @@ export default function AboutPage() {
             <p
               className={`text-lg text-muted-foreground max-w-2xl mx-auto text-pretty transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
             >
-              Experience university life like never before with our innovative 3D platform.
+              Experience university life like never before with our innovative
+              3D platform.
             </p>
           </div>
 
@@ -97,11 +106,12 @@ export default function AboutPage() {
                 bg: "bg-white",
                 slideFrom: "left",
               },
-              
+
               {
                 title: "Campus Marketplace",
                 description: "Shop and discover local businesses",
-                content: " Discover local businesses and services around campus. You can also pitch your own stores.",
+                content:
+                  " Discover local businesses and services around campus. You can also pitch your own stores.",
                 image: "/assets/commerce2.jfif",
                 alt: "Campus Marketplace",
                 bg: "bg-white",
@@ -156,42 +166,46 @@ export default function AboutPage() {
                     alt={card.alt}
                     className="w-96 object-cover rounded-lg mb-4 hover:scale-1.25 transition-transform duration-300"
                   />
-                  <CardTitle className="hover:text-blue-600 transition-colors">{card.title}</CardTitle>
+                  <CardTitle className="hover:text-blue-600 transition-colors">
+                    {card.title}
+                  </CardTitle>
                   <CardDescription>{card.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{card.content}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {card.content}
+                  </p>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </section>      
+        </section>
 
         {/* Call to Action */}
-        <section
-          className={`text-center py-16 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl transition-all duration-1000 ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-        >
-          <h2 className="text-3xl font-bold mb-4 animate-pulse">Join Campus Connect 3D</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto text-pretty opacity-90">
-            Transform your university experience with 3D navigation, social connections, and real-time campus life.
+        <section className="text-center py-16">
+          <h2 className="text-4xl font-bold mb-4">
+            Ready to Transform Your Campus?
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            Join thousands of students already experiencing the future of campus
+            life with Futoverse.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="px-8 bg-white text-blue-600 hover:bg-gray-100 hover:scale-105 transition-all duration-300"
+            <Link
+              href="/sign-up"
+              className="px-8 py-3 bg-primary text-white hover:bg-primary/90 font-semibold rounded-lg transition-all duration-300 hover:scale-105 inline-block"
             >
-              Explore Campus
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="px-8 border-white text-white hover:bg-white hover:text-blue-600 bg-transparent hover:scale-105 transition-all duration-300"
+              Sign Up Now
+            </Link>
+            <Link
+              href="https://chat.whatsapp.com/DyXwnogPabiLaUwgaT8L22?mode=wwt"
+              className="px-8 py-3 border-2 border-primary text-primary hover:bg-primary/5 font-semibold rounded-lg transition-all duration-300 inline-block"
             >
-              Join Community
-            </Button>
+              Join our Community
+            </Link>
           </div>
         </section>
       </div>
     </div>
-  )
+  );
 }
