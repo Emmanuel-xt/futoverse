@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { Cartesian3, Rectangle } from "cesium";
+import { Cartesian3, Math, Rectangle } from "cesium";
 
 import {
   callTHeCreateTIles,
@@ -57,27 +57,43 @@ export const useMapInitialization = ({
       viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
       // Handle optional fly-to from URL
+      // 🔹 Try restoring saved camera view
+      const savedView = JSON.parse(
+        localStorage.getItem("cameraView") || "null"
+      );
+      if (savedView) {
+        viewer.camera.flyTo({
+          destination: Cartesian3.fromRadians(
+            savedView.lon,
+            savedView.lat,
+            savedView.height
+          ),
+          orientation: {
+            heading: savedView.heading,
+            pitch: savedView.pitch,
+            roll: savedView.roll,
+          },
+          duration: 1.5,
+        });
+      } else {
+        // Default view if no saved camera
+        viewer.camera.flyTo({
+          destination: Cartesian3.fromDegrees(
+            0.12211527832901911, // longitude
+            0.09381252264655088, // latitude
+            751.2011803076922 // height
+          ),
+          orientation: {
+            heading: 6.226261913948254, // radians
+            pitch: -0.8325870197715304,
+            roll: 0.000017565609374159408,
+          },
+        });
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const lat = urlParams.get("lat");
       const lng = urlParams.get("lng");
-      if (viewer.scene) {
-        // console.log("Flying to default location");
-
-        viewer.camera.flyTo({
-          destination: Cartesian3.fromDegrees(
-            6.996121931660761,
-            5.383035004589935,
-            3000
-          ),
-          orientation: {
-            heading: 0,
-            pitch: -Math.PI / 3,
-            roll: 0,
-          },
-        });
-        // console.log("it did flew");
-      }
-
       if (lat && lng) {
         flytoDestination(viewer, parseFloat(lng), parseFloat(lat));
       }
@@ -86,6 +102,25 @@ export const useMapInitialization = ({
       loadNewBuildingTileset(viewer);
       loadAllTilesets(viewer);
       callTHeCreateTIles(viewer);
+
+      // ✅ Add camera movement listener (auto-save position)
+      const saveCameraPosition = () => {
+        const camera = viewer.camera;
+        const pos = camera.positionCartographic;
+
+        localStorage.setItem(
+          "cameraView",
+          JSON.stringify({
+            lon: pos.longitude,
+            lat: pos.latitude,
+            height: pos.height,
+            heading: camera.heading,
+            pitch: camera.pitch,
+            roll: camera.roll,
+          })
+        );
+      };
+      viewer.camera.changed.addEventListener(saveCameraPosition);
     } catch (error) {
       console.error("Error initializing Cesium:", error);
       setError("Failed to load Cesium viewer");

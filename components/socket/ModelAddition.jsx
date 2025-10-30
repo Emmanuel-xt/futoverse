@@ -16,7 +16,6 @@ export const ModelRelocation = () => {
   const { viewer, viewerReady, isMapVisible, setMapVisible } =
     useCesiumViewer();
   const socket = useSocket();
-
   socket.on("update_tileDetaiils", (data) => {
     // const { viewer } = useCesiumViewer();
 
