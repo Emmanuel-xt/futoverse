@@ -237,7 +237,7 @@ export const MapFlyers = ({}) => {
 
       {/* Bottom Panel */}
       <div className="fixed bottom-14 left-0 right-0 z-20">
-        <div className="bg-white/95 backdrop-blur-sm rounded-t-2xl shadow-2xl border-t px-2 py-1">
+        <div className="bg-white/95 rounded-t-2xl border-t px-2 py-1">
           <div className="flex items-center gap-4 mb-4">
             <Button
               size="icon"

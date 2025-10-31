@@ -53,6 +53,7 @@ export const setupEventHandlers = (viewer, handlers) => {
   };
 
   const handleLabelClick = () => {
+    console.log("label was clicked");
     setShowLabelModal(true);
   };
 

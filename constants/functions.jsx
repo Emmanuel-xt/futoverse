@@ -31,6 +31,7 @@ import {
   Matrix4,
   PolylineOutlineMaterialProperty,
   CallbackProperty,
+  NearFarScalar,
 } from "cesium";
 import { concatPlaces, groupedPlaces, places } from "./places";
 import { toast } from "sonner";
@@ -234,52 +235,249 @@ export const callTHeCreateTIles = (cesiumViewer) => {
   }
 };
 
-export const addPlacesToViewer = async (viewer) => {
-  if (!viewer) return [];
+// export const addPlacesToViewer = async (viewer) => {
+//   if (!viewer) return [];
 
-  const labelEntities = []; // Store references to labels
+//   const labelEntities = []; // Store references to labels
 
-  const createEntity = (place, minDist, maxDist, fontSize) => {
-    const { latitude, longitude, placeName } = place;
+//   const createEntity = (place, minDist, maxDist, fontSize) => {
+//     const { latitude, longitude, placeName } = place;
+//     const lon = parseFloat(longitude);
+//     const lat = parseFloat(latitude);
+
+//     const entity = viewer.entities.add({
+//       position: Cartesian3.fromDegrees(
+//         parseFloat(longitude),
+//         parseFloat(latitude)
+//       ),
+//       id: `label-${placeName}`, // Unique ID for this tile
+//       name: `label ${placeName}`,
+//       properties: {
+//         type: "label",
+//         name: placeName,
+//         coordinates: { lon, lat }, // Store coordinates for reference
+//       },
+//       label: {
+//         text: placeName,
+//         font: `900 ${fontSize}px Roboto, sans-serif`,
+//         fillColor: Color.WHITESMOKE,
+//         outlineColor: Color.BLACK,
+//         outlineWidth: 4,
+//         style: LabelStyle.FILL_AND_OUTLINE,
+//         verticalOrigin: VerticalOrigin.BOTTOM,
+//         eyeOffset: new Cartesian3(0.0, 0.0, -70.0),
+//         distanceDisplayCondition: new DistanceDisplayCondition(
+//           minDist,
+//           maxDist
+//         ),
+//         show: false, // Default visibility
+//       },
+//     });
+//     labelEntities.push(entity);
+//   };
+
+//   places.forEach((place) => createEntity(place, 0.0, 400.0, 18));
+//   groupedPlaces.forEach((place) => createEntity(place, 501.0, 2000.0, 12));
+//   concatPlaces.forEach((place) => createEntity(place, 2000.0, 10000.0, 20));
+
+//   return labelEntities;
+// };
+
+/**
+ * Generates a custom marker PNG dynamically using Canvas.
+ * @param {string} text - Short name to display on the marker (e.g., "EEB").
+ * @returns {string} - Base64 PNG data URL
+ */
+// function generateMarkerIcon(text) {
+//   const canvas = document.createElement("canvas");
+//   const width = 120;
+//   const height = 140;
+//   canvas.width = width;
+//   canvas.height = height;
+
+//   const ctx = canvas.getContext("2d");
+
+//   // Clear background
+//   ctx.clearRect(0, 0, width, height);
+
+//   // Draw rounded marker shape (Google style)
+//   const radius = 20;
+//   const rectHeight = 80;
+//   ctx.moveTo(width / 2 - 40, 20);
+//   ctx.lineTo(width / 2 + 40, 20);
+//   ctx.quadraticCurveTo(width / 2 + 60, 20, width / 2 + 60, 40);
+//   ctx.lineTo(width / 2 + 60, rectHeight);
+//   ctx.quadraticCurveTo(
+//     width / 2 + 60,
+//     rectHeight + 20,
+//     width / 2 + 40,
+//     rectHeight + 20
+//   );
+//   ctx.lineTo(width / 2 - 40, rectHeight + 20);
+//   ctx.quadraticCurveTo(
+//     width / 2 - 60,
+//     rectHeight + 20,
+//     width / 2 - 60,
+//     rectHeight
+//   );
+//   ctx.lineTo(width / 2 - 60, 40);
+//   ctx.quadraticCurveTo(width / 2 - 60, 20, width / 2 - 40, 20);
+//   ctx.closePath();
+
+//   ctx.fillStyle = "#0078FF"; // Futoverse blue or your theme color
+//   ctx.fill();
+
+//   ctx.beginPath();
+//   ctx.moveTo(width / 2 - 15, rectHeight + 20);
+//   ctx.lineTo(width / 2, height - 10);
+//   ctx.lineTo(width / 2 + 15, rectHeight + 20);
+//   ctx.closePath();
+//   ctx.fillStyle = "#0078FF";
+//   ctx.fill();
+
+//   // Draw text (shortName)
+//   ctx.font = "bold 32px Roboto";
+//   ctx.fillStyle = "#FFFFFF";
+//   ctx.textAlign = "center";
+//   ctx.textBaseline = "middle";
+//   ctx.fillText(text, width / 2, rectHeight / 2);
+
+//   return canvas.toDataURL("image/png");
+// }
+
+/**
+ * Adds labeled markers to Cesium viewer.
+ */
+// export const addDynamicMarkersToViewer = async (viewer, places) => {
+//   if (!viewer || !places?.length) return [];
+
+//   const markerEntities = [];
+
+//   for (const place of places) {
+//     const { latitude, longitude, placeName } = place;
+//     const lon = parseFloat(longitude);
+//     const lat = parseFloat(latitude);
+
+//     // Generate the marker only once for this label
+//     const markerImage = generateMarkerIcon(placeName);
+
+//     const entity = viewer.entities.add({
+//       id: `marker-${placeName}`,
+//       name: placeName,
+//       position: Cartesian3.fromDegrees(lon, lat),
+//       type: "marker",
+
+//       billboard: {
+//         image: markerImage,
+//         width: 90, // ✅ make it visible
+//         height: 100,
+//         verticalOrigin: VerticalOrigin.BOTTOM,
+//         heightReference: HeightReference.NONE, // we’ll float manually above terrain
+//         pixelOffset: new Cartesian3(0, -20, 0),
+//         scaleByDistance: new NearFarScalar(200.0, 1.2, 3000.0, 0.3),
+//         distanceDisplayCondition: new DistanceDisplayCondition(0, 8000),
+//         disableDepthTestDistance: Number.POSITIVE_INFINITY, // ✅ prevents burying under ground
+//       },
+//     });
+
+//     markerEntities.push(entity);
+//   }
+
+//   console.log("✅ Added dynamic markers:", markerEntities.length);
+//   return markerEntities;
+// };
+
+// lib/cesium/markers.js
+
+function generateMarkerIcon(text) {
+  const canvas = document.createElement("canvas");
+  const width = 90; // smaller than before for lighter rendering
+  const height = 120;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, width, height);
+
+  const centerX = width / 2;
+  const circleY = 40;
+  const circleRadius = 25;
+
+  // Outer blue circle
+  ctx.beginPath();
+  ctx.arc(centerX, circleY, circleRadius, 0, Math.PI * 2);
+  ctx.fillStyle = "#0078FF"; // Futoverse blue
+  ctx.fill();
+
+  // Inner white circle
+  ctx.beginPath();
+  ctx.arc(centerX, circleY, circleRadius - 5, 0, Math.PI * 2);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fill();
+
+  // Pointer (triangle)
+  ctx.beginPath();
+  ctx.moveTo(centerX - 10, circleY + circleRadius - 2);
+  ctx.lineTo(centerX, height - 10);
+  ctx.lineTo(centerX + 10, circleY + circleRadius - 2);
+  ctx.closePath();
+  ctx.fillStyle = "#0078FF";
+  ctx.fill();
+
+  // Draw label text
+  const label = text.toUpperCase().slice(0, 4);
+  ctx.fillStyle = "#0078FF"; // text inside
+  ctx.font = "bold 18px Roboto, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, centerX, circleY);
+
+  return canvas.toDataURL("image/png");
+}
+
+/**
+ * Adds small, efficient markers to Cesium viewer.
+ * Each marker floats above its building and always faces camera.
+ */
+export const addLightMarkersToViewer = async (viewer, places) => {
+  if (!viewer || !places?.length) return [];
+
+  const entities = [];
+
+  for (const place of places) {
+    const { latitude, longitude, shortName, placeName } = place;
     const lon = parseFloat(longitude);
     const lat = parseFloat(latitude);
 
+    const label = shortName || placeName || "BLD";
+    const markerImage = generateMarkerIcon(label);
+
     const entity = viewer.entities.add({
-      position: Cartesian3.fromDegrees(
-        parseFloat(longitude),
-        parseFloat(latitude)
-      ),
-      id: `label-${placeName}`, // Unique ID for this tile
-      name: `label ${placeName}`,
+      id: `marker-${label}-${lon}-${lat}`,
+      name: label,
+      position: Cartesian3.fromDegrees(lon, lat, 20), // small height offset above roof
       properties: {
         type: "label",
-        name: placeName,
         coordinates: { lon, lat }, // Store coordinates for reference
       },
-      label: {
-        text: placeName,
-        font: `900 ${fontSize}px Roboto, sans-serif`,
-        fillColor: Color.WHITESMOKE,
-        outlineColor: Color.BLACK,
-        outlineWidth: 4,
-        style: LabelStyle.FILL_AND_OUTLINE,
+      billboard: {
+        image: markerImage,
+        width: 60,
+        height: 80,
         verticalOrigin: VerticalOrigin.BOTTOM,
-        eyeOffset: new Cartesian3(0.0, 0.0, -70.0),
-        distanceDisplayCondition: new DistanceDisplayCondition(
-          minDist,
-          maxDist
-        ),
-        show: false, // Default visibility
+        heightReference: HeightReference.NONE,
+        pixelOffset: new Cartesian3(0, -5, 0),
+        scaleByDistance: new NearFarScalar(100.0, 1.2, 2000.0, 0.4),
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 5000),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY, // keep above terrain
       },
     });
-    labelEntities.push(entity);
-  };
 
-  places.forEach((place) => createEntity(place, 0.0, 400.0, 18));
-  groupedPlaces.forEach((place) => createEntity(place, 501.0, 2000.0, 12));
-  concatPlaces.forEach((place) => createEntity(place, 2000.0, 10000.0, 20));
+    entities.push(entity);
+  }
 
-  return labelEntities;
+  console.log("✅ Added lightweight building markers:", entities.length);
+  return entities;
 };
 
 export const load3DModel = async (cesiumViewer, shopName, lon, lat, tileId) => {

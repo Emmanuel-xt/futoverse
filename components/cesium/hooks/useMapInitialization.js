@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { Cartesian3, Math, Rectangle } from "cesium";
 
 import {
+  addLightMarkersToViewer,
   callTHeCreateTIles,
   flytoDestination,
   load3DModelForShop,
@@ -10,6 +11,7 @@ import {
 } from "@constants/functions";
 
 import { setupEventHandlers } from "../utils/eventHandler";
+import { groupedPlaces } from "@constants/places";
 
 export const useMapInitialization = ({
   viewer,
@@ -102,6 +104,8 @@ export const useMapInitialization = ({
       loadNewBuildingTileset(viewer);
       loadAllTilesets(viewer);
       callTHeCreateTIles(viewer);
+
+      addLightMarkersToViewer(viewer, groupedPlaces);
 
       // ✅ Add camera movement listener (auto-save position)
       const saveCameraPosition = () => {

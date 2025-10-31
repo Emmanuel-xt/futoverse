@@ -1642,6 +1642,7 @@ export const places = [
 export const groupedPlaces = [
   {
     placeName: "SCHOOL OF ENGINEERING AND ENGINEERING TECHNOLOGY (SEET)",
+    shortName: "SEET",
     longitude: 6.9992835378202365,
     latitude: 5.383523348250658,
   },
