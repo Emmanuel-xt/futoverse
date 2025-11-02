@@ -389,13 +389,6 @@ export const callTHeCreateTIles = (cesiumViewer) => {
 
 // lib/cesium/markers.js
 
-import {
-  Cartesian3,
-  VerticalOrigin,
-  HeightReference,
-  NearFarScalar,
-  DistanceDisplayCondition,
-} from "cesium";
 
 /**
  * Cache object to store a single reused marker image.
