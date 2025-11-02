@@ -454,9 +454,10 @@ export const addLightMarkersToViewer = async (viewer, places) => {
 
     const entity = viewer.entities.add({
       id: `marker-${label}-${lon}-${lat}`,
-      name: label,
+      name: placeName,
       position: Cartesian3.fromDegrees(lon, lat, 20), // small height offset above roof
       properties: {
+        name: placeName,
         type: "label",
         coordinates: { lon, lat }, // Store coordinates for reference
       },

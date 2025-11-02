@@ -5,6 +5,8 @@ import {
   Color,
   ColorMaterialProperty,
   JulianDate,
+  Math,
+  Cartographic,
 } from "cesium";
 
 import { checkIfTileOccupied } from "@constants/functions";
@@ -52,7 +54,7 @@ export const setupEventHandlers = (viewer, handlers) => {
     console.log("user was clicked");
   };
 
-  const handleLabelClick = () => {
+  const handleLabelClick = (building) => {
     console.log("label was clicked");
     setShowLabelModal(true);
   };
@@ -108,8 +110,11 @@ export const setupEventHandlers = (viewer, handlers) => {
       if (properties.type === "label") {
         handleLabelClick();
         setLabelInfo({
-          placename: properties.name,
-          location: properties.coordinates,
+          placeName: properties.name,
+          longitude: properties?.coordinates.lon,
+          latitude: properties?.coordinates.lat,
+          category: "",
+          locationDesc: "",
         });
         setShowLabelModal(true);
       }
@@ -121,6 +126,27 @@ export const setupEventHandlers = (viewer, handlers) => {
         });
         setShowPointer(true);
       }
+    }
+
+    const pickedPosition = viewer.scene.pickPosition(movement.position);
+    if (defined(pickedPosition)) {
+      const cartographic = Cartographic.fromCartesian(pickedPosition);
+
+      const longitude = Math.toDegrees(cartographic.longitude);
+      const latitude = Math.toDegrees(cartographic.latitude);
+
+      console.log(
+        `📍 Clicked Coordinates → Longitude: ${longitude}, Latitude: ${latitude}`
+      );
+      navigator.clipboard.writeText(
+        `
+    placeName: "",
+    shortName: "",
+    longitude:${longitude}, 
+    latitude:${latitude}`
+      );
+    } else {
+      console.log("❌ No valid globe position picked.");
     }
   }, ScreenSpaceEventType.LEFT_CLICK);
 

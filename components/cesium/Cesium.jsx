@@ -113,6 +113,9 @@ const CesiumMapB = () => {
           setUnoccuppiedTileModal={setUnoccuppiedTileModal}
           showUserModal={showUserModal}
           setShowUserModal={setShowUserModal}
+          showLabelModal={showLabelModal}
+          setShowLabelModal={setShowLabelModal}
+          labelInfo={labelInfo}
           tileInfo={tileInfo}
           userInfo={userInfo}
           occupiedTileDetails={occupiedTileDetails}

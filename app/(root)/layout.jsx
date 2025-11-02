@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import { CartProvider } from "@components/providers/CartProvider";
 import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -67,7 +68,6 @@ export const metadata = {
     creator: "@futoverse",
   },
 
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
   robots: "index, follow",
   alternates: {
     canonical: "https://futoverse.com",
@@ -89,6 +89,8 @@ export default function RootLayout({ children }) {
                       <main className="bg-light">
                         <div className="">{children}</div>
                         <Toaster />
+                        <Analytics />
+                        <SpeedInsights />
                         <ButtomNav />
                         {/* <CesiumMapB /> */}
                         {/* <CesiumMapBWrapper /> */}

@@ -11,7 +11,7 @@ import {
 } from "@constants/functions";
 
 import { setupEventHandlers } from "../utils/eventHandler";
-import { groupedPlaces } from "@constants/places";
+import { groupedPlaces, mappedPlaces } from "@constants/places";
 
 export const useMapInitialization = ({
   viewer,
@@ -54,7 +54,7 @@ export const useMapInitialization = ({
         5.410862571178967 // north
       );
 
-      viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10;
+      viewer.scene.screenSpaceCameraController.minimumZoomDistance = 50;
       viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3000;
       viewer.scene.screenSpaceCameraController.rectangleLimit = futoBounds;
 
@@ -105,7 +105,7 @@ export const useMapInitialization = ({
       loadAllTilesets(viewer);
       callTHeCreateTIles(viewer);
 
-      addLightMarkersToViewer(viewer, groupedPlaces);
+      addLightMarkersToViewer(viewer, mappedPlaces);
 
       // ✅ Add camera movement listener (auto-save position)
       const saveCameraPosition = () => {

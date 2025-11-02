@@ -1,5 +1,6 @@
 "use client";
 
+import { BuildingDrawer } from "@components/drawers/map-drawers/BuildingDrawer";
 import { OccupiedTileDrawer } from "@components/drawers/map-drawers/OccupiedTileDrawer";
 import { UnoccupiedTileDrawer } from "@components/drawers/map-drawers/UnoccupiedTileDrawer";
 import { UserInfoDrawer } from "@components/drawers/map-drawers/UserInfoDrawer";
@@ -24,6 +25,9 @@ export const MapDrawers = ({
   setUnoccuppiedTileModal, //
   showUserModal,
   setShowUserModal,
+  showLabelModal,
+  setShowLabelModal,
+  labelInfo,
   tileInfo,
   userInfo,
   occupiedTileDetails,
@@ -37,10 +41,13 @@ export const MapDrawers = ({
         userInfo={userInfo}
       />
 
-      {/* Tile Drawers */}
-      {/* {showModal && ( */}
-
-      {/* {isOccupied ? ( */}
+      {showLabelModal && (
+        <BuildingDrawer
+          open={showLabelModal}
+          onOpenChange={setShowLabelModal}
+          building={labelInfo}
+        />
+      )}
 
       {showOccuppiedTileModal && (
         <OccupiedTileDrawer
@@ -50,6 +57,7 @@ export const MapDrawers = ({
           tileDetails={occupiedTileDetails}
         />
       )}
+
       {showShopModal && (
         <OccupiedTileDrawer
           open={showShopModal}
