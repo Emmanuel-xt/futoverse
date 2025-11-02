@@ -389,10 +389,31 @@ export const callTHeCreateTIles = (cesiumViewer) => {
 
 // lib/cesium/markers.js
 
+import {
+  Cartesian3,
+  VerticalOrigin,
+  HeightReference,
+  NearFarScalar,
+  DistanceDisplayCondition,
+} from "cesium";
+
+/**
+ * Cache object to store a single reused marker image.
+ * Since all markers share same design, only regenerate once.
+ */
+let cachedMarkerImage = null;
+
+/**
+ * Generates a small, efficient marker icon (cached).
+ * Reduced size for lighter GPU texture usage.
+ */
 function generateMarkerIcon(text) {
+  // Reuse cached version if available
+  if (cachedMarkerImage) return cachedMarkerImage;
+
   const canvas = document.createElement("canvas");
-  const width = 90; // smaller than before for lighter rendering
-  const height = 120;
+  const width = 60; // reduced size (was 90)
+  const height = 80; // reduced size (was 120)
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
@@ -400,8 +421,8 @@ function generateMarkerIcon(text) {
   ctx.clearRect(0, 0, width, height);
 
   const centerX = width / 2;
-  const circleY = 40;
-  const circleRadius = 25;
+  const circleY = 25;
+  const circleRadius = 18;
 
   // Outer blue circle
   ctx.beginPath();
@@ -411,38 +432,42 @@ function generateMarkerIcon(text) {
 
   // Inner white circle
   ctx.beginPath();
-  ctx.arc(centerX, circleY, circleRadius - 5, 0, Math.PI * 2);
+  ctx.arc(centerX, circleY, circleRadius - 4, 0, Math.PI * 2);
   ctx.fillStyle = "#FFFFFF";
   ctx.fill();
 
   // Pointer (triangle)
   ctx.beginPath();
-  ctx.moveTo(centerX - 10, circleY + circleRadius - 2);
-  ctx.lineTo(centerX, height - 10);
-  ctx.lineTo(centerX + 10, circleY + circleRadius - 2);
+  ctx.moveTo(centerX - 8, circleY + circleRadius - 2);
+  ctx.lineTo(centerX, height - 8);
+  ctx.lineTo(centerX + 8, circleY + circleRadius - 2);
   ctx.closePath();
   ctx.fillStyle = "#0078FF";
   ctx.fill();
 
   // Draw label text
-  const label = text.toUpperCase().slice(0, 4);
+  const label = text?.toUpperCase()?.slice(0, 4) || "BLD";
   ctx.fillStyle = "#0078FF"; // text inside
-  ctx.font = "bold 18px Roboto, sans-serif";
+  ctx.font = "bold 14px Roboto, sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(label, centerX, circleY);
 
-  return canvas.toDataURL("image/png");
+  // Cache result so all markers share this one texture
+  cachedMarkerImage = canvas.toDataURL("image/png");
+
+  return cachedMarkerImage;
 }
 
 /**
- * Adds small, efficient markers to Cesium viewer.
- * Each marker floats above its building and always faces camera.
+ * Adds optimized lightweight building markers to Cesium viewer.
+ * Uses a single cached texture and limits visibility to nearby zoom.
  */
 export const addLightMarkersToViewer = async (viewer, places) => {
   if (!viewer || !places?.length) return [];
 
   const entities = [];
+  const markerImage = generateMarkerIcon("BLD"); // generate once & reuse
 
   for (const place of places) {
     const { latitude, longitude, shortName, placeName } = place;
@@ -450,34 +475,39 @@ export const addLightMarkersToViewer = async (viewer, places) => {
     const lat = parseFloat(latitude);
 
     const label = shortName || placeName || "BLD";
-    const markerImage = generateMarkerIcon(label);
 
     const entity = viewer.entities.add({
       id: `marker-${label}-${lon}-${lat}`,
       name: placeName,
-      position: Cartesian3.fromDegrees(lon, lat, 20), // small height offset above roof
+      position: Cartesian3.fromDegrees(lon, lat, 20),
       properties: {
         name: placeName,
         type: "label",
-        coordinates: { lon, lat }, // Store coordinates for reference
+        coordinates: { lon, lat },
       },
       billboard: {
         image: markerImage,
-        width: 60,
-        height: 80,
+        width: 45, // scaled up visually despite smaller canvas
+        height: 60,
         verticalOrigin: VerticalOrigin.BOTTOM,
         heightReference: HeightReference.NONE,
         pixelOffset: new Cartesian3(0, -5, 0),
-        scaleByDistance: new NearFarScalar(100.0, 1.2, 2000.0, 0.4),
-        distanceDisplayCondition: new DistanceDisplayCondition(0, 5000),
-        disableDepthTestDistance: Number.POSITIVE_INFINITY, // keep above terrain
+
+        // 👇 Billboard size fades with distance
+        scaleByDistance: new NearFarScalar(100.0, 1.2, 2000.0, 0.3),
+
+        // 👇 Visible only when camera is within 1200m
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 1200.0),
+
+        // Keeps billboard above terrain & visible
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
       },
     });
 
     entities.push(entity);
   }
 
-  console.log("✅ Added lightweight building markers:", entities.length);
+  console.log(`✅ Added ${entities.length} optimized building markers`);
   return entities;
 };
 
