@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { PostFeed } from "@components/post/post-feed";
 import { PostSkeleton } from "@components/post/post-skeleton";
 import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";

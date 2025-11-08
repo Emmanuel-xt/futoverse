@@ -235,178 +235,24 @@ export const callTHeCreateTIles = (cesiumViewer) => {
   }
 };
 
-// export const addPlacesToViewer = async (viewer) => {
-//   if (!viewer) return [];
-
-//   const labelEntities = []; // Store references to labels
-
-//   const createEntity = (place, minDist, maxDist, fontSize) => {
-//     const { latitude, longitude, placeName } = place;
-//     const lon = parseFloat(longitude);
-//     const lat = parseFloat(latitude);
-
-//     const entity = viewer.entities.add({
-//       position: Cartesian3.fromDegrees(
-//         parseFloat(longitude),
-//         parseFloat(latitude)
-//       ),
-//       id: `label-${placeName}`, // Unique ID for this tile
-//       name: `label ${placeName}`,
-//       properties: {
-//         type: "label",
-//         name: placeName,
-//         coordinates: { lon, lat }, // Store coordinates for reference
-//       },
-//       label: {
-//         text: placeName,
-//         font: `900 ${fontSize}px Roboto, sans-serif`,
-//         fillColor: Color.WHITESMOKE,
-//         outlineColor: Color.BLACK,
-//         outlineWidth: 4,
-//         style: LabelStyle.FILL_AND_OUTLINE,
-//         verticalOrigin: VerticalOrigin.BOTTOM,
-//         eyeOffset: new Cartesian3(0.0, 0.0, -70.0),
-//         distanceDisplayCondition: new DistanceDisplayCondition(
-//           minDist,
-//           maxDist
-//         ),
-//         show: false, // Default visibility
-//       },
-//     });
-//     labelEntities.push(entity);
-//   };
-
-//   places.forEach((place) => createEntity(place, 0.0, 400.0, 18));
-//   groupedPlaces.forEach((place) => createEntity(place, 501.0, 2000.0, 12));
-//   concatPlaces.forEach((place) => createEntity(place, 2000.0, 10000.0, 20));
-
-//   return labelEntities;
-// };
-
 /**
- * Generates a custom marker PNG dynamically using Canvas.
- * @param {string} text - Short name to display on the marker (e.g., "EEB").
- * @returns {string} - Base64 PNG data URL
+ * Cache object to store per-label marker images.
+ * Each unique shortName gets its own cached texture.
  */
-// function generateMarkerIcon(text) {
-//   const canvas = document.createElement("canvas");
-//   const width = 120;
-//   const height = 140;
-//   canvas.width = width;
-//   canvas.height = height;
-
-//   const ctx = canvas.getContext("2d");
-
-//   // Clear background
-//   ctx.clearRect(0, 0, width, height);
-
-//   // Draw rounded marker shape (Google style)
-//   const radius = 20;
-//   const rectHeight = 80;
-//   ctx.moveTo(width / 2 - 40, 20);
-//   ctx.lineTo(width / 2 + 40, 20);
-//   ctx.quadraticCurveTo(width / 2 + 60, 20, width / 2 + 60, 40);
-//   ctx.lineTo(width / 2 + 60, rectHeight);
-//   ctx.quadraticCurveTo(
-//     width / 2 + 60,
-//     rectHeight + 20,
-//     width / 2 + 40,
-//     rectHeight + 20
-//   );
-//   ctx.lineTo(width / 2 - 40, rectHeight + 20);
-//   ctx.quadraticCurveTo(
-//     width / 2 - 60,
-//     rectHeight + 20,
-//     width / 2 - 60,
-//     rectHeight
-//   );
-//   ctx.lineTo(width / 2 - 60, 40);
-//   ctx.quadraticCurveTo(width / 2 - 60, 20, width / 2 - 40, 20);
-//   ctx.closePath();
-
-//   ctx.fillStyle = "#0078FF"; // Futoverse blue or your theme color
-//   ctx.fill();
-
-//   ctx.beginPath();
-//   ctx.moveTo(width / 2 - 15, rectHeight + 20);
-//   ctx.lineTo(width / 2, height - 10);
-//   ctx.lineTo(width / 2 + 15, rectHeight + 20);
-//   ctx.closePath();
-//   ctx.fillStyle = "#0078FF";
-//   ctx.fill();
-
-//   // Draw text (shortName)
-//   ctx.font = "bold 32px Roboto";
-//   ctx.fillStyle = "#FFFFFF";
-//   ctx.textAlign = "center";
-//   ctx.textBaseline = "middle";
-//   ctx.fillText(text, width / 2, rectHeight / 2);
-
-//   return canvas.toDataURL("image/png");
-// }
+const markerImageCache = {};
 
 /**
- * Adds labeled markers to Cesium viewer.
- */
-// export const addDynamicMarkersToViewer = async (viewer, places) => {
-//   if (!viewer || !places?.length) return [];
-
-//   const markerEntities = [];
-
-//   for (const place of places) {
-//     const { latitude, longitude, placeName } = place;
-//     const lon = parseFloat(longitude);
-//     const lat = parseFloat(latitude);
-
-//     // Generate the marker only once for this label
-//     const markerImage = generateMarkerIcon(placeName);
-
-//     const entity = viewer.entities.add({
-//       id: `marker-${placeName}`,
-//       name: placeName,
-//       position: Cartesian3.fromDegrees(lon, lat),
-//       type: "marker",
-
-//       billboard: {
-//         image: markerImage,
-//         width: 90, // ✅ make it visible
-//         height: 100,
-//         verticalOrigin: VerticalOrigin.BOTTOM,
-//         heightReference: HeightReference.NONE, // we’ll float manually above terrain
-//         pixelOffset: new Cartesian3(0, -20, 0),
-//         scaleByDistance: new NearFarScalar(200.0, 1.2, 3000.0, 0.3),
-//         distanceDisplayCondition: new DistanceDisplayCondition(0, 8000),
-//         disableDepthTestDistance: Number.POSITIVE_INFINITY, // ✅ prevents burying under ground
-//       },
-//     });
-
-//     markerEntities.push(entity);
-//   }
-
-//   console.log("✅ Added dynamic markers:", markerEntities.length);
-//   return markerEntities;
-// };
-
-// lib/cesium/markers.js
-
-
-/**
- * Cache object to store a single reused marker image.
- * Since all markers share same design, only regenerate once.
- */
-let cachedMarkerImage = null;
-
-/**
- * Generates a small, efficient marker icon (cached).
- * Reduced size for lighter GPU texture usage.
+ * Generates (and caches) a small, efficient marker icon.
  */
 function generateMarkerIcon(text) {
+  const label = text?.toUpperCase()?.slice(0, 4) || "BLD";
+
   // Reuse cached version if available
-  if (cachedMarkerImage) return cachedMarkerImage;
+  if (markerImageCache[label]) return markerImageCache[label];
 
   const canvas = document.createElement("canvas");
-  const width = 60; // reduced size (was 90)
-  const height = 80; // reduced size (was 120)
+  const width = 60;
+  const height = 80;
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
@@ -420,7 +266,7 @@ function generateMarkerIcon(text) {
   // Outer blue circle
   ctx.beginPath();
   ctx.arc(centerX, circleY, circleRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "#0078FF"; // Futoverse blue
+  ctx.fillStyle = "#0078FF";
   ctx.fill();
 
   // Inner white circle
@@ -438,29 +284,29 @@ function generateMarkerIcon(text) {
   ctx.fillStyle = "#0078FF";
   ctx.fill();
 
-  // Draw label text
-  const label = text?.toUpperCase()?.slice(0, 4) || "BLD";
-  ctx.fillStyle = "#0078FF"; // text inside
+  // Draw text label
+  ctx.fillStyle = "#0078FF";
   ctx.font = "bold 14px Roboto, sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(label, centerX, circleY);
 
-  // Cache result so all markers share this one texture
-  cachedMarkerImage = canvas.toDataURL("image/png");
+  // Cache this label’s image
+  markerImageCache[label] = canvas.toDataURL("image/png");
 
-  return cachedMarkerImage;
+  return markerImageCache[label];
 }
 
 /**
  * Adds optimized lightweight building markers to Cesium viewer.
  * Uses a single cached texture and limits visibility to nearby zoom.
  */
+
 export const addLightMarkersToViewer = async (viewer, places) => {
   if (!viewer || !places?.length) return [];
+  console.log("Places", places);
 
   const entities = [];
-  const markerImage = generateMarkerIcon("BLD"); // generate once & reuse
 
   for (const place of places) {
     const { latitude, longitude, shortName, placeName } = place;
@@ -468,6 +314,7 @@ export const addLightMarkersToViewer = async (viewer, places) => {
     const lat = parseFloat(latitude);
 
     const label = shortName || placeName || "BLD";
+    const markerImage = generateMarkerIcon(label);
 
     const entity = viewer.entities.add({
       id: `marker-${label}-${lon}-${lat}`,
@@ -480,19 +327,14 @@ export const addLightMarkersToViewer = async (viewer, places) => {
       },
       billboard: {
         image: markerImage,
-        width: 45, // scaled up visually despite smaller canvas
+        width: 45,
         height: 60,
         verticalOrigin: VerticalOrigin.BOTTOM,
         heightReference: HeightReference.NONE,
         pixelOffset: new Cartesian3(0, -5, 0),
 
-        // 👇 Billboard size fades with distance
         scaleByDistance: new NearFarScalar(100.0, 1.2, 2000.0, 0.3),
-
-        // 👇 Visible only when camera is within 1200m
-        distanceDisplayCondition: new DistanceDisplayCondition(0, 1200.0),
-
-        // Keeps billboard above terrain & visible
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 300.0),
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
       },
     });

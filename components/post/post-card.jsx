@@ -70,7 +70,6 @@ export function PostCard({ post, userId }) {
       setShowShareDialog(true);
       return;
     }
-
     try {
       const firstImageUrl = Array.isArray(post.images)
         ? post.images[0]

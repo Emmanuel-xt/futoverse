@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useLikeMutation, useTrackView } from "hooks/use-posts";
+import { ShareDialog } from "./share-dialog";
 
 function formatTimeShort(date) {
   const now = new Date();
@@ -48,12 +49,13 @@ export function PostFeedCard({
   onEdit,
   onDelete,
   onComment,
-  onShare,
+  // onShare,
 }) {
   const [isLiked, setIsLiked] = useState(false);
   const firstImage = post.media?.[0]?.url || post.images?.[0];
   const heading = getHeadingText(post);
   const [hasTrackedView, setHasTrackedView] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const likeMutation = useLikeMutation(userId);
   const trackViewMutation = useTrackView();
@@ -69,6 +71,46 @@ export function PostFeedCard({
   const handleLike = () => {
     if (!userId) return;
     likeMutation.mutate({ postId: post.id });
+  };
+
+  const handleShare = async () => {
+    if (!navigator.share) {
+      setShowShareDialog(true);
+      return;
+    }
+    try {
+      const firstImageUrl = Array.isArray(post.images)
+        ? post.images[0]
+        : post.image;
+
+      let shareData = {
+        title: post.title || "Futoverse Post",
+        text: post.content.slice(0, 100) + "...",
+        url: `${window.location.origin}/posts/${post.id}`,
+      };
+
+      if (firstImageUrl) {
+        try {
+          const response = await fetch(firstImageUrl);
+          const blob = await response.blob();
+          const file = new File([blob], "post-image.jpg", { type: blob.type });
+
+          if (navigator.canShare?.({ files: [file] })) {
+            shareData = {
+              ...shareData,
+              files: [file],
+            };
+          }
+        } catch (error) {
+          // console.warn("Failed to fetch post image for sharing:", error);
+          // fallback silently
+        }
+      }
+
+      await navigator.share(shareData);
+    } catch (error) {
+      setShowShareDialog(true);
+    }
   };
 
   return (
@@ -162,7 +204,7 @@ export function PostFeedCard({
           </button>
 
           <button
-            onClick={() => onShare?.(post)}
+            onClick={handleShare}
             className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors"
           >
             <Share2 className="h-4 w-4" />
@@ -172,6 +214,12 @@ export function PostFeedCard({
             <Eye className="h-4 w-4" />
             <span>{post._count.views || 0}</span>
           </div>
+
+          <ShareDialog
+            open={showShareDialog}
+            onOpenChange={setShowShareDialog}
+            post={post}
+          />
 
           {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>

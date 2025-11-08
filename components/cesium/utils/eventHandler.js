@@ -135,16 +135,9 @@ export const setupEventHandlers = (viewer, handlers) => {
       const longitude = Math.toDegrees(cartographic.longitude);
       const latitude = Math.toDegrees(cartographic.latitude);
 
-      console.log(
-        `📍 Clicked Coordinates → Longitude: ${longitude}, Latitude: ${latitude}`
-      );
-      navigator.clipboard.writeText(
-        `
-    placeName: "",
-    shortName: "",
-    longitude:${longitude}, 
-    latitude:${latitude}`
-      );
+      // console.log(
+      //   `📍 Clicked Coordinates → Longitude: ${longitude}, Latitude: ${latitude}`
+      // );
     } else {
       console.log("❌ No valid globe position picked.");
     }

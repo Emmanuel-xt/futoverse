@@ -31,7 +31,6 @@ export const BuildingDrawer = ({ open, onOpenChange, building }) => {
   const [loadingDirections, setLoadingDirections] = useState(false);
 
   if (!building) return null;
-  console.log(building);
 
   const handleGetDirections = async () => {
     if (!building) return;
@@ -67,8 +66,6 @@ export const BuildingDrawer = ({ open, onOpenChange, building }) => {
   const handleCopyLink = () => {
     if (!building) return;
     const link = generateLocationLink(building.longitude, building.latitude);
-    navigator.clipboard.writeText(link);
-    toast.success("Building link copied to clipboard!");
   };
 
   return (
