@@ -7,9 +7,17 @@ import { ArrowLeft, Heart } from "lucide-react";
 import Link from "next/link";
 import { ReactionButton } from "@components/elections/reaction-button";
 import { CommentSection } from "@components/elections/comment-section";
+import { auth } from "auth";
 
 export default async function CandidateProfilePage({ params }) {
   const result = await getCandidate(params.id);
+  const session = await auth();
+  const CURRENT_USER = {
+    id: Number(session?.user?.id) || null,
+    name: session?.user?.name || "Guest",
+    picture: session?.user?.image || null,
+    canPost: true,
+  };
 
   if (!result.success || !result.data) {
     return (
@@ -137,6 +145,7 @@ export default async function CandidateProfilePage({ params }) {
       <CommentSection
         candidateId={candidate.id}
         comments={candidate.comments}
+        userId={CURRENT_USER.id}
       />
     </div>
   );

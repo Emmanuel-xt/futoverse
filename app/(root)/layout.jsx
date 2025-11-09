@@ -11,6 +11,7 @@ import { CartProvider } from "@components/providers/CartProvider";
 import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { DailyRewardWrapper } from "@components/leaderboard/daily-reward-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -84,19 +85,16 @@ export default function RootLayout({ children }) {
               <OnlineUsersProvider>
                 <OnlineShopsProvider>
                   <LocationProvider>
-                    {/* <CesiumViewerProvider> */}
                     <CartProvider>
                       <main className="bg-light">
                         <div className="">{children}</div>
                         <Toaster />
                         <Analytics />
                         <SpeedInsights />
+                        <DailyRewardWrapper />
                         <ButtomNav />
-                        {/* <CesiumMapB /> */}
-                        {/* <CesiumMapBWrapper /> */}
                       </main>
                     </CartProvider>
-                    {/* </CesiumViewerProvider> */}
                   </LocationProvider>
                 </OnlineShopsProvider>
               </OnlineUsersProvider>

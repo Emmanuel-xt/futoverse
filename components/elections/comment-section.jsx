@@ -3,13 +3,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Button } from "@components/ui/button";
 import { Textarea } from "@components/ui/textarea";
-import { Avatar, AvatarFallback } from "@components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { addComment } from "@lib/actions/election";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export function CommentSection({ candidateId, comments }) {
+export function CommentSection({ candidateId, comments, userId }) {
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -20,7 +21,7 @@ export function CommentSection({ candidateId, comments }) {
 
     setIsSubmitting(true);
     try {
-      const result = await addComment(candidateId, newComment.trim(), 1); // TODO: Replace with actual user ID from auth
+      const result = await addComment(candidateId, newComment.trim(), userId); // TODO: Replace with actual user ID from auth
 
       if (result.success) {
         setNewComment("");
@@ -52,14 +53,22 @@ export function CommentSection({ candidateId, comments }) {
             onChange={(e) => setNewComment(e.target.value)}
             className="min-h-[100px]"
           />
-          <Button
-            type="submit"
-            disabled={!newComment.trim() || isSubmitting}
-            className="w-full sm:w-auto bg-green-800"
-          >
-            <Send className="w-4 h-4 mr-2" />
-            {isSubmitting ? "Posting..." : "Post Comment"}
-          </Button>
+          {!userId ? (
+            <Link href={"/sign-up"}>
+              <Button type="" className="w-full sm:w-auto bg-green-800">
+                Log In to Comment
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              type="submit"
+              disabled={!newComment.trim() || isSubmitting || !userId}
+              className="w-full sm:w-auto bg-green-800"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {isSubmitting ? "Posting..." : "Post Comment"}
+            </Button>
+          )}
         </form>
 
         {/* Comments List */}
@@ -71,6 +80,10 @@ export function CommentSection({ candidateId, comments }) {
                 className="flex gap-3 p-4 bg-muted/50 rounded-lg"
               >
                 <Avatar className="w-8 h-8">
+                  <AvatarImage
+                    src={comment.user.picture || "/placeholder.svg"}
+                    alt={comment.user.name}
+                  />
                   <AvatarFallback className="text-xs">
                     {comment.user.name
                       .split(" ")

@@ -37,7 +37,7 @@ export default async function ElectionsPage() {
       <div className=" mx-auto px-4 py-8">
         <div className="mb-8 text-center w-full">
           <h1 className="text-2xl font-bold text-white text-balance mb-2">
-            SUG Elections 2024
+            SUG Elections 2025
           </h1>
           <p className="text-green-200">
             Meet the candidates running for Student Union Government positions
