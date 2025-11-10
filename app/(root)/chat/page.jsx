@@ -3,11 +3,12 @@ import ChatLayout from "@components/chat/ChatLayout";
 import { Loader2 } from "lucide-react";
 import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
 import { auth } from "auth";
+import { redirect } from "next/navigation";
 
 const ChatPage = async () => {
   const session = await auth();
 
-  if (!session.user) {
+  if (!session?.user) {
     redirect("/login");
   }
 

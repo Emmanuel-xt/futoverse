@@ -150,6 +150,7 @@ function ProfilePanelContent({
       />
       <ProfileTabs
         userId={user.id}
+        currentUserId={currentUserId}
         username={user.username}
         isOwnProfile={false}
         onUserCardClick={onUserCardClick}

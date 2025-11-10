@@ -5,6 +5,9 @@ import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
 import { InstallButton } from "@components/InstallButton";
 import { PostFeedCompact } from "@components/post/post-feed-compact";
+import { Button } from "@components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 export default async function HomePage() {
   const session = await auth();
@@ -14,14 +17,13 @@ export default async function HomePage() {
     picture: session?.user?.image || null,
     canPost: true,
   };
-  // console.log("Current User:", session);
   const CURRENT_USER_ID = Number(session?.user?.id) || null;
   const initialData = await getPosts(undefined, 10, CURRENT_USER_ID);
 
   return (
     <div className="container mx-auto px-1 max-w-2xl">
       {/* Sticky Futoverse banner */}
-      <div className="sticky top-0 z-50 bg-white border-b py-4">
+      <div className="sticky top-0 z-50 bg-white border-b py-4 backdrop-blur supports-[backdrop-filter]:bg-white/90">
         <h1 className="text-2xl sm:text-3xl font-bold text-primary">
           futoverse
         </h1>
@@ -32,15 +34,36 @@ export default async function HomePage() {
         <InstallButton />
       </div>
 
-      {/* Rest of the scrollable content */}
-      <div className="py-6 space-y-2">
-        <WhatsHappening
-          userId={CURRENT_USER.id}
-          userCanPost={CURRENT_USER.canPost}
-          userName={CURRENT_USER.name}
-          userPicture={CURRENT_USER.picture}
-        />
+      <div className="py-6 space-y-4">
+        {/* 👇 Login UI for guests */}
+        {!CURRENT_USER_ID && (
+          <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-accent/5 p-5 text-center shadow-sm">
+            <div className="flex flex-col items-center gap-3">
+              <h2 className="text-lg font-semibold text-primary">
+                Welcome to Futoverse 🌍
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Sign in to connect with fellow students, post updates, and
+                explore the campus in 3D.
+              </p>
+              <Link href="/login">
+                <Button className="mt-2 bg-primary">Log in to Continue</Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
+        {/* Post input (only show if logged in) */}
+        {CURRENT_USER_ID && (
+          <WhatsHappening
+            userId={CURRENT_USER.id}
+            userCanPost={CURRENT_USER.canPost}
+            userName={CURRENT_USER.name}
+            userPicture={CURRENT_USER.picture}
+          />
+        )}
+
+        {/* Posts feed */}
         <Suspense
           fallback={
             <div className="space-y-6">
@@ -50,18 +73,9 @@ export default async function HomePage() {
             </div>
           }
         >
-          {/* <PostFeed userId={CURRENT_USER_ID} initialPosts={initialData} /> */}
           <PostFeedCompact
             userId={CURRENT_USER_ID}
             initialPosts={initialData}
-            // featureComponents={
-            //   {
-            //     // candidates: SUGCandidatesHomeRow,
-            //     // events: EventsHomeRow,
-            //     // products: ProductsHomeRow,
-            //     // Add more features as needed
-            //   }
-            // }
           />
         </Suspense>
       </div>

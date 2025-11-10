@@ -5,10 +5,25 @@ import { useRef, useEffect } from "react";
 import { UserCard } from "../UserCard";
 import { fetchUnconnectedUsers } from "@lib/actions/user.prisma";
 import { Skeleton } from "@components/ui/skeleton";
+import { Button } from "@components/ui/button";
+import Link from "next/link";
 
-export function SuggestedTab({ userId, onUserCardClick }) {
+export function SuggestedTab({ userId, onUserCardClick, currentUserId }) {
   const observerRef = useRef(null);
 
+  if (!currentUserId) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 text-center space-y-4">
+        <p className="text-sm text-muted-foreground max-w-sm">
+          Log in to discover fellow students, connect with friends, and grow
+          your network.
+        </p>
+        <Link href={"/login"}>
+          <Button className="mt-2 font-medium">Log in to continue</Button>
+        </Link>
+      </div>
+    );
+  }
   const {
     data,
     fetchNextPage,
@@ -18,8 +33,9 @@ export function SuggestedTab({ userId, onUserCardClick }) {
     isLoading,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["suggestedUsers", userId],
-    queryFn: ({ pageParam = null }) => fetchUnconnectedUsers(userId, pageParam),
+    queryKey: ["suggestedUsers", currentUserId],
+    queryFn: ({ pageParam = null }) =>
+      fetchUnconnectedUsers(currentUserId, pageParam),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     staleTime: 1000 * 60 * 5,
     retry: 2,

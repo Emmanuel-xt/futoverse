@@ -69,9 +69,9 @@ export default function UsersPage() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["allUsers", currentUserId],
-    queryFn: () => fetchAllUsers(currentUserId),
-    enabled: !!currentUserId,
+    queryKey: ["allUsers", currentUserId || "key"],
+    queryFn: () => fetchAllUsers(currentUserId || 1416),
+    enabled: true,
     // refetchOnWindowFocus: true,
     retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes

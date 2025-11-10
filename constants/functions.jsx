@@ -236,19 +236,16 @@ export const callTHeCreateTIles = (cesiumViewer) => {
 };
 
 /**
- * Cache object to store per-label marker images.
- * Each unique shortName gets its own cached texture.
+ * Cache object to store a single reused marker image.
+ * All markers share the same base icon (no text).
  */
-const markerImageCache = {};
+let cachedMarkerImage = null;
 
 /**
- * Generates (and caches) a small, efficient marker icon.
+ * Generates a small, efficient, textless marker icon (cached).
  */
-function generateMarkerIcon(text) {
-  const label = text?.toUpperCase()?.slice(0, 4) || "BLD";
-
-  // Reuse cached version if available
-  if (markerImageCache[label]) return markerImageCache[label];
+function generateMarkerIcon() {
+  if (cachedMarkerImage) return cachedMarkerImage;
 
   const canvas = document.createElement("canvas");
   const width = 60;
@@ -284,29 +281,20 @@ function generateMarkerIcon(text) {
   ctx.fillStyle = "#0078FF";
   ctx.fill();
 
-  // Draw text label
-  ctx.fillStyle = "#0078FF";
-  ctx.font = "bold 14px Roboto, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(label, centerX, circleY);
-
-  // Cache this label’s image
-  markerImageCache[label] = canvas.toDataURL("image/png");
-
-  return markerImageCache[label];
+  // Convert to data URL (GPU-friendly cached texture)
+  cachedMarkerImage = canvas.toDataURL("image/png");
+  return cachedMarkerImage;
 }
 
 /**
  * Adds optimized lightweight building markers to Cesium viewer.
- * Uses a single cached texture and limits visibility to nearby zoom.
+ * Uses a single cached texture, and shows dynamic shortName labels beneath.
  */
-
 export const addLightMarkersToViewer = async (viewer, places) => {
   if (!viewer || !places?.length) return [];
-  console.log("Places", places);
 
   const entities = [];
+  const markerImage = generateMarkerIcon(); // cached single texture
 
   for (const place of places) {
     const { latitude, longitude, shortName, placeName } = place;
@@ -314,7 +302,6 @@ export const addLightMarkersToViewer = async (viewer, places) => {
     const lat = parseFloat(latitude);
 
     const label = shortName || placeName || "BLD";
-    const markerImage = generateMarkerIcon(label);
 
     const entity = viewer.entities.add({
       id: `marker-${label}-${lon}-${lat}`,
@@ -325,16 +312,46 @@ export const addLightMarkersToViewer = async (viewer, places) => {
         type: "label",
         coordinates: { lon, lat },
       },
+
+      // Billboard marker
       billboard: {
         image: markerImage,
-        width: 45,
-        height: 60,
+        width: 70,
+        height: 80,
         verticalOrigin: VerticalOrigin.BOTTOM,
         heightReference: HeightReference.NONE,
         pixelOffset: new Cartesian3(0, -5, 0),
 
-        scaleByDistance: new NearFarScalar(100.0, 1.2, 2000.0, 0.3),
-        distanceDisplayCondition: new DistanceDisplayCondition(0, 300.0),
+        // 👇 Smooth scale curve (visible from close-up to ~600m away)
+        // scaleByDistance: new NearFarScalar(200.0, 1.2, 3000.0, 0.3),
+
+        // 👇 Controls when billboard stops showing
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 500.0),
+
+        // 👇 Optional: ensures marker always visible above terrain
+        // disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+
+      label: {
+        text: label,
+        font: "bold 18px Roboto, sans-serif",
+        fillColor: Color.fromCssColorString("#0078FF"),
+        outlineColor: Color.BLACK,
+        outlineWidth: 1,
+        style: LabelStyle.FILL_AND_OUTLINE,
+
+        pixelOffset: new Cartesian2(0, -60), // slightly lower for spacing
+        verticalOrigin: VerticalOrigin.TOP,
+
+        // 👇 Text scales slightly slower than marker — easier to read
+        scaleByDistance: new NearFarScalar(
+          10.0,
+          1.1, // within 10m → slightly enlarged for readability
+          600.0,
+          0.4 // at 600m → 40% size
+        ),
+
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 500.0),
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
       },
     });
@@ -541,7 +558,7 @@ export const drawLineBetweenPoints = async (
       id: "direction-line",
       polyline: {
         positions,
-        width: 5,
+        width: 2,
         material: new PolylineOutlineMaterialProperty({
           color: Color.BLUE.withAlpha(0.9),
           outlineColor: Color.BLUE.withAlpha(0.6),
