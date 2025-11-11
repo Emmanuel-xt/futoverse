@@ -2,13 +2,12 @@ import { Inter } from "next/font/google";
 import "@styles/globals.css";
 import ButtomNav from "@components/ButtomNav";
 import Provider from "@components/providers/SessionProvider";
-import { SocketProvider } from "@components/providers/SocketProvider";
-import { OnlineUsersProvider } from "@components/providers/OnlineUsersProvider";
-import { OnlineShopsProvider } from "@components/providers/OnlineShopsProvider";
+import {
+  CoreProviders,
+  RealtimeProviders,
+} from "@components/providers/OptimizedProvidersWrapper";
 import { LocationProvider } from "@components/providers/LocationProvider";
 import { Toaster } from "sonner";
-import { CartProvider } from "@components/providers/CartProvider";
-import { TanStackQueryProvider } from "@components/providers/TanstackQueryProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DailyRewardWrapper } from "@components/leaderboard/daily-reward-wrapper";
@@ -80,26 +79,20 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Provider>
-          <TanStackQueryProvider>
-            <SocketProvider>
-              <OnlineUsersProvider>
-                <OnlineShopsProvider>
-                  <LocationProvider>
-                    <CartProvider>
-                      <main className="bg-light">
-                        <div className="">{children}</div>
-                        <Toaster />
-                        <Analytics />
-                        <SpeedInsights />
-                        <DailyRewardWrapper />
-                        <ButtomNav />
-                      </main>
-                    </CartProvider>
-                  </LocationProvider>
-                </OnlineShopsProvider>
-              </OnlineUsersProvider>
-            </SocketProvider>
-          </TanStackQueryProvider>
+          <CoreProviders>
+            <RealtimeProviders>
+              <LocationProvider>
+                <main className="bg-light">
+                  <div className="">{children}</div>
+                  <Toaster />
+                  <Analytics />
+                  <SpeedInsights />
+                  <DailyRewardWrapper />
+                  <ButtomNav />
+                </main>
+              </LocationProvider>
+            </RealtimeProviders>
+          </CoreProviders>
         </Provider>
       </body>
     </html>

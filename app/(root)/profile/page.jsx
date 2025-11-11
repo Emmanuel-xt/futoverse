@@ -47,6 +47,7 @@ export default async function ProfilePage() {
 
           <ProfileTabs
             userId={userId}
+            currentUserId={userId}
             username={session.user.username}
             isOwnProfile={true}
           />

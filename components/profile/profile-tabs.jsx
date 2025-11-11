@@ -11,6 +11,7 @@ export function ProfileTabs({
   userId,
   username,
   isOwnProfile,
+  currentUserId,
   isPanel = false,
 }) {
   const [activeTab, setActiveTab] = useState("suggested");
@@ -68,7 +69,11 @@ export function ProfileTabs({
         )}
 
         <TabsContent value="suggested" className="mt-0">
-          <SuggestedTab userId={userId} onUserCardClick={handleUserCardClick} />
+          <SuggestedTab
+            userId={userId}
+            currentUserId={currentUserId}
+            onUserCardClick={handleUserCardClick}
+          />
         </TabsContent>
       </Tabs>
     </div>

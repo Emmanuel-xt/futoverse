@@ -6,6 +6,7 @@ import { PWAInstallPrompt } from "./pwa-install-prompt";
 import { useSession } from "next-auth/react";
 import { useIsPWA } from "hooks/useIsPWA";
 import { useDailyLocalStorageCleanup } from "hooks/useDailyLocalStorageCleanup";
+import { claimDailyReward } from "@lib/actions/leaderboard-actions";
 
 const getTodayKey = () => {
   const today = new Date().toDateString();
