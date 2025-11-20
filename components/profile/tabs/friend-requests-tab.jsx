@@ -5,7 +5,7 @@ import { UserCard } from "../UserCard";
 import { fetchPendingFriendRequests } from "@lib/actions/connect.prisma";
 import { Skeleton } from "@components/ui/skeleton"; // Replace with your Skeleton component
 
-export function FriendRequestsTab({ userId, onUserCardClick }) {
+export function FriendRequestsTab({ userId, currentUserId, onUserCardClick }) {
   const queryClient = useQueryClient();
 
   const {
@@ -19,6 +19,8 @@ export function FriendRequestsTab({ userId, onUserCardClick }) {
     retry: 2, // Retry on failure (optional)
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  console.log("requests", requests);
 
   const handleRequestAction = (action, requestId) => {
     if (action === "accept" || action === "decline") {

@@ -79,9 +79,11 @@ export function UserCard({
   const handleUserClick = (e) => {
     e.preventDefault();
     if (onUserCardClick) {
+      console.log("user was clicked");
       onUserCardClick(user.username);
     } else {
       // Fallback to navigation if no panel handler
+      console.log("falling back to profile header");
       window.location.href = `/profile/${user.username}`;
     }
   };

@@ -62,6 +62,7 @@ export function ProfileTabs({
         {isOwnProfile && (
           <TabsContent value="requests" className="mt-0">
             <FriendRequestsTab
+              currentUserId={currentUserId}
               userId={userId}
               onUserCardClick={handleUserCardClick}
             />

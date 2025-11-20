@@ -65,6 +65,9 @@ export default async function UserProfilePage({ params }) {
             userId={user.id}
             username={user.username}
             isOwnProfile={false}
+            currentUserId={
+              session?.user?.id ? Number.parseFloat(session.user.id) : undefined
+            }
           />
         </Suspense>
       </ProfilePanelProvider>

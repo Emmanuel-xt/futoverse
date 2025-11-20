@@ -22,9 +22,9 @@ export function CurrentUserPosition({ user, totalUsers }) {
       </div>
 
       <div className="mt-4 flex items-center gap-4">
-        <Avatar className="h-16 w-16">
+        <Avatar className="h-8 w-8">
           <AvatarImage
-            src={user.user.avatar || "/placeholder.svg"}
+            src={user.user.picture || "/placeholder.svg"}
             alt={user.user.name}
           />
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-xl">
@@ -33,18 +33,18 @@ export function CurrentUserPosition({ user, totalUsers }) {
         </Avatar>
 
         <div className="flex-1">
-          <h3 className="text-xl font-bold">{user.user.name}</h3>
+          <h3 className="text font-bold">{user.user.name}</h3>
           {/* <p className="text-muted-foreground">{user.user.email}</p> */}
         </div>
 
         <div className="text-right">
           <div className="text-sm text-muted-foreground">Rank</div>
-          <div className="text-3xl font-bold text-blue-600">#{user.rank}</div>
+          <div className="text-sm font-bold text-blue-600">#{user.rank}</div>
         </div>
 
         <div className="text-right">
           <div className="text-sm text-muted-foreground">Points</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {user.totalPoints.toLocaleString()}
           </div>
         </div>
