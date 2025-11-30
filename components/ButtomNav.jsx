@@ -1,6 +1,13 @@
 "use client";
 
-import { Home, Search, MapPin, MessageCircle, User } from "lucide-react";
+import {
+  Home,
+  Search,
+  MapPin,
+  MessageCircle,
+  User,
+  ShoppingBag,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,8 +21,8 @@ function BottomNav() {
       label: "Home",
     },
     {
-      route: "/finds",
-      icon: Search,
+      route: "/finds/products",
+      icon: ShoppingBag,
       label: "Find",
       // badge: true,
     },

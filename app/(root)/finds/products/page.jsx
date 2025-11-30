@@ -9,10 +9,9 @@ export default function ProductsPage({ searchParams }) {
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Products</h1>
-          <p className="text-gray-600">
-            Discover amazing products from local vendors
-          </p>
+          <h1 className="text-xl text-center text-primary font-bold mb-2">
+            Market Place
+          </h1>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">

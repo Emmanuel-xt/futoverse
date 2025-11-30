@@ -71,12 +71,13 @@ async function getFilteredProducts(searchParams) {
 export async function ProductsGrid({ searchParams }) {
   const products = await getFilteredProducts(searchParams);
 
-  if (products.length === 0) {
+  if (!products || products.length === 0) {
     return <ProductsEmpty />;
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 gap-3">
+      {" "}
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
