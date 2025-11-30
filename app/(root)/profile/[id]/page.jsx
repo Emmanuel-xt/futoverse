@@ -13,10 +13,6 @@ import {
 import { auth } from "auth";
 import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
 
-// interface ProfilePageProps {
-//   params: { id: string }
-// }
-
 async function getProfileData(username, currentUserId) {
   const user = await fetchUserByUsername(username);
 
@@ -78,4 +74,80 @@ export default async function UserProfilePage({ params }) {
       </ProfilePanelProvider>
     </div>
   );
+}
+
+export async function generateMetadata({ params }) {
+  const username = decodeURIComponent(params.id);
+
+  // fetch the profile data (reuse your helper)
+  const profileData = await getProfileData(username);
+
+  // fallback if no profile found
+  if (!profileData || !profileData.user) {
+    return {
+      title: "User not found | Futoverse",
+      description: "This profile does not exist on Futoverse.",
+      openGraph: {
+        title: "User not found | Futoverse",
+        description: "This profile does not exist on Futoverse.",
+        images: ["/images/mainflier.jpg"],
+      },
+    };
+  }
+
+  const { user } = profileData;
+
+  // --- SMART FALLBACKS ---
+  const name = user.name || user.username || "Futoverse User";
+  const about =
+    user.about ||
+    user.bio ||
+    `Check out ${name}'s profile on Futoverse — explore their campus activity, shops, posts and more!`;
+
+  const department = user.department?.name || "Student of Futoverse University"; // fallback text
+
+  const profilePicture =
+    user.picture ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=random`;
+
+  const title = `${name} • ${department}`;
+  const description = about;
+
+  return {
+    title,
+    description,
+    keywords: [
+      name,
+      user.username,
+      department,
+      "Futoverse",
+      "Campus Map",
+      "Student Profile",
+    ],
+    openGraph: {
+      title,
+      description,
+      url: `https://futoverse.app/profile/${user.username}`,
+      type: "profile",
+      images: [
+        {
+          url: profilePicture,
+          width: 600,
+          height: 600,
+        },
+      ],
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [profilePicture],
+    },
+    alternates: {
+      canonical: `https://futoverse.app/profile/${user.username}`,
+    },
+  };
 }

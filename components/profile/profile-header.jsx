@@ -51,6 +51,7 @@ export function ProfileHeader({
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const inviteLink = `${window.location.origin}/sign-up?invite=${user.id}`;
+  const profileLink = `${window.location.origin}/profile/${user.username}`;
 
   const copyInviteLink = async () => {
     try {
@@ -89,6 +90,35 @@ export function ProfileHeader({
     } catch (error) {
       // If share fails or is cancelled, fallback to simple alert or do nothing
       console.warn("Share failed or cancelled:", error);
+    }
+  };
+  const shareProfileLink = async () => {
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [] })) {
+        // Attempt to share with image
+        await navigator.share({
+          title: "Futoverse User",
+          text: "Check out ",
+          url: profileLink,
+          files: [file],
+        });
+      } else {
+        // Fallback to share without image
+        await navigator.share({
+          title: "Join me on the Campus App!",
+          text: "Sign up using my invite link and get points!",
+          url: profileLink,
+        });
+      }
+    } catch (error) {
+      // If share fails or is cancelled, fallback to simple alert or do nothing
+      console.warn("Share failed or cancelled:", error);
+      try {
+        await navigator.clipboard.writeText(profileLink);
+        alert("Event link copied to clipboard!");
+      } catch (clipboardError) {
+        console.error("Failed to copy link:", clipboardError);
+      }
     }
   };
 
@@ -320,6 +350,9 @@ export function ProfileHeader({
                 <MessageCircle size={16} />
               </Button>
             )}
+            <Button variant="outline" size="icon" onClick={shareProfileLink}>
+              <Share2 size={16} />
+            </Button>
           </div>
 
           {/* Bio */}

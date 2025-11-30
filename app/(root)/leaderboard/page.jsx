@@ -47,7 +47,7 @@ export default async function LeaderboardPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 mb-6">
           <Trophy className="h-6 w-6 text-yellow-500" />
-          <h2 className="text-lg font-bold">Top 20 Members</h2>
+          <h2 className="text-lg font-bold">Top 100 Members</h2>
           <Badge variant="outline" className="ml-auto text-xs">
             Updated in real-time
           </Badge>
@@ -75,7 +75,7 @@ export default async function LeaderboardPage() {
       </div>
 
       {/* Current User Position (if in top 20) */}
-      {currentUser && currentUser.rank <= 20 && (
+      {currentUser && (
         <div className="mt-8">
           <CurrentUserPosition user={currentUser} totalUsers={totalUsers} />
         </div>
