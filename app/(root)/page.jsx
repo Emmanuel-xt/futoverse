@@ -8,6 +8,8 @@ import { PostFeedCompact } from "@components/post/post-feed-compact";
 import { Button } from "@components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { FeatureNavigation } from "@components/feature-navigation";
+import { Search } from "lucide-react";
 
 export default async function HomePage() {
   const session = await auth();
@@ -24,14 +26,23 @@ export default async function HomePage() {
     <div className="container mx-auto px-1 max-w-2xl">
       {/* Sticky Futoverse banner */}
       <div className="sticky top-0 z-50 bg-white border-b py-4 backdrop-blur supports-[backdrop-filter]:bg-white/90">
-        <h1 className="text-2xl sm:text-3xl font-bold text-primary">
-          futoverse
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary">
+            futoverse
+          </h1>
+
+          <Link
+            href={"/finds"}
+            className="p-2 hover:bg-gray-100 rounded-full relative "
+          >
+            <Search size={20} />
+          </Link>
+        </div>
         <p className="hidden">
           Futoverse lets you explore FUTO campus in 3D, connect with students,
           and discover stores — all in one immersive platform.
         </p>
-        <InstallButton />
+        {/* <InstallButton /> */}
       </div>
 
       <div className="py-6 space-y-4">
@@ -62,6 +73,10 @@ export default async function HomePage() {
             userPicture={CURRENT_USER.picture}
           />
         )}
+
+        <div className="max-w-6xl mx-auto px-1 py-2">
+          <FeatureNavigation />
+        </div>
 
         {/* Posts feed */}
         <Suspense
