@@ -37,30 +37,34 @@ model User {
   invitesSent     InviteHistory[] @relation("InviterHistory")
   invitesReceived InviteHistory[] @relation("InviteeHistory")
 
-  pointsHistory      PointsHistory[]
-  receivedRequests   FriendRequest[]      @relation("ReceivedRequests")
-  sentRequests       FriendRequest[]      @relation("SentRequests")
-  messages           Message[]
-  orders             Order[]
-  shops              Shop[]
-  shopItem           ShopItem[]
-  department         Department?          @relation(fields: [departmentId], references: [id])
-  level              Level?               @relation(fields: [levelId], references: [id])
-  statuses           UserStatus[]
-  ConversationMember ConversationMember[]
-  messageReactions   MessageReaction[]
-  conversations      Conversation[]       @relation("ConversationToUser")
-  friends            User[]               @relation("Friendship")
-  friendOf           User[]               @relation("Friendship")
-  stories            Story[] // Stories created by the user
-  storyViews         StoryView[] // Stories viewed by the user
-  posts              Post[]
-  comments           Comment[]
-  likes              Like[]
-  views              View[]
-  Notification       Notification[]
-  sentNotifications  Notification[]       @relation("Sender") // Add this line
-  fcmTokens          FcmToken[]
+  pointsHistory        PointsHistory[]
+  receivedRequests     FriendRequest[]       @relation("ReceivedRequests")
+  sentRequests         FriendRequest[]       @relation("SentRequests")
+  messages             Message[]
+  orders               Order[]
+  shops                Shop[]
+  shopItem             ShopItem[]
+  department           Department?           @relation(fields: [departmentId], references: [id])
+  level                Level?                @relation(fields: [levelId], references: [id])
+  statuses             UserStatus[]
+  ConversationMember   ConversationMember[]
+  messageReactions     MessageReaction[]
+  conversations        Conversation[]        @relation("ConversationToUser")
+  friends              User[]                @relation("Friendship")
+  friendOf             User[]                @relation("Friendship")
+  stories              Story[] // Stories created by the user
+  storyViews           StoryView[] // Stories viewed by the user
+  posts                Post[]
+  comments             Comment[]
+  likes                Like[]
+  views                View[]
+  Notification         Notification[]
+  sentNotifications    Notification[]        @relation("Sender") // Add this line
+  fcmTokens            FcmToken[]
+  embeddedReels        EmbeddedReel[]        @relation("UserEmbeddedReels")
+  embeddedReelLikes    EmbeddedReelLike[]    @relation("UserEmbeddedReelLikes")
+  embeddedReelComments EmbeddedReelComment[] @relation("UserEmbeddedReelComments")
+  embeddedReelShares   EmbeddedReelShare[]   @relation("UserEmbeddedReelShares")
 
   @@map("User")
 }
@@ -531,4 +535,88 @@ model ElectionReaction {
   candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
   @@unique([userId, candidateId, type])
+}
+
+// Enum for the source platform
+enum EmbedPlatform {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+  FACEBOOK
+}
+
+// Main Embedded Reels table
+model EmbeddedReel {
+  id              String        @id @default(cuid())
+  embedUrl        String // The embed URL from the platform
+  originalUrl     String // The original post URL
+  platform        EmbedPlatform
+  thumbnailUrl    String? // Cached thumbnail for preview
+  tiktokEmbedHtml String?       @db.Text // Full TikTok blockquote HTML
+  caption         String? // FUTOverse user's caption
+  hashtags        String[] // FUTOverse hashtags
+  postedById      Int // FUTOverse user who shared it
+  isActive        Boolean       @default(true)
+  viewCount       Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  postedBy User                  @relation("UserEmbeddedReels", fields: [postedById], references: [id], onDelete: Cascade)
+  likes    EmbeddedReelLike[]
+  comments EmbeddedReelComment[]
+  shares   EmbeddedReelShare[]
+
+  @@index([postedById])
+  @@index([platform])
+  @@index([createdAt(sort: Desc)])
+}
+
+// Likes for Embedded Reels (FUTOverse's own like system)
+model EmbeddedReelLike {
+  id        String   @id @default(cuid())
+  reelId    String
+  userId    Int
+  createdAt DateTime @default(now())
+
+  reel EmbeddedReel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  user User         @relation("UserEmbeddedReelLikes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reelId, userId])
+  @@index([reelId])
+  @@index([userId])
+}
+
+// Comments for Embedded Reels (FUTOverse's own comment system)
+model EmbeddedReelComment {
+  id              String   @id @default(cuid())
+  content         String
+  reelId          String
+  userId          Int
+  parentCommentId String?
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  reel          EmbeddedReel          @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  user          User                  @relation("UserEmbeddedReelComments", fields: [userId], references: [id], onDelete: Cascade)
+  parentComment EmbeddedReelComment?  @relation("ReelCommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       EmbeddedReelComment[] @relation("ReelCommentReplies")
+
+  @@index([reelId])
+  @@index([userId])
+  @@index([parentCommentId])
+}
+
+// Shares tracking for Embedded Reels
+model EmbeddedReelShare {
+  id        String   @id @default(cuid())
+  reelId    String
+  userId    Int
+  createdAt DateTime @default(now())
+
+  reel EmbeddedReel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  user User         @relation("UserEmbeddedReelShares", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([reelId])
+  @@index([userId])
 }

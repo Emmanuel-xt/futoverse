@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FeatureNavigation } from "@components/feature-navigation";
 import { Search } from "lucide-react";
+import { ReelsHomeRow } from "@components/reels/reels-home-row";
 
 export default async function HomePage() {
   const session = await auth();
@@ -77,6 +78,10 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-1 py-2">
           <FeatureNavigation />
         </div>
+
+        <section className="bg-card rounded-xl border shadow-sm p-4">
+          <ReelsHomeRow />
+        </section>
 
         {/* Posts feed */}
         <Suspense
