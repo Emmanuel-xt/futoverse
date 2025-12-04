@@ -85,10 +85,10 @@ async function resolveTikTok(url: string): Promise<ResolvedEmbed | null> {
             },
         });
 
-        console.log("🔥 req:", mp4Req);
+        // console.log("🔥 req:", mp4Req);
         const videoUrl = mp4Req.url; // final redirected mp4
 
-        console.log("🔥 REAL TikTok MP4:", videoUrl);
+        // console.log("🔥 REAL TikTok MP4:", videoUrl);
 
         return {
             embedUrl: finalUrl,

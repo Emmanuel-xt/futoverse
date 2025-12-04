@@ -79,10 +79,6 @@ export default async function HomePage() {
           <FeatureNavigation />
         </div>
 
-        <section className="bg-card rounded-xl border shadow-sm p-4">
-          <ReelsHomeRow />
-        </section>
-
         {/* Posts feed */}
         <Suspense
           fallback={

@@ -1,6 +1,7 @@
 import { getCandidates } from "@lib/actions/election";
 import { CandidateCard } from "@components/elections/candidates-card";
 import Link from "next/link";
+import { ReelsHomeRow } from "@components/reels/reels-home-row";
 
 export default async function ElectionsPage() {
   const result = await getCandidates();
@@ -42,6 +43,11 @@ export default async function ElectionsPage() {
           <p className="text-green-200">
             Meet the candidates running for Student Union Government positions
           </p>
+
+          <section className="bg-card rounded-xl border shadow-sm p-4">
+            <ReelsHomeRow />
+          </section>
+
           {/* <Link href="/elections/register" className="text-blue-700 underline">
             Register a Candidate
           </Link> */}
