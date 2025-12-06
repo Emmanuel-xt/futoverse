@@ -71,7 +71,7 @@ export function ReelFullCard({
       </div>
 
       {/* Bottom user info */}
-      <div className="absolute left-4 right-20 bottom-8 z-20">
+      <div className="absolute left-4 right-20 bottom-8  z-50">
         <ReelUserInfo
           user={reel.postedBy}
           caption={reel.caption}

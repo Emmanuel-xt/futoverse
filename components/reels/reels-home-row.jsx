@@ -4,7 +4,7 @@ import { Button } from "@components/ui/button";
 import { getReels } from "@lib/actions/reels";
 import Link from "next/link";
 import { ReelsHomeRowClient } from "./reels-home-row-client";
-import { EmbedSubmitModal } from "./reel-submit-modal";
+import { EmbedSubmitDrawer } from "./reel-submit-modal";
 
 async function ReelsContent() {
   const result = await getReels({
@@ -76,7 +76,7 @@ export function ReelsHomeRow() {
         }
       >
         <ReelsContent />
-        <EmbedSubmitModal postedById={1} />
+        <EmbedSubmitDrawer postedById={1} />
       </Suspense>
     </div>
   );

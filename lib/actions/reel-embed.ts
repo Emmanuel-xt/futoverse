@@ -68,27 +68,13 @@ async function resolveTikTok(url: string): Promise<ResolvedEmbed | null> {
 
         const oembedJson: OEmbedResponse = await oembedRes.json()
 
+        console.log('Tik tok Json', oembedJson);
+
         // 3. Build normalized embed data
         const caption = oembedJson.title || ""
         const hashtags = extractHashtags(caption)
         console.log('Final TikTok URL:', oembedJson);
 
-        const apiUrl =
-            `https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/play/?video_id=${oembedJson.embed_product_id}&ratio=default&line=0`;
-
-        // Follow redirects
-        const mp4Req = await fetch(apiUrl, {
-            method: "GET",
-            redirect: "follow",
-            headers: {
-                "User-Agent": "Mozilla/5.0",
-            },
-        });
-
-        // console.log("🔥 req:", mp4Req);
-        const videoUrl = mp4Req.url; // final redirected mp4
-
-        // console.log("🔥 REAL TikTok MP4:", videoUrl);
 
         return {
             embedUrl: finalUrl,

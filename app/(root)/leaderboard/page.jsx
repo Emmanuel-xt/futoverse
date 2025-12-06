@@ -6,6 +6,7 @@ import { Badge } from "@components/ui/badge";
 import { Trophy, Users, TrendingUp } from "lucide-react";
 import { auth } from "auth";
 import { PointsGuide } from "@components/leaderboard/point-guide";
+import Link from "next/link";
 
 // Mock current user ID - replace with actual auth
 
@@ -29,7 +30,7 @@ export default async function LeaderboardPage() {
           </h1>
         </div>
         <p className="text-lg text-muted-foreground">
-          See how you rank among all {totalUsers.toLocaleString()} members
+          See how you rank among 500+ members
         </p>
         <PointsGuide />
       </div>
@@ -64,11 +65,12 @@ export default async function LeaderboardPage() {
         ) : (
           <div className="space-y-3">
             {topUsers.map((user) => (
-              <LeaderboardCard
-                key={user.userId}
-                user={user}
-                isCurrentUser={currentUser?.userId === user.userId}
-              />
+              <Link key={user.userId} href={`/profile/${user.user.username}`}>
+                <LeaderboardCard
+                  user={user}
+                  isCurrentUser={currentUser?.userId === user.userId}
+                />
+              </Link>
             ))}
           </div>
         )}
@@ -85,7 +87,8 @@ export default async function LeaderboardPage() {
         <Card className="flex-1 min-w-[120px] max-w-[200px] p-4 text-center">
           <Users className="h-8 w-8 mx-auto mb-2 text-blue-500" />
           <div className="text-2xl font-bold">
-            {totalUsers.toLocaleString()}
+            {/* {totalUsers.toLocaleString()} */}
+            500+
           </div>
           <div className="text-sm text-muted-foreground">Members</div>
         </Card>

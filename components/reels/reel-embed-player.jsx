@@ -32,22 +32,11 @@ export function ReelEmbedPlayer({
       !showThumbnail
     ) {
       // Load TikTok embed script
-      const existingScript = document.querySelector(
-        'script[src="https://www.tiktok.com/embed.js"]'
-      );
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.src = "https://www.tiktok.com/embed.js";
-        script.async = true;
-        document.body.appendChild(script);
-      } else {
-        // Re-process embeds if script already loaded
-        if (window.tiktok?.embedjs?.process) {
-          setTimeout(() => {
-            window.tiktok.embedjs.process();
-          }, 100);
-        }
-      }
+
+      const script = document.createElement("script");
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
       setIsLoading(false);
     }
   }, [platform, tiktokEmbedHtml, isActive, showThumbnail]);
@@ -59,7 +48,7 @@ export function ReelEmbedPlayer({
   const getEmbedParams = () => {
     switch (platform) {
       case "YOUTUBE":
-        return `${embedUrl}?autoplay=${isActive ? 1 : 0}&mute=0&loop=1&playsinline=1&controls=0&modestbranding=1`;
+        return `${embedUrl}?autoplay=${isActive ? 1 : 0}&mute=1&loop=1&playsinline=1&controls=0&modestbranding=1`;
       case "INSTAGRAM":
         return embedUrl;
       case "FACEBOOK":
@@ -84,11 +73,25 @@ export function ReelEmbedPlayer({
     }
 
     return (
-      <div
-        ref={tiktokContainerRef}
-        className="w-full h-full flex items-center justify-center bg-black"
-        dangerouslySetInnerHTML={{ __html: tiktokEmbedHtml }}
-      />
+      <div className="relative w-full h-full">
+        {/* TikTok embed HTML */}
+        <div
+          ref={tiktokContainerRef}
+          className="w-full h-full flex items-center justify-center bg-black"
+          dangerouslySetInnerHTML={{ __html: tiktokEmbedHtml }}
+        />
+
+        {/* White overlay at bottom */}
+        <div
+          className="
+      absolute bottom-0 left-0 right-0 
+      h-44
+       bg-black
+      pointer-events-none
+      z-50
+    "
+        />
+      </div>
     );
   };
 
@@ -100,7 +103,7 @@ export function ReelEmbedPlayer({
       )}
     >
       {/* Loading state */}
-      {isLoading && !showThumbnail && platform !== "TIKTOK" && (
+      {isLoading && !showThumbnail && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
           <Loader2 className="w-10 h-10 text-white animate-spin" />
         </div>

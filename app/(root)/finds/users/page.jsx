@@ -244,10 +244,10 @@ export default function UsersPage() {
 
       {/* Results */}
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">
+        {/* <p className="text-sm text-muted-foreground">
           {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}{" "}
           found
-        </p>
+        </p> */}
 
         {isLoading && (
           <div className="space-y-4">

@@ -3,14 +3,11 @@ import { PostSkeleton } from "@components/post/post-skeleton";
 import { getPosts } from "@lib/actions/post-actions";
 import { auth } from "auth";
 import { WhatsHappening } from "@components/post/whats-happening";
-import { InstallButton } from "@components/InstallButton";
 import { PostFeedCompact } from "@components/post/post-feed-compact";
 import { Button } from "@components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 import { FeatureNavigation } from "@components/feature-navigation";
 import { Search } from "lucide-react";
-import { ReelsHomeRow } from "@components/reels/reels-home-row";
 
 export default async function HomePage() {
   const session = await auth();

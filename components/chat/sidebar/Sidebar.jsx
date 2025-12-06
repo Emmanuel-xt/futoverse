@@ -16,6 +16,7 @@ import {
 } from "@lib/actions/Chat.prisma";
 import { cn } from "@lib/utils";
 import StoriesContainer from "../stories/StoriesContainer";
+import { ReelsHomeRow } from "@components/reels/reels-home-row";
 
 const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,6 +113,9 @@ const Sidebar = () => {
 
       {/* Stories Container */}
       <StoriesContainer />
+      <section className="bg-card rounded-xl border shadow-sm p-4">
+        <ReelsHomeRow />
+      </section>
 
       {/* Conversations List */}
       <div className="flex-1 overflow-hidden">
