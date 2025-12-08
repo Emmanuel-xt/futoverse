@@ -50,6 +50,7 @@ export function PostCard({ post, userId }) {
   const [showCommentDrawer, setShowCommentDrawer] = useState(false);
 
   const likeMutation = useLikeMutation(userId);
+  console.log("user id at post card", userId);
   const trackViewMutation = useTrackView();
 
   // Track view when post comes into view
@@ -198,7 +199,7 @@ export function PostCard({ post, userId }) {
         {post.media.length > 0 && <MediaCarousel media={post.media} />}
 
         <div className="flex items-center justify-between pt-2 border-t">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             className={cn("flex items-center space-x-2")}
@@ -210,8 +211,8 @@ export function PostCard({ post, userId }) {
               <span>{post._count.views.toLocaleString()} </span>
               <span>View{post._count.views > 1 && "s"}</span>
             </div>
-          </Button>
-          {/* <Button
+          </Button> */}
+          <Button
             variant="ghost"
             size="sm"
             className={cn(
@@ -221,12 +222,12 @@ export function PostCard({ post, userId }) {
             onClick={handleLike}
             disabled={!userId || likeMutation.isPending}
           >
-            <Eye className={cn("h-4 w-4", post.isLiked && "fill-current")} />
+            <Heart className={cn("h-4 w-4", post.isLiked && "fill-current")} />
             <div className="">
-              <span>{post._count.views.toLocaleString()} </span>
-              <span>View{post._count.views > 1 && "s"}</span>
+              <span>{post._count.likes.toLocaleString()} </span>
+              <span>Like{post._count.likes > 1 && "s"}</span>
             </div>
-          </Button> */}
+          </Button>
 
           <Button
             variant="ghost"

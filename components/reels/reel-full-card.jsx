@@ -10,6 +10,7 @@ import { toggleReelLike } from "@lib/actions/reels";
 export function ReelFullCard({
   reel,
   isActive,
+  isMuted,
   currentUserId,
   onCommentOpen,
   onShare,
@@ -45,6 +46,7 @@ export function ReelFullCard({
           platform={reel.platform}
           thumbnailUrl={reel.thumbnailUrl}
           isActive={isActive}
+          isMuted={isMuted}
           tiktokEmbedHtml={reel.tiktokEmbedHtml}
           className="w-full h-full"
         />

@@ -13,7 +13,7 @@ import {
 import { Plus } from "lucide-react";
 import { EmbedSubmitForm } from "./reel-submit-form";
 
-export function EmbedSubmitDrawer({ postedById, onSuccess }) {
+export async function EmbedSubmitDrawer({ postedById, onSuccess }) {
   const [open, setOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -29,7 +29,7 @@ export function EmbedSubmitDrawer({ postedById, onSuccess }) {
           Add Reel
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="min-h-[90vh]">
         <div className="mx-auto w-full max-w-md pb-8">
           <DrawerHeader>
             <DrawerTitle>Add Reel</DrawerTitle>

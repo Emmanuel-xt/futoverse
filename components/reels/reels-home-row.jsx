@@ -5,6 +5,7 @@ import { getReels } from "@lib/actions/reels";
 import Link from "next/link";
 import { ReelsHomeRowClient } from "./reels-home-row-client";
 import { EmbedSubmitDrawer } from "./reel-submit-modal";
+import { auth } from "auth";
 
 async function ReelsContent() {
   const result = await getReels({
@@ -39,7 +40,9 @@ async function ReelsContent() {
   return <ReelsHomeRowClient reels={reels} />;
 }
 
-export function ReelsHomeRow() {
+export async function ReelsHomeRow() {
+  const session = await auth();
+  const postedById = Number(session?.user?.id) || null;
   return (
     <div className="py-4">
       {/* Header */}
@@ -69,14 +72,14 @@ export function ReelsHomeRow() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="w-32 h-48 bg-muted animate-pulse rounded-xl shrink-0"
+                className="w-32 h-48 bg-gray-300 animate-pulse rounded-xl shrink-0"
               />
             ))}
           </div>
         }
       >
         <ReelsContent />
-        <EmbedSubmitDrawer postedById={1} />
+        <EmbedSubmitDrawer postedById={postedById} />
       </Suspense>
     </div>
   );

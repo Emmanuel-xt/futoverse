@@ -146,9 +146,9 @@ export function EmbedSubmitForm({ postedById, onSuccess }) {
       {preview && (
         <Card className="overflow-hidden">
           <CardContent className="p-4">
-            <div className="flex gap-4">
+            <div className="flex flex-col gap-4">
               {/* Thumbnail */}
-              <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-muted shrink-0">
+              <div className="relative  rounded-lg overflow-hidden bg-muted shrink-0">
                 {preview.thumbnailUrl ? (
                   <img
                     src={preview.thumbnailUrl || "/placeholder.svg"}
@@ -217,7 +217,7 @@ export function EmbedSubmitForm({ postedById, onSuccess }) {
       )}
 
       {/* Raw oEmbed Debug (optional - remove in production) */}
-      {preview?.rawOEmbed && process.env.NODE_ENV === "development" && (
+      {/* {preview?.rawOEmbed && process.env.NODE_ENV === "development" && (
         <details className="text-xs">
           <summary className="cursor-pointer text-muted-foreground">
             Raw oEmbed
@@ -226,7 +226,7 @@ export function EmbedSubmitForm({ postedById, onSuccess }) {
             {JSON.stringify(preview.rawOEmbed, null, 2)}
           </pre>
         </details>
-      )}
+      )} */}
     </div>
   );
 }
