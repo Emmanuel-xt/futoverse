@@ -12,9 +12,12 @@ import {
 } from "@components/ui/drawer";
 import { Plus } from "lucide-react";
 import { EmbedSubmitForm } from "./reel-submit-form";
+import { useSession } from "next-auth/react";
 
-export async function EmbedSubmitDrawer({ postedById, onSuccess }) {
+export async function EmbedSubmitDrawer({ onSuccess }) {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
+  const postedById = Number(session?.user?.id) || null;
 
   const handleSuccess = () => {
     onSuccess?.();

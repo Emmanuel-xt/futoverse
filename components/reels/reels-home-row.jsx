@@ -5,7 +5,6 @@ import { getReels } from "@lib/actions/reels";
 import Link from "next/link";
 import { ReelsHomeRowClient } from "./reels-home-row-client";
 import { EmbedSubmitDrawer } from "./reel-submit-modal";
-import { auth } from "auth";
 
 async function ReelsContent() {
   const result = await getReels({
@@ -41,8 +40,8 @@ async function ReelsContent() {
 }
 
 export async function ReelsHomeRow() {
-  const session = await auth();
-  const postedById = Number(session?.user?.id) || null;
+  // const session = await auth();
+  // const postedById = Number(session?.user?.id) || null;
   return (
     <div className="py-4">
       {/* Header */}
@@ -79,7 +78,7 @@ export async function ReelsHomeRow() {
         }
       >
         <ReelsContent />
-        <EmbedSubmitDrawer postedById={postedById} />
+        <EmbedSubmitDrawer />
       </Suspense>
     </div>
   );
