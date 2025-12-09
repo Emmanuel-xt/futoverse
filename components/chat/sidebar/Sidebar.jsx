@@ -113,9 +113,9 @@ const Sidebar = () => {
 
       {/* Stories Container */}
       <StoriesContainer />
-      <section className="bg-card rounded-xl border shadow-sm p-4">
+      {/* <section className="bg-card rounded-xl border shadow-sm p-4">
         <ReelsHomeRow />
-      </section>
+      </section> */}
 
       {/* Conversations List */}
       <div className="flex-1 overflow-hidden">
