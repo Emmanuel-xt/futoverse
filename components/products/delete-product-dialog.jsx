@@ -21,6 +21,7 @@ export function DeleteProductDialog({
   onOpenChange,
   productId,
   productName,
+  userId,
   onDeleteSuccess,
   redirectPath = "/products",
 }) {
@@ -33,10 +34,10 @@ export function DeleteProductDialog({
     setError(null);
 
     try {
-      const success = await deleteProduct(productId);
+      const result = await deleteProduct(productId, userId);
 
-      if (!success) {
-        throw new Error("Failed to delete product");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to delete product");
       }
 
       toast.success("Product deleted successfully");

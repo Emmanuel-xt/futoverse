@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 import {
   fetchShopForEditing,
   fetchUserShopById,
@@ -29,6 +30,7 @@ import { IoCameraReverseOutline } from "react-icons/io5";
 
 const EditStoreProfile = ({ params }) => {
   const router = useRouter();
+  const { data: session } = useSession();
   const shopId = params.id.replace(/%20/g, " ");
   const [shop, setShop] = useState(null);
   const [wasNewImageUploaded, setWasNewImageUploaded] = useState(false);
@@ -118,14 +120,21 @@ const EditStoreProfile = ({ params }) => {
       }
 
       // Update shop details with Cloudinary URL
-      const wasShopUpdated = await updateShopDetails(shopId, {
+      const userId = parseInt(session?.user?.id);
+      const result = await updateShopDetails(shopId, {
         name: form.name,
         image: uploadedFields.image,
         coverImage: uploadedFields.coverImage,
         desc: form.desc,
         category: form.category,
         locationDesc: form.locationDesc,
-      });
+      }, userId);
+
+      if (!result.success) {
+        setError(result.error || "Failed to update shop");
+        setLoading(false);
+        return;
+      }
 
       setLoading(false);
       router.back();

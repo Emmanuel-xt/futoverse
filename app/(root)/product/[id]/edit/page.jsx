@@ -115,10 +115,10 @@ const EditProductPage = ({ params }) => {
 
   const handleSubmit = async () => {
     try {
-      const success = await updateProductDetails(productId, product);
-      if (!success) {
-        console.log("product update failed");
-        throw new Error("Failed to update product");
+      const userId = parseInt(session?.user?.id);
+      const result = await updateProductDetails(productId, product, userId);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update product");
       }
 
       router.back();

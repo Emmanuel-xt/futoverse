@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { ReelEmbedPlayer } from "./reel-embed-player";
 import { ReelActions } from "./reel-actions";
 import { ReelUserInfo } from "./reel-user-info";
 import { cn } from "@lib/utils";
 import { toggleReelLike } from "@lib/actions/reels";
 
-export function ReelFullCard({
+export const ReelFullCard = memo(function ReelFullCard({
   reel,
   isActive,
   isMuted,
@@ -90,4 +90,4 @@ export function ReelFullCard({
       </div>
     </div>
   );
-}
+});

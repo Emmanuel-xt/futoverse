@@ -4,6 +4,7 @@ import { ArrowLeft, Eye, Heart, Share2, Calendar, Hash } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@components/ui/button";
 import { Badge } from "@components/ui/badge";
+import { SanitizedEmbed } from "@components/reels/sanitized-embed";
 
 // Dynamic metadata for SEO
 export async function generateMetadata({ params }) {
@@ -106,8 +107,8 @@ export default async function ReelPage({ params }) {
         <div className="bg-muted rounded-xl overflow-hidden mb-6">
           <div className="aspect-video">
             {reel.platform === "TIKTOK" && reel.tiktokEmbedHtml ? (
-              <div
-                dangerouslySetInnerHTML={{ __html: reel.tiktokEmbedHtml }}
+              <SanitizedEmbed
+                html={reel.tiktokEmbedHtml}
                 className="w-full h-full flex items-center justify-center"
               />
             ) : (

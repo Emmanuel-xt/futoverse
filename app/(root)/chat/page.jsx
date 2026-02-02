@@ -5,6 +5,9 @@ import { ProfilePanelProvider } from "@components/profile/profile-panel-provider
 import { auth } from "auth";
 import { redirect } from "next/navigation";
 
+// Never cache chat - always fetch fresh data
+export const dynamic = "force-dynamic";
+
 const ChatPage = async () => {
   const session = await auth();
 

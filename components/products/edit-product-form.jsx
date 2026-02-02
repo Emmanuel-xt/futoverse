@@ -32,7 +32,7 @@ const categories = [
   "Health & Beauty",
 ];
 
-export function EditProductForm({ product }) {
+export function EditProductForm({ product, userId }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -122,17 +122,17 @@ export function EditProductForm({ product }) {
 
     startTransition(async () => {
       try {
-        const success = await updateProductDetails(product.id, {
+        const result = await updateProductDetails(product.id, {
           name: formData.name.trim(),
           description: formData.description.trim(),
           quantity: Number.parseInt(formData.quantity) || 0,
           price: formData.price,
           category: formData.category,
           image: formData.image,
-        });
+        }, userId);
 
-        if (!success) {
-          throw new Error("Failed to update product");
+        if (!result.success) {
+          throw new Error(result.error || "Failed to update product");
         }
 
         toast.success("Product updated successfully");
@@ -323,6 +323,7 @@ export function EditProductForm({ product }) {
         onOpenChange={setShowDeleteDialog}
         productId={product.id}
         productName={product.name}
+        userId={userId}
         redirectPath="/products"
       />
     </>

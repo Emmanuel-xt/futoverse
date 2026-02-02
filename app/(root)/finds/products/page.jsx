@@ -4,6 +4,9 @@ import { ProductsFilters } from "@components/products/products-filters";
 import { ProductsSearch } from "@components/products/products-search";
 import { ProductsLoading } from "@components/products/products-loading";
 
+// Revalidate products page every 60 seconds (1 minute)
+export const revalidate = 60;
+
 export default function ProductsPage({ searchParams }) {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">

@@ -20,7 +20,7 @@ export function PostFeed({ userId, initialPosts }) {
 
   const { ref, inView } = useInView({
     threshold: 0,
-    rootMargin: "100px",
+    rootMargin: "200px",
   });
 
   useEffect(() => {
@@ -62,24 +62,19 @@ export function PostFeed({ userId, initialPosts }) {
 
   return (
     <div className="space-y-6">
-      {posts.map((post, i) => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} userId={userId} />
       ))}
 
       {hasNextPage && (
         <div ref={ref} className="space-y-6">
-          {isFetchingNextPage && (
-            <>
-              {/* <PostSkeleton /> */}
-              <PostSkeleton />
-            </>
-          )}
+          {isFetchingNextPage && <PostSkeleton />}
         </div>
       )}
 
       {!hasNextPage && posts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Arinzechukwu's Execution</p>
+          <p className="text-muted-foreground">You've reached the end</p>
         </div>
       )}
     </div>

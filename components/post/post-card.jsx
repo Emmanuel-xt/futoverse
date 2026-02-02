@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import {
   Heart,
@@ -41,7 +41,7 @@ const linkifyOptions = {
   className: "text-blue-600 underline break-all",
 };
 
-export function PostCard({ post, userId }) {
+export const PostCard = memo(function PostCard({ post, userId }) {
   const [showFullContent, setShowFullContent] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
@@ -281,4 +281,4 @@ export function PostCard({ post, userId }) {
       />
     </Card>
   );
-}
+});

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -17,7 +18,7 @@ import useImageModal from "hooks/useImageModal";
 //   conversation: any
 // }
 
-const ConversationItem = ({ conversation }) => {
+const ConversationItem = memo(function ConversationItem({ conversation }) {
   const { data: session } = useSession();
   const { selectedConversation, setSelectedConversation } = useConversation();
   const onlineUsers = useOnlineUsers();
@@ -214,6 +215,6 @@ const ConversationItem = ({ conversation }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ConversationItem;

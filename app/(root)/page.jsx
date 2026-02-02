@@ -9,6 +9,9 @@ import Link from "next/link";
 import { FeatureNavigation } from "@components/feature-navigation";
 import { Search } from "lucide-react";
 
+// Revalidate home page every 10 seconds
+export const revalidate = 10;
+
 export default async function HomePage() {
   const session = await auth();
   const CURRENT_USER = {

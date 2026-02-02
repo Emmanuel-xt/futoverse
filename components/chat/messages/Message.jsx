@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { Check, CheckCheck, Reply } from "lucide-react";
@@ -14,7 +14,7 @@ import VoiceMessage from "./VoiceMessage";
 //   isGrouped?: boolean
 // }
 
-const Message = ({ message, isGrouped = false }) => {
+const Message = memo(function Message({ message, isGrouped = false }) {
   const { data: session } = useSession();
   const { selectedConversation } = useConversation();
   const [showMenu, setShowMenu] = useState(false);
@@ -189,6 +189,6 @@ const Message = ({ message, isGrouped = false }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Message;
