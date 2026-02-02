@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Users, X, Check } from "lucide-react";
 import {
   Dialog,
@@ -60,11 +60,17 @@ const NewGroupModal = ({ open, onClose }) => {
     }
   }, [open, session]);
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.username?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // useMemo prevents recalculating filtered users on every render
+  // Only recalculates when users or searchQuery changes
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery) return users;
+    const query = searchQuery.toLowerCase();
+    return users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(query) ||
+        user.username?.toLowerCase().includes(query)
+    );
+  }, [users, searchQuery]);
 
   const handleUserToggle = (user) => {
     setSelectedUsers((prev) => {

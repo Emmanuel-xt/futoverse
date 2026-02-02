@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import {
   Heart,
   Share2,
@@ -43,7 +43,7 @@ function getHeadingText(post) {
   return lines.length > 150 ? lines.slice(0, 150) + "..." : lines;
 }
 
-export function PostFeedCard({
+export const PostFeedCard = memo(function PostFeedCard({
   post,
   userId,
   onEdit,
@@ -239,4 +239,4 @@ export function PostFeedCard({
       </div>
     </div>
   );
-}
+});

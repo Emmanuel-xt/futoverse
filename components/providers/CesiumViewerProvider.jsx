@@ -1,13 +1,9 @@
 "use client";
 
 import { createContext, useContext, useRef, useState, useEffect } from "react";
-import {
-  Viewer,
-  Ion,
-  IonImageryProvider,
-  UrlTemplateImageryProvider,
-  WebMercatorTilingScheme,
-} from "cesium";
+
+// Cesium is now dynamically imported only when the map becomes visible
+// This saves ~2.5MB from the initial bundle, making the app load faster
 
 const CesiumViewerContext = createContext(null);
 
@@ -17,19 +13,31 @@ export const CesiumViewerProvider = ({ children }) => {
   const viewerRef = useRef(null);
   const [viewerReady, setViewerReady] = useState(false);
   const [isMapVisible, setMapVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // if (viewerRef.current) return;
+    // Only load Cesium when the map becomes visible
+    if (!isMapVisible) return;
+    // Don't reinitialize if already ready
+    if (viewerRef.current) return;
+
     let destroyed = false;
 
     const initializeViewer = async () => {
       try {
         if (typeof window === "undefined") return;
 
-        Ion.defaultAccessToken =
+        setIsLoading(true);
+
+        // Dynamic import - Cesium only loads when user actually opens the map
+        const Cesium = await import("cesium");
+
+        if (destroyed) return;
+
+        Cesium.Ion.defaultAccessToken =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGNkMDgyYy1jZWQ5LTRkZjktODc5NS01YmYwOWU2YjQ4ZmUiLCJpZCI6MjA1NDMyLCJpYXQiOjE3MTE3NzUxNTV9.2JgatZJRPURzsB8ZytMKxqfjvF53JCkLbbnj90x63_A";
 
-        const cesiumViewer = new Viewer("cesiumContainer", {
+        const cesiumViewer = new Cesium.Viewer("cesiumContainer", {
           baseLayerPicker: false,
           fullscreenButton: false,
           vrButton: false,
@@ -45,22 +53,14 @@ export const CesiumViewerProvider = ({ children }) => {
           maximumRenderTimeChange: Infinity,
         });
 
-        const googleMapsProvider = new UrlTemplateImageryProvider({
+        const googleMapsProvider = new Cesium.UrlTemplateImageryProvider({
           url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-          tilingScheme: new WebMercatorTilingScheme(),
+          tilingScheme: new Cesium.WebMercatorTilingScheme(),
           maximumLevel: 20,
         });
 
         cesiumViewer.imageryLayers.removeAll();
         cesiumViewer.imageryLayers.addImageryProvider(googleMapsProvider);
-
-        // const imageryLayer = cesiumViewer.imageryLayers.addImageryProvider(
-        //   await IonImageryProvider.fromAssetId(4)
-        // );
-
-        // imageryLayer.imageryProvider.errorEvent.addEventListener((err) => {
-        //   console.error("ImageryProvider error:", err);
-        // });
 
         // Add a basic tile load error handler
         cesiumViewer.scene.globe.tileLoadProgressEvent.addEventListener(
@@ -82,10 +82,11 @@ export const CesiumViewerProvider = ({ children }) => {
         if (!destroyed) {
           viewerRef.current = cesiumViewer;
           setViewerReady(true);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Cesium failed to initialize:", error);
-        // Don't set any state that affects render
+        setIsLoading(false);
       }
     };
 
@@ -93,9 +94,12 @@ export const CesiumViewerProvider = ({ children }) => {
 
     return () => {
       destroyed = true;
-      viewerRef.current?.destroy();
+      if (viewerRef.current) {
+        viewerRef.current.destroy();
+        viewerRef.current = null;
+      }
     };
-  }, []);
+  }, [isMapVisible]);
 
   return (
     <CesiumViewerContext.Provider
@@ -104,6 +108,7 @@ export const CesiumViewerProvider = ({ children }) => {
         viewerReady,
         isMapVisible,
         setMapVisible,
+        isLoading,
       }}
     >
       {children}

@@ -1,13 +1,13 @@
 import { io } from "socket.io-client";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-const socketServerURL = isDevelopment
-  ? // ? "http://localhost:4000" // Local server during development
-    "https://socket-server-2ynk.onrender.com" // Local server during development
-  : "https://socket-server-2ynk.onrender.com"; // Hosted server during production
+const socketServerURL = process.env.NEXT_PUBLIC_SOCKET_URL || "https://socket-server-2ynk.onrender.com";
 
 const socket = io(socketServerURL, {
-  transports: ["websocket"], // Recommended transport for better performance
+  transports: ["websocket"],
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  reconnectionAttempts: 5,
 });
 
 export default socket;

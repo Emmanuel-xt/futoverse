@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import {
   Home,
   Search,
@@ -7,12 +8,30 @@ import {
   MessageCircle,
   User,
   ShoppingBag,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleNavigation = (e, route) => {
+    e.preventDefault();
+    if (pathname === route) return; // Already on this route
+
+    startTransition(() => {
+      router.push(route);
+    });
+  };
+
+  const handlePrefetch = (route) => {
+    if (pathname !== route) {
+      router.prefetch(route);
+    }
+  };
 
   const snapchatLinks = [
     {
@@ -46,7 +65,18 @@ function BottomNav() {
   ];
 
   return (
-    <section className="fixed bottom-0 z-10 w-full bg-white border-t border-gray-100 px-4 py-2 safe-area-pb">
+    <>
+      {/* Page Loading Overlay */}
+      {isPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 size={40} className="text-blue-500 animate-spin" />
+            <span className="text-sm text-gray-600">Loading...</span>
+          </div>
+        </div>
+      )}
+
+      <section className="fixed bottom-0 z-10 w-full bg-white border-t border-gray-100 px-4 py-2 safe-area-pb">
       <div className="flex items-center justify-between max-w-md mx-auto">
         {snapchatLinks.map((link) => {
           const isActive =
@@ -59,12 +89,15 @@ function BottomNav() {
             <Link
               href={link.route}
               key={link.label}
+              onClick={(e) => handleNavigation(e, link.route)}
+              onMouseEnter={() => handlePrefetch(link.route)}
+              onTouchStart={() => handlePrefetch(link.route)}
               className="relative flex items-center justify-center p-3"
             >
               <div className="relative">
                 <Icon
                   size={link.isCenter ? 32 : 24}
-                  className={`${isActive ? "text-blue-500" : "text-gray-700"} ${link.isCenter ? "stroke-[1.5]" : "stroke-[1.5]"}`}
+                  className={`${isActive ? "text-blue-500" : "text-gray-700"} ${link.isCenter ? "stroke-[1.5]" : "stroke-[1.5]"} transition-colors`}
                 />
 
                 {/* Notification Badge */}
@@ -85,6 +118,7 @@ function BottomNav() {
         })}
       </div>
     </section>
+    </>
   );
 }
 

@@ -9,6 +9,9 @@ import { auth } from "auth";
 import { ProfilePanelProvider } from "@components/profile/profile-panel-provider";
 import NotificationManager from "@components/notification-manager";
 
+// Revalidate profile page every 60 seconds (1 minute)
+export const revalidate = 60;
+
 async function getProfileData(username) {
   const [user, friendCount] = await Promise.all([
     fetchUserByUsername(username),

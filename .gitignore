@@ -32,8 +32,17 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local planning files
+*.local.md
+REFINEMENT_PLAN.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 certificates
+
+# cesium
+public/Cesium/
+
+ 
