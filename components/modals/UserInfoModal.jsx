@@ -1,5 +1,5 @@
 "use client";
-import { fetchOnlyUserInfo } from "@lib/actions/user.prisma";
+import { fetchOnlyUserInfo } from "@lib/actions/user-queries";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Modal from "./Modal";

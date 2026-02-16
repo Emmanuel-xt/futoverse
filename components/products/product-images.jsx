@@ -62,6 +62,7 @@ export function ProductImages({ product }) {
             }
             alt={`${product.name} - Image ${selectedImageIndex + 1}`}
             fill
+            sizes="(max-width: 768px) 100vw, 600px"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             priority
           />
@@ -124,6 +125,8 @@ export function ProductImages({ product }) {
                   src={image || "/placeholder.svg?height=100&width=100"}
                   alt={`${product.name} - Thumbnail ${index + 1}`}
                   fill
+                  sizes="100px"
+                  loading="lazy"
                   className="object-cover"
                 />
               </button>
@@ -155,6 +158,7 @@ export function ProductImages({ product }) {
                 }
                 alt={`${product.name} - Zoomed Image ${zoomImageIndex + 1}`}
                 fill
+                sizes="(max-width: 768px) 100vw, 800px"
                 className="object-contain"
                 priority
               />

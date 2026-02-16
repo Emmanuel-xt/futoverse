@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { ProfileTabs } from "@components/profile/profile-tabs";
 import { ProfileSkeleton } from "@components/profile/profile-skeleton";
-import { fetchUserByUsername } from "@lib/actions/user.prisma";
+import { fetchUserByUsername } from "@lib/actions/user-queries";
 import { fetchUsersFriendCount } from "@lib/actions/connect.prisma";
 import { ProfileHeader } from "@components/profile/profile-header";
 import { auth } from "auth";

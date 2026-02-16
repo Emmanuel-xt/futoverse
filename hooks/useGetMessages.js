@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import useConversation from "../zustand/useConversation";
-import { getMessagesOfUsers } from "@lib/actions/Chat.prisma";
+import { getMessagesOfUsers } from "@lib/actions/message.prisma";
 import { useSession } from "next-auth/react";
 import { getMessagesFromDB, saveMessagesToDB } from "@lib/indexedDB";
 
@@ -25,8 +25,8 @@ const useGetMessages = () => {
 
       // Step 1: Check IndexedDB first for instant display
       const cachedMessages = await getMessagesFromDB(
-        session?.user.id,
-        selectedConversation.id
+        selectedConversation.id,
+        session?.user.id
       );
       if (cachedMessages?.length > 0) {
         setMessages(cachedMessages);

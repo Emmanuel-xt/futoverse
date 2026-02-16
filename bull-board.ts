@@ -8,7 +8,7 @@ const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath("/admin/queues");
 
 createBullBoard({
-  queues: [new BullMQAdapter(notificationQueue)], // ✅ Wrap it here
+  queues: [new BullMQAdapter(notificationQueue.instance)],
   serverAdapter,
 });
 
@@ -18,5 +18,5 @@ app.use("/admin/queues", serverAdapter.getRouter());
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(`✅ Bull Board running: http://localhost:${PORT}/admin/queues`);
+  console.log(`Bull Board running: http://localhost:${PORT}/admin/queues`);
 });

@@ -30,6 +30,11 @@ module.exports = {
       screens: {
         xs: "400px",
       },
+      fontSize: {
+        "heading-lg": ["1.5rem", { lineHeight: "2rem", fontWeight: "700" }],
+        "heading-md": ["1.25rem", { lineHeight: "1.75rem", fontWeight: "600" }],
+        "heading-sm": ["1rem", { lineHeight: "1.5rem", fontWeight: "600" }],
+      },
     },
   },
   plugins: [],

@@ -19,7 +19,7 @@ import {
 import { useSession } from "next-auth/react";
 import { Cartesian3, Transforms } from "cesium";
 import { shopCategories } from "@constants/arrays";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import {
   Select,
   SelectContent,

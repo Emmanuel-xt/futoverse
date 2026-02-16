@@ -4,10 +4,15 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CandidateEditForm } from "@components/elections/candidate-edit";
+import { auth } from "auth";
 
 export default async function CandidateEditPage({ params }) {
-  // TODO: Replace with actual user ID from auth
-  const userId = 1;
+  const session = await auth();
+  const userId = Number(session?.user?.id) || null;
+
+  if (!userId) {
+    redirect("/elections");
+  }
 
   const result = await getCandidateForEdit(params.id, userId);
 

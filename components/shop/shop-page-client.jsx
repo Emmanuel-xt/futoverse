@@ -13,7 +13,7 @@ import { useOnlineShops } from "@components/providers/OnlineShopsProvider";
 import StatusDrawer from "@components/drawers/StatusDrawer";
 import AddTextStatusDrawer from "@components/drawers/AddTextStatusDrawer";
 import AddMediaStatusDrawer from "@components/drawers/AddMediaStatusDrawer";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import { flytoDestination, generateProfileLink } from "@constants/functions";
 import ShopHeader from "./shop-header";
 import ShopTabs from "./shop-tabs";

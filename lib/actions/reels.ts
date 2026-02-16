@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import prisma from "@prisma/prisma";
-
+import { userBasicSelect, userWithDeptLevelSelect } from "@lib/prisma-selects";
+import { validateInput } from "@lib/validations/validate";
+import { createReelSchema, addReelCommentSchema } from "@lib/validations/schemas";
 
 // Types for server actions
 export type CreateReelInput = {
@@ -49,6 +51,8 @@ export type DeleteCommentInput = {
  * Create a new embedded reel
  */
 export async function createReel(input: CreateReelInput) {
+    const v = validateInput(createReelSchema, input)
+    if (!v.success) return { success: false, error: "Invalid input" }
     try {
         const reel = await prisma.embeddedReel.create({
             data: {
@@ -120,16 +124,7 @@ export async function getReels(options?: GetReelsOptions) {
                 take: limit,
                 orderBy,
                 include: {
-                    postedBy: {
-                        select: {
-                            id: true,
-                            username: true,
-                            name: true,
-                            picture: true,
-                            department: { select: { name: true, initial: true } },
-                            level: { select: { name: true } },
-                        },
-                    },
+                    postedBy: { select: userWithDeptLevelSelect },
                     _count: {
                         select: { likes: true, comments: true, shares: true },
                     },
@@ -159,6 +154,7 @@ export async function getReels(options?: GetReelsOptions) {
  * Get a specific reel by ID
  */
 export async function getReelById(id: string, currentUserId?: number) {
+    if (!id) return { success: false, error: "Invalid input" }
     try {
         const reel = await prisma.embeddedReel.findUnique({
             where: { id, isActive: true },
@@ -233,6 +229,7 @@ export async function getTrendingReels(options?: { page?: number; limit?: number
  * Update a reel
  */
 export async function updateReel(input: UpdateReelInput) {
+    if (!input?.id) return { success: false, error: "Invalid input" }
     try {
         const reel = await prisma.embeddedReel.update({
             where: { id: input.id },
@@ -274,6 +271,7 @@ export async function updateReel(input: UpdateReelInput) {
  * Delete a reel (soft delete)
  */
 export async function deleteReel(id: string, userId?: number) {
+    if (!id) return { success: false, error: "Invalid input" }
     try {
         // Check ownership first if userId provided
         if (userId) {
@@ -302,6 +300,7 @@ export async function deleteReel(id: string, userId?: number) {
  * Permanently delete a reel (admin only)
  */
 export async function hardDeleteReel(id: string) {
+    if (!id) return { success: false, error: "Invalid input" }
     try {
         // Delete related records first due to foreign key constraints
         await prisma.$transaction([
@@ -325,6 +324,7 @@ export async function hardDeleteReel(id: string) {
  * Like/Unlike a reel (toggle)
  */
 export async function toggleReelLike(reelId: string, userId: number) {
+    if (!reelId || !userId) return { success: false, error: "Invalid input" }
     try {
         const existingLike = await prisma.embeddedReelLike.findUnique({
             where: { reelId_userId: { reelId, userId } },
@@ -380,6 +380,8 @@ export async function getReelLikeCount(reelId: string) {
  * Add a comment to a reel
  */
 export async function addReelComment(input: AddCommentInput) {
+    const v = validateInput(addReelCommentSchema, input)
+    if (!v.success) return { success: false, error: "Invalid input" }
     try {
         const comment = await prisma.embeddedReelComment.create({
             data: {
@@ -425,14 +427,7 @@ export async function getReelComments(reelId: string, options?: { page?: number;
                 take: limit,
                 orderBy: { createdAt: "desc" },
                 include: {
-                    user: {
-                        select: {
-                            id: true,
-                            username: true,
-                            name: true,
-                            picture: true,
-                        },
-                    },
+                    user: { select: userBasicSelect },
                     replies: {
                         where: { isDeleted: false },
                         orderBy: { createdAt: "asc" },
@@ -475,6 +470,7 @@ export async function getReelComments(reelId: string, options?: { page?: number;
  * Delete a comment (soft delete)
  */
 export async function deleteReelComment(input: DeleteCommentInput) {
+    if (!input?.commentId || !input?.userId) return { success: false, error: "Invalid input" }
     try {
         const comment = await prisma.embeddedReelComment.findUnique({
             where: { id: input.commentId },
@@ -502,9 +498,10 @@ export async function deleteReelComment(input: DeleteCommentInput) {
  * Share a reel (track share event)
  */
 export async function shareReel(reelId: string, userId: number, platform?: string) {
+    if (!reelId || !userId) return { success: false, error: "Invalid input" }
     try {
         await prisma.embeddedReelShare.create({
-            data: { reelId, userId, platform },
+            data: { reelId, userId },
         })
 
         revalidatePath("/reels")
@@ -532,6 +529,7 @@ export async function getReelShareCount(reelId: string) {
  * Increment view count for a reel
  */
 export async function incrementReelView(reelId: string) {
+    if (!reelId) return { success: false, error: "Invalid input" }
     try {
         await prisma.embeddedReel.update({
             where: { id: reelId },
@@ -651,16 +649,7 @@ export async function searchReels(query: string, options?: { page?: number; limi
                 take: limit,
                 orderBy: { createdAt: "desc" },
                 include: {
-                    postedBy: {
-                        select: {
-                            id: true,
-                            username: true,
-                            name: true,
-                            picture: true,
-                            department: { select: { name: true, initial: true } },
-                            level: { select: { name: true } },
-                        },
-                    },
+                    postedBy: { select: userWithDeptLevelSelect },
                     _count: {
                         select: { likes: true, comments: true, shares: true },
                     },

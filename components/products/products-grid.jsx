@@ -1,9 +1,9 @@
-import { fetchAllProductS } from "@lib/actions/product.prisma";
+import { fetchAllProducts } from "@lib/actions/product.prisma";
 import { ProductCard } from "./product-card";
 import { ProductsEmpty } from "./products-empty";
 
 async function getFilteredProducts(searchParams) {
-  const products = await fetchAllProductS();
+  const products = await fetchAllProducts();
 
   let filtered = products;
 

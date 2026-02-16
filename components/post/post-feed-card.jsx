@@ -165,8 +165,10 @@ export const PostFeedCard = memo(function PostFeedCard({
             <Image
               src={firstImage || "/placeholder.svg"}
               alt="Post media"
-              width={800} // give a max reference width
-              height={400} // height will scale automatically because of h-auto
+              width={800}
+              height={400}
+              sizes="(max-width: 640px) 100vw, 800px"
+              loading="lazy"
               className="w-full h-auto  max-h-96 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
           </div>

@@ -17,7 +17,6 @@ export function usePosts(userId) {
 }
 
 export function useLikeMutation(userId) {
-  console.log("user id gotten at like mutation", userId);
   const queryClient = useQueryClient();
 
   return useMutation({

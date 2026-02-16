@@ -1,0 +1,665 @@
+
+import {
+  Cartesian3,
+  Rectangle,
+  Color,
+  ColorMaterialProperty,
+  HeightReference,
+  Model,
+  Cesium3DTileset,
+  Transforms,
+  LabelStyle,
+  VerticalOrigin,
+  BoundingSphere,
+  HeadingPitchRange,
+  Math,
+  HeadingPitchRoll,
+  Cartesian2,
+  DistanceDisplayCondition,
+  HorizontalOrigin,
+  PolylineOutlineMaterialProperty,
+  CallbackProperty,
+  NearFarScalar,
+} from "cesium";
+import { toast } from "sonner";
+import { tilesetsToLoad } from "./arrays";
+
+export async function loadAllTilesets(viewer) {
+  const loadOne = async ({ name, url }) => {
+    try {
+      if (viewer.isDestroyed()) return;
+      const tileset = await Cesium3DTileset.fromUrl(url);
+      if (!viewer.isDestroyed()) {
+        viewer.scene.primitives.add(tileset);
+      }
+    } catch (error) {
+      console.warn(`Failed to load tileset "${name}" from "${url}":`, error.message);
+    }
+  };
+
+  await Promise.all(tilesetsToLoad.map(loadOne));
+}
+
+export const loadNewBuildingTileset = async (cesiumViewer) => {
+  // Array of tileset IDs and corresponding names for better debugging
+  const tilesets = [
+    // { id: 3278963, name: "map" },
+    { id: 3268940, name: "map" },
+    // { id: 3268940, name: "map" },
+    // { id: 2593928, name: "senate" },
+    { id: 2593447, name: "roundabout" },
+    { id: 2975229, name: "NDDC" },
+    { id: 2975246, name: "tetFunds" },
+    { id: 2975953, name: "tetFunds2" },
+    { id: 2975261, name: "guestHouse" },
+    { id: 2975960, name: "chemical" },
+    { id: 2975964, name: "besideChemical" },
+    { id: 2975969, name: "mechanical" },
+    { id: 2975970, name: "mechanicalGlab" },
+    { id: 2975973, name: "hostelC" },
+    { id: 2975991, name: "predegress" },
+    { id: 2975993, name: "hostelB" },
+    { id: 2975995, name: "girlsHostel1" },
+    { id: 2976005, name: "girlsHostel2" },
+    { id: 2976009, name: "sugResource" },
+    { id: 2977043, name: "backOfSEET" },
+    { id: 2977045, name: "christEmbassy" },
+    { id: 2977047, name: "deeperLife" },
+    { id: 2977048, name: "besideDeeperLife" },
+    { id: 2977049, name: "oldEatery" },
+    { id: 2977053, name: "workshop1" },
+    { id: 2977054, name: "automotiveWS" },
+    { id: 2977055, name: "SOPsExtend" },
+    // { id: 2977058, name: "physicsPractExt" },
+    // { id: 2977060, name: "physicsPractical" },
+    // { id: 2977061, name: "physicsPracticalNew" },
+    { id: 2977063, name: "SOPS" },
+    { id: 2977064, name: "oppositeSOPS" },
+    { id: 2977065, name: "ICT" },
+    { id: 2977066, name: "besideICT" },
+    { id: 2977067, name: "SIWES" },
+    { id: 2977068, name: "besideJUPEB" },
+    { id: 2977070, name: "jupeb1" },
+    { id: 2977097, name: "workshop2" },
+    { id: 2977629, name: "jupeb2" },
+    { id: 2977630, name: "jupeb3" },
+    { id: 2979429, name: "stacc" },
+    { id: 2979430, name: "oldUCC" },
+    { id: 2979435, name: "HallOFMercy" },
+    { id: 2979439, name: "500caps" },
+    { id: 2979441, name: "hallOFExcellence" },
+    { id: 2979443, name: "futowa1" },
+    { id: 2979447, name: "backofHOM" },
+    { id: 2979449, name: "750caps" },
+    { id: 2979454, name: "futowa2" },
+    { id: 2979455, name: "ucc" },
+    { id: 2979457, name: "backofLib" },
+    { id: 2979460, name: "library" },
+    { id: 2979463, name: "ACOL" },
+    { id: 2979465, name: "ALl saints" },
+    { id: 2979474, name: "statistics" },
+    { id: 2979491, name: "BeforeSOBS" },
+    { id: 2979493, name: "SOBS" },
+    { id: 2979494, name: "SOES" },
+    { id: 2979496, name: "BackOFSOES" },
+    { id: 2979497, name: "BesideDGS" },
+    { id: 3266179, name: "DGS" },
+    { id: 3266239, name: "afterDGS" },
+    { id: 3266277, name: "hostelC" },
+    { id: 3280046, name: "Architecture-Short" },
+    { id: 3280049, name: "infront-Archi" },
+    // { id: 3280050, name: "ArchitectureHall" },
+    { id: 3280053, name: "opposite_archi" },
+    { id: 3280054, name: "beforeSOES" },
+    { id: 3280055, name: "be4Archi-short" },
+    { id: 3280061, name: "backofArchiHall" },
+    { id: 3280063, name: "ArchitectureSecondBuilding" },
+    { id: 3280089, name: "Agri-Econs" },
+    { id: 3280093, name: "AEX" },
+    { id: 3280094, name: "beforeFUTOWA" },
+    { id: 3280122, name: "NuclearEnergy" },
+    { id: 3280139, name: "ift-buidling" },
+    { id: 3280154, name: "csc_manual" },
+    { id: 3280169, name: "csc" },
+    { id: 3280170, name: "besideIFT" },
+    { id: 3280179, name: "smat_3" },
+    { id: 3280191, name: "smat_1" },
+    { id: 3280193, name: "smat-2" },
+    { id: 3280199, name: "smat_22" },
+    { id: 3280248, name: "SEET" },
+    { id: 3280321, name: "SEET_2" },
+    { id: 3280369, name: "SEET_3" },
+    { id: 3280461, name: "Stac" },
+    { id: 3280704, name: "futo-cafe" },
+    { id: 3284551, name: "after-press" },
+    { id: 3284552, name: "press" },
+    { id: 3284555, name: "geology" },
+    { id: 3284557, name: "architecture-hall" },
+    { id: 3284561, name: "biochem" },
+    { id: 3284564, name: "sat-new-lecture-hall" },
+    { id: 3284605, name: "physics-new" },
+    { id: 3284608, name: "colledge-of-medicine" },
+    { id: 3284609, name: "beside-physics-new" },
+    { id: 3284611, name: "physics-textbook" },
+    { id: 3284613, name: "SOPS-theatre" },
+    { id: 3284616, name: "micro-bio" },
+    { id: 3284618, name: "last-sat-building" },
+    { id: 3284620, name: "logistics" },
+    { id: 3284622, name: "ENS" },
+    { id: 3284624, name: "Bank" },
+    { id: 3284626, name: "dental" },
+    { id: 3284627, name: "optometry" },
+    { id: 3284629, name: "beside-dental" },
+    { id: 3284633, name: "SOHT-hall" },
+    { id: 3284638, name: "prostetics" },
+    { id: 3284646, name: "beside-prostetics" },
+  ];
+
+  const loadTileset = async ({ id, name }) => {
+    try {
+      if (cesiumViewer.isDestroyed()) return;
+      const tileset = await Cesium3DTileset.fromIonAssetId(id);
+      if (!cesiumViewer.isDestroyed()) {
+        cesiumViewer.scene.primitives.add(tileset);
+      }
+    } catch (error) {
+      console.warn(`Failed to load tileset "${name}" (ID: ${id}):`, error.message);
+    }
+  };
+
+  await Promise.all(tilesets.map(loadTileset));
+};
+
+const material = new ColorMaterialProperty(Color.GREEN.withAlpha(0.1));
+export const createTileWithProperties = (viewer, x, y, size, properties) => {
+  return viewer.entities.add({
+    name: `Tile_${x}_${y}`,
+    position: Cartesian3.fromDegrees(x + size / 2, y + size / 2),
+    rectangle: {
+      coordinates: Rectangle.fromDegrees(x, y, x + size, y + size),
+      material: material,
+      heightReference: HeightReference.CLAMP_TO_GROUND,
+      extrudedHeight: 0,
+      outline: true,
+      outlineColor: Color.BLACK,
+      outlineWidth: 0.1,
+    },
+    properties,
+  });
+};
+
+export const callTHeCreateTIles = (cesiumViewer) => {
+  const west = 6.993498287022618;
+  const south = 5.3600319870711814;
+  const east = 7.012325243502062;
+  const north = 5.394281689328309;
+
+  const tileSize = 0.0007; // Adjusted size of each tile in degrees
+
+  let tileID = 1;
+  for (let lon = west; lon < east; lon += tileSize) {
+    for (let lat = south; lat < north; lat += tileSize) {
+      createTileWithProperties(cesiumViewer, lon, lat, tileSize, {
+        tileId: tileID++,
+        type: "tile",
+        coordinates: { lon, lat, size: tileSize },
+      });
+    }
+  }
+};
+
+/**
+ * Cache object to store a single reused marker image.
+ * All markers share the same base icon (no text).
+ */
+let cachedMarkerImage = null;
+
+/**
+ * Generates a small, efficient, textless marker icon (cached).
+ */
+function generateMarkerIcon() {
+  if (cachedMarkerImage) return cachedMarkerImage;
+
+  const canvas = document.createElement("canvas");
+  const width = 60;
+  const height = 80;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, width, height);
+
+  const centerX = width / 2;
+  const circleY = 25;
+  const circleRadius = 18;
+
+  // Outer blue circle
+  ctx.beginPath();
+  ctx.arc(centerX, circleY, circleRadius, 0, Math.PI * 2);
+  ctx.fillStyle = "#0078FF";
+  ctx.fill();
+
+  // Inner white circle
+  ctx.beginPath();
+  ctx.arc(centerX, circleY, circleRadius - 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fill();
+
+  // Pointer (triangle)
+  ctx.beginPath();
+  ctx.moveTo(centerX - 8, circleY + circleRadius - 2);
+  ctx.lineTo(centerX, height - 8);
+  ctx.lineTo(centerX + 8, circleY + circleRadius - 2);
+  ctx.closePath();
+  ctx.fillStyle = "#0078FF";
+  ctx.fill();
+
+  // Convert to data URL (GPU-friendly cached texture)
+  cachedMarkerImage = canvas.toDataURL("image/png");
+  return cachedMarkerImage;
+}
+
+/**
+ * Adds optimized lightweight building markers to Cesium viewer.
+ * Uses a single cached texture, and shows dynamic shortName labels beneath.
+ */
+export const addLightMarkersToViewer = async (viewer, places) => {
+  if (!viewer || !places?.length) return [];
+
+  const entities = [];
+  const markerImage = generateMarkerIcon(); // cached single texture
+
+  for (const place of places) {
+    const { latitude, longitude, shortName, placeName } = place;
+    const lon = parseFloat(longitude);
+    const lat = parseFloat(latitude);
+
+    const label = shortName || placeName || "BLD";
+
+    const entity = viewer.entities.add({
+      id: `marker-${label}-${lon}-${lat}`,
+      name: placeName,
+      position: Cartesian3.fromDegrees(lon, lat, 20),
+      properties: {
+        name: placeName,
+        type: "label",
+        coordinates: { lon, lat },
+      },
+
+      // Billboard marker
+      billboard: {
+        image: markerImage,
+        width: 70,
+        height: 80,
+        verticalOrigin: VerticalOrigin.BOTTOM,
+        heightReference: HeightReference.NONE,
+        pixelOffset: new Cartesian3(0, -5, 0),
+
+        // 👇 Controls when billboard stops showing
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 500.0),
+      },
+
+      label: {
+        text: label,
+        font: "bold 18px Roboto, sans-serif",
+        fillColor: Color.fromCssColorString("#0078FF"),
+        outlineColor: Color.BLACK,
+        outlineWidth: 1,
+        style: LabelStyle.FILL_AND_OUTLINE,
+
+        pixelOffset: new Cartesian2(0, -60), // slightly lower for spacing
+        verticalOrigin: VerticalOrigin.TOP,
+
+        // 👇 Text scales slightly slower than marker — easier to read
+        scaleByDistance: new NearFarScalar(
+          10.0,
+          1.1, // within 10m → slightly enlarged for readability
+          600.0,
+          0.4 // at 600m → 40% size
+        ),
+
+        distanceDisplayCondition: new DistanceDisplayCondition(0, 500.0),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+    });
+
+    entities.push(entity);
+  }
+
+  console.log(`✅ Added ${entities.length} optimized building markers`);
+  return entities;
+};
+
+export const load3DModel = async (cesiumViewer, shopName, lon, lat, tileId) => {
+  const position = Cartesian3.fromDegrees(lon, lat);
+  const modelMatrix = Transforms.eastNorthUpToFixedFrame(position);
+
+  cesiumViewer.entities.add({
+    id: `shop-${tileId}`, // Unique ID for this tile
+    name: `shop ${tileId}`,
+    position: position, // Use the same position as the model
+    properties: {
+      type: "shop",
+
+      tileId: tileId, // Link this entity to the tile ID
+      shopId: shopName, // Shop name or unique identifier
+      coordinates: { lon, lat }, // Store coordinates for reference
+    },
+    model: {
+      uri: "/shops/food_shop.glb", // Model file
+      modelMatrix: modelMatrix,
+      scale: 2,
+    },
+    label: {
+      text: shopName, // Use the shop name from the mock data
+      font: "18px sans-serif",
+      fillColor: Color.WHITE,
+      outlineColor: Color.BLACK,
+      outlineWidth: 2,
+      style: LabelStyle.FILL_AND_OUTLINE,
+      verticalOrigin: VerticalOrigin.BOTTOM, // Move the label just above the model
+      horizontalOrigin: HorizontalOrigin.CENTER, // Keep label centered horizontally
+      eyeOffset: new Cartesian3(0.0, 0.0, -70.0), // Move the label in front of the model
+      distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400.0), // Display label within a certain distance
+    },
+  });
+  cesiumViewer.scene.requestRender();
+};
+
+export const load3DModelForShop = async (
+  cesiumViewer,
+  shopName,
+  lon,
+  lat,
+  tileId,
+  category
+) => {
+  if (isNaN(lon) || isNaN(lat)) {
+    return;
+  }
+
+  // Define a mapping of categories to model URLs
+  const categoryModelMap = {
+    "Food & Beverage": "/shops/cane.glb",
+    "Clothing & Accessories": "/shops/candy.glb",
+    default: "/shops/food_shop.glb", // Default model for undefined categories
+  };
+
+  // Get the model URL based on the category, falling back to the default
+  const modelUrl = categoryModelMap[category] || categoryModelMap.default;
+
+  // Get the position for the model
+  const position = Cartesian3.fromDegrees(lon, lat);
+  const modelMatrix = Transforms.eastNorthUpToFixedFrame(position);
+
+  // Load the model asynchronously
+  const model = await Model.fromGltfAsync({
+    url: modelUrl, // Dynamic model URL based on the category
+    modelMatrix: modelMatrix,
+    scale: 2,
+  });
+
+  // Skip if this tile entity already exists
+  const existingEntity = cesiumViewer.entities.getById(`tile-${tileId}`);
+  if (existingEntity) return existingEntity;
+
+  // Create an entity for the tile, which includes both the model and the label
+  const tileEntity = cesiumViewer.entities.add({
+    id: `tile-${tileId}`, // Unique ID for this tile
+    name: `Tile ${tileId}`,
+    position: position, // Position of the model/tile
+    properties: {
+      type: "shop",
+      tileId: tileId, // Link this entity to the tile ID
+      shopId: shopName, // Shop name or unique identifier
+      category: category, // Store category for reference
+      coordinates: { lon, lat }, // Store coordinates for reference
+    },
+    model: {
+      uri: modelUrl, // Dynamic model URL based on the category
+      modelMatrix: modelMatrix,
+      scale: 2,
+    },
+    label: {
+      text: shopName, // The shop's name
+      font: "18px sans-serif",
+      fillColor: Color.WHITE,
+      outlineColor: Color.BLACK,
+      outlineWidth: 2,
+      style: LabelStyle.FILL_AND_OUTLINE,
+      verticalOrigin: VerticalOrigin.BOTTOM, // Position the label above the model
+      horizontalOrigin: HorizontalOrigin.CENTER, // Center the label horizontally
+      eyeOffset: new Cartesian3(0.0, 0.0, -70.0), // Move the label in front of the model
+      distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400.0), // Set display range
+    },
+  });
+  cesiumViewer.scene.requestRender();
+};
+
+// Function to check if a tile is occupied based on longitude and latitude
+export const checkIfTileOccupied = (tileId, shops) => {
+  const occupiedTile = shops?.find((shop) => {
+    return shop.id == tileId;
+  });
+
+  // If the tile is occupied, return an object with occupied status and the shop.user
+  return occupiedTile
+    ? { occupied: true, details: occupiedTile }
+    : { occupied: false };
+};
+
+export const drawLineBetweenPoints = async (
+  viewer,
+  getCurrentPosition, // should return { longitude, latitude }
+  endLocation,
+  setLoading // optional loading state function
+) => {
+  try {
+    if (setLoading) setLoading(true);
+
+    const current = getCurrentPosition?.();
+    if (
+      !current ||
+      typeof current.longitude !== "number" ||
+      typeof current.latitude !== "number"
+    ) {
+      throw new Error("NO_CURRENT_LOCATION");
+    }
+
+    const directionResponse = await getMapboxDirections(
+      current.longitude,
+      current.latitude,
+      endLocation.longitude,
+      endLocation.latitude
+    );
+
+    if (!directionResponse.success) {
+      throw new Error(`DIRECTION_ERROR_${directionResponse.reason}`);
+    }
+
+    const waypoints = directionResponse.coordinates;
+
+    const positions = new CallbackProperty(() => {
+      const current = getCurrentPosition?.();
+      const updatedStart = Cartesian3.fromDegrees(
+        current.longitude,
+        current.latitude,
+        5
+      );
+      const updatedEnd = Cartesian3.fromDegrees(
+        endLocation.longitude,
+        endLocation.latitude,
+        5
+      );
+
+      if (waypoints) {
+        return [
+          updatedStart,
+          ...waypoints.map(([lon, lat]) => Cartesian3.fromDegrees(lon, lat, 5)),
+          updatedEnd,
+        ];
+      }
+    }, false);
+
+    const existingEntity = viewer.entities.getById("direction-line");
+    if (existingEntity) viewer.entities.remove(existingEntity);
+
+    viewer.entities.add({
+      id: "direction-line",
+      polyline: {
+        positions,
+        width: 2,
+        material: new PolylineOutlineMaterialProperty({
+          color: Color.BLUE.withAlpha(0.9),
+          outlineColor: Color.BLUE.withAlpha(0.6),
+          outlineWidth: 2,
+        }),
+      },
+    });
+
+    viewer.scene.requestRender();
+    return { success: true };
+  } catch (error) {
+    if (error.message === "NO_CURRENT_LOCATION") {
+      return { success: false, reason: "no-location" };
+    }
+
+    if (error.message.startsWith("DIRECTION_ERROR_")) {
+      const reason = error.message.replace("DIRECTION_ERROR_", "");
+      return { success: false, reason: reason };
+    }
+
+    if (error.message === "INVALID_WAYPOINTS") {
+      return { success: false, reason: "no-route" };
+    }
+
+    return { success: false, reason: "unknown" };
+  } finally {
+    if (setLoading) setLoading(false);
+  }
+};
+
+export const flytoDestination = (viewer, lon, lat) => {
+  lon = parseFloat(lon);
+  lat = parseFloat(lat);
+  // Fly to the bounding sphere at the specified location
+  viewer.camera.flyToBoundingSphere(
+    new BoundingSphere(Cartesian3.fromDegrees(lon, lat, 0), 500),
+    {
+      duration: 2,
+      offset: new HeadingPitchRange(0, Math.toRadians(-30), 500),
+    }
+  );
+
+  const pointerHeightOffset = 40;
+  const position = Cartesian3.fromDegrees(lon, lat, pointerHeightOffset);
+
+  const orientation = Transforms.headingPitchRollQuaternion(
+    position,
+    new HeadingPitchRoll(Math.toRadians(50), 0, 0)
+  );
+
+  const existingEntity = viewer.entities.getById("pointer1");
+  if (existingEntity) {
+    existingEntity.position = position;
+  } else {
+    // Add new pointer
+    viewer.entities.add({
+      position,
+      orientation,
+      id: `pointer1`, // Unique ID for this tile
+      properties: {
+        type: "pointer",
+        coordinates: { longitude: lon, latitude: lat },
+      },
+      model: {
+        uri: "/models/pointer.glb",
+        scale: 5.0,
+        minimumPixelSize: 64,
+        maximumScale: 200,
+      },
+    });
+  }
+};
+
+export const userModelAdd = (viewer, long, lat) => {
+  viewer.entities.add({
+    position: Cartesian3.fromDegrees(long, lat), // Initial position
+    model: {
+      uri: "path/to/your/model.glb", // URL to your .glb/.gltf model file
+      minimumPixelSize: 64, // Ensures model is always visible at small scales
+      maximumScale: 2000, // Adjust based on how large you want the model to appear
+    },
+  });
+};
+
+export const getMapboxDirections = async (
+  startLon,
+  startLat,
+  endLon,
+  endLat
+) => {
+  const accessToken =
+    process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
+    "pk.eyJ1IjoiZWF6eiIsImEiOiJjbTM5ZTVqeXUxMHJuMnBzY3Jpa3RpcjV6In0.4jWwsMi42zaIedqwlmVjXg"; // TODO: REMOVE_FALLBACK
+  const profile = "driving";
+  const url = `https://car-kfey.onrender.com/route/v1/${profile}/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      // Handle 4xx / 5xx status codes
+      return {
+        success: false,
+        reason: "bad-response",
+        status: response.status,
+      };
+    }
+
+    const data = await response.json();
+
+    if (
+      data.code === "Ok" &&
+      Array.isArray(data.routes) &&
+      data.routes.length > 0
+    ) {
+      return {
+        success: true,
+        coordinates: data.routes[0].geometry.coordinates,
+      };
+    } else {
+      return {
+        success: false,
+        reason: "invalid-data",
+        message: data.message || "Invalid route data",
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching directions:", error);
+
+    // Detect network-related errors (e.g., internet off)
+    if (
+      error.message.includes("NetworkError") ||
+      error.message.includes("Failed to fetch") ||
+      error.name === "TypeError"
+    ) {
+      return { success: false, reason: "network" };
+    }
+
+    return {
+      success: false,
+      reason: "unknown",
+      message: error.message || "Unknown error",
+    };
+  }
+};
+
+export const generateLocationLink = (longitude, latitude) => {
+  const baseUrl = window.location.origin + window.location.pathname;
+  const shareableLink = `${baseUrl}?lat=${latitude}&lng=${longitude}`;
+
+  navigator.clipboard
+    .writeText(shareableLink)
+    .then(() => toast("Link copied! Share it with others."))
+    .catch((err) => console.error("Failed to copy link:", err));
+};

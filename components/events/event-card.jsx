@@ -62,6 +62,8 @@ export default function EventCard({ event }) {
           alt={event.title}
           width={300}
           height={200}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          loading="lazy"
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
         />
         <div className="absolute top-2 right-2 flex gap-2">

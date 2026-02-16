@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import useConversation from "zustand/useConversation";
 import { saveMessagesToDB } from "@lib/indexedDB";
 import { useSession } from "next-auth/react";
 import useSidebarConversations from "zustand/useSidebarConversations";
-import { markMessagesAsRead } from "@lib/actions/Chat.prisma";
+import { markMessagesAsRead } from "@lib/actions/message.prisma";
 
 const useListenMessages = () => {
   const { messages, setMessages, selectedConversation } = useConversation();
@@ -43,7 +43,7 @@ const useListenMessages = () => {
       // ✅ Update the reader’s own sidebar UI
       markLastMessageAsRead(conversationId);
 
-      await saveMessagesToDB(senderId, userId, updatedMessages);
+      await saveMessagesToDB(conversationId, userId, updatedMessages);
 
       // Optionally play sound here too if you want
       const sound = new Audio("/sounds/notification.mp3");

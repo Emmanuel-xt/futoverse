@@ -16,9 +16,9 @@ import { ScrollArea } from "@components/ui/scroll-area";
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Skeleton } from "@components/ui/skeleton";
-import { fetchOnlyUserInfo } from "@lib/actions/user.prisma";
+import { fetchOnlyUserInfo } from "@lib/actions/user-queries";
 import { fetchAllShops } from "@lib/actions/shops.prisma";
-import { fetchAllProductS } from "@lib/actions/product.prisma";
+import { fetchAllProducts } from "@lib/actions/product.prisma";
 import Image from "next/image";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import { flytoDestination } from "@constants/functions";
@@ -225,7 +225,7 @@ export const CategoryDrawer = ({
     try {
       setLoading(true);
       setError(null);
-      const products = await fetchAllProductS();
+      const products = await fetchAllProducts();
 
       const formattedItems = products.map((product) => ({
         id: product.id,

@@ -48,7 +48,7 @@ import {
   generateLocationLink,
   load3DModel,
 } from "@constants/functions";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import Link from "next/link";
 import { Cartesian3 } from "cesium";
 import { useLocation } from "@components/providers/LocationProvider";

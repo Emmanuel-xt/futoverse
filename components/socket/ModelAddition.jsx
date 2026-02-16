@@ -13,29 +13,26 @@ import { useSocket } from "@components/providers/SocketProvider";
 import { useOnlineShops } from "@components/providers/OnlineShopsProvider";
 
 export const ModelRelocation = () => {
-  const { viewer, viewerReady, isMapVisible, setMapVisible } =
-    useCesiumViewer();
+  const { viewer, viewerReady } = useCesiumViewer();
   const socket = useSocket();
-  socket.on("update_tileDetaiils", (data) => {
-    // const { viewer } = useCesiumViewer();
 
-    const { id, longitude, latitude } = data;
-    if (viewer && viewerReady) {
-      const entityToRelocate = viewer.entities.getById(id);
-      if (!entityToRelocate) {
-        // console.log(
-        //   "why you dey trigger socket to relocate tile wey no dey exist?"
-        // );
+  useEffect(() => {
+    if (!socket) return;
+
+    const handler = (data) => {
+      const { id, longitude, latitude } = data;
+      if (viewer && viewerReady) {
+        const entityToRelocate = viewer.entities.getById(id);
+        if (entityToRelocate) {
+          entityToRelocate.position = Cartesian3.fromDegrees(longitude, latitude);
+          viewer.scene.requestRender();
+        }
       }
-      entityToRelocate.position = Cartesian3.fromDegrees(longitude, latitude);
-      viewer.scene.requestRender();
-      // console.log(
-      //   "shop wey another person relocated from some where don move to new locaton , you bad !!"
-      // );
-    } else {
-      // console.log("i dont know why but somehow , viewer no dey ");
-    }
-  });
+    };
+
+    socket.on("update_tileDetaiils", handler);
+    return () => socket?.off("update_tileDetaiils", handler);
+  }, [socket, viewer, viewerReady]);
 };
 
 export const NewShopCreation = () => {
@@ -44,6 +41,8 @@ export const NewShopCreation = () => {
   const socket = useSocket();
 
   useEffect(() => {
+    if (!socket) return;
+
     socket.on("update_shopEntites", (data) => {
       // console.log("shop update fired from swerver", data);
       const { name, longitude, latitude, id } = data;
@@ -71,7 +70,7 @@ export const NewShopCreation = () => {
 export const AddOnlineMarkers = () => {
   const { viewer } = useCesiumViewer();
   const onlineShops = useOnlineShops();
-  const onlineShopNames = onlineShops.map((shop) => shop.name);
+  const onlineShopNames = (onlineShops || []).map((shop) => shop.name);
 
   useEffect(() => {
     if (!viewer || !onlineShopNames) return;

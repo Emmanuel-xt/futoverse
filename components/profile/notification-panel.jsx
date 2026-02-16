@@ -60,7 +60,7 @@ export function NotificationPanel({ isOpen, onClose }) {
         </div>
 
         <div className="overflow-y-auto h-full pb-20">
-          {notifications.length !== 0 ? (
+          {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64">
               <Bell size={48} className="text-gray-300 mb-4" />
               <p className="text-gray-500">No notifications yet</p>
@@ -71,14 +71,14 @@ export function NotificationPanel({ isOpen, onClose }) {
                 <div
                   key={notification.id}
                   className={`p-4 hover:bg-gray-50 ${
-                    !notification.read ? "bg-blue-50" : ""
+                    !notification.isRead ? "bg-blue-50" : ""
                   }`}
                 >
-                  <p className="text-sm">{notification.message}</p>
+                  <p className="text-sm">{notification.body}</p>
                   <p className="text-xs text-gray-500 mt-1">
                     {notification.time}
                   </p>
-                  {!notification.read && (
+                  {!notification.isRead && (
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   )}
                 </div>

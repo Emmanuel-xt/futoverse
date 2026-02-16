@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import useSidebarConversations from "zustand/useSidebarConversations";
 import useConversation from "zustand/useConversation";
 

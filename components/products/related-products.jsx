@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchAllProductS } from "@lib/actions/product.prisma";
+import { fetchAllProducts } from "@lib/actions/product.prisma";
 import { Button } from "@components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { RelatedProductsClient } from "./related-products-client";
@@ -12,7 +12,7 @@ import { RelatedProductsClient } from "./related-products-client";
 
 async function getRelatedProducts(productId, category, shopId) {
   try {
-    const allProducts = await fetchAllProductS();
+    const allProducts = await fetchAllProducts();
 
     // Filter out the current product
     const relatedProducts = allProducts.filter(

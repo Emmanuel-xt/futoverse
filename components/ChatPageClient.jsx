@@ -50,7 +50,7 @@ const ChatPageClient = () => {
   }
 
   return (
-    <div className="flex h-screen w-full rounded-lg overflow-hidden bg-gray-400 bg-clip-padding bg-opacity-0 z-30">
+    <div className="flex h-[100dvh] w-full rounded-lg overflow-hidden bg-gray-400 bg-clip-padding bg-opacity-0 z-30">
       <Sidebar />
       <MessageContainer />
     </div>

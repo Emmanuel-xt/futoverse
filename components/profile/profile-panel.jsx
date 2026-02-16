@@ -5,7 +5,7 @@ import { X, ArrowLeft } from "lucide-react";
 import { ProfileHeader } from "./profile-header";
 import { ProfileTabs } from "./profile-tabs";
 import { ProfileSkeleton } from "./profile-skeleton";
-import { fetchUserByUsername } from "@lib/actions/user.prisma";
+import { fetchUserByUsername } from "@lib/actions/user-queries";
 import {
   fetchUsersFriendCount,
   areFriends,

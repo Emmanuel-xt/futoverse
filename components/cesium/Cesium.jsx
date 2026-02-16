@@ -7,16 +7,19 @@ import { useCesiumViewer } from "../providers/CesiumViewerProvider";
 import { IoMdArrowBack } from "react-icons/io";
 
 import MapFlyers from "@components/Navigation/MapFlyers";
-import { useMapInitialization } from "./hooks/useMapInitialization";
-// import { useMapEventHandlers } from "./hooks/useMapEventHandlers";
-// import { useSocketComponents } from "./hooks/useSocketComponents";
-import { MapDrawers, MapModals } from "./MapModals";
-import { useSocketComponents } from "./hooks/useSocketComponent";
-import { useShops } from "./hooks/useTileActions";
+import { useMapInitialization } from "hooks/cesium/useMapInitialization";
+import { MapDrawers } from "./MapModals";
+import { useSocketComponents } from "hooks/cesium/useSocketComponent";
+import { useShops } from "hooks/cesium/useTileActions";
 
 const CesiumMapB = () => {
   const { viewer, viewerReady, isMapVisible, setMapVisible } =
     useCesiumViewer();
+
+  // Trigger Cesium loading when the map page mounts
+  useEffect(() => {
+    setMapVisible(true);
+  }, [setMapVisible]);
 
   // State management
   const [showShopModal, setShowShopModal] = useState(false);
@@ -82,18 +85,17 @@ const CesiumMapB = () => {
     };
   }, [viewer]);
 
-  if (error) {
-    return (
-      <div className="text-center">
-        <h2 className="text-red-600 font-bold text-xl">Error:</h2>
-        <p className="text-sm text-gray-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full h-[100dvh] overflow-hidden">
+        {error && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80">
+            <div className="text-center">
+              <h2 className="text-red-600 font-bold text-xl">Error:</h2>
+              <p className="text-sm text-gray-500">{error}</p>
+            </div>
+          </div>
+        )}
         <div id="cesiumContainer" className="w-full h-[110vh] relative border">
           <MapFlyers
             labelsVisible={labelsVisible}

@@ -1,5 +1,5 @@
 "use client";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import { fetchUserShopByUserId } from "@lib/actions/shops.prisma";
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useEffect, useRef } from "react";

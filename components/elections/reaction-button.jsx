@@ -4,19 +4,22 @@ import { Button } from "@components/ui/button";
 import { useState } from "react";
 import { toggleReaction } from "@lib/actions/election";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function ReactionButton({ candidateId, type, count, label }) {
   const [isReacted, setIsReacted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentCount, setCurrentCount] = useState(count);
   const router = useRouter();
+  const { data: session } = useSession();
+  const userId = Number(session?.user?.id);
 
   const handleReaction = async () => {
-    if (isLoading) return;
+    if (isLoading || !userId) return;
 
     setIsLoading(true);
     try {
-      const result = await toggleReaction(candidateId, type, 1); // TODO: Replace with actual user ID from auth
+      const result = await toggleReaction(candidateId, type, userId);
 
       if (result.success) {
         const wasAdded = result.data.action === "added";

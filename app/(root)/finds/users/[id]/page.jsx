@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ProfileHeader } from "@components/profile/profile-header";
 import { ProfileTabs } from "@components/profile/profile-tabs";
 import { ProfileSkeleton } from "@components/profile/profile-skeleton";
-import { fetchUserByUsername } from "@lib/actions/user.prisma";
+import { fetchUserByUsername } from "@lib/actions/user-queries";
 import {
   fetchUsersFriendCount,
   areFriends,

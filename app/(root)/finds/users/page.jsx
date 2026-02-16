@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Search, Filter, ArrowLeft } from "lucide-react";
-import { fetchAllUsers } from "@lib/actions/user.prisma";
+import { fetchAllUsers } from "@lib/actions/user-queries";
 import { useSession } from "next-auth/react";
 // import { departments } from "@constants/departments";
 import Image from "next/image";

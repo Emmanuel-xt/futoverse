@@ -1,6 +1,6 @@
 import useTypingStore from "zustand/useTypingStore";
 import { useEffect } from "react";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 
 const TypingListener = () => {
   const setTyping = useTypingStore((s) => s.setTyping);

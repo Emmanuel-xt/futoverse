@@ -3,6 +3,9 @@
 // import { AppNotifications } from "@lib/notification/app-notifications"
 import prisma from "@prisma/prisma"
 import { revalidatePath } from "next/cache"
+import { userBasicSelect, postCountSelect } from "@lib/prisma-selects"
+import { validateInput } from "@lib/validations/validate"
+import { createPostSchema, updatePostSchema, toggleLikeSchema, createCommentSchema } from "@lib/validations/schemas"
 
 export interface PostWithDetails {
     id: string
@@ -32,7 +35,6 @@ export interface PostWithDetails {
 }
 
 export async function getPosts(cursor?: string, limit = 10, userId?: number) {
-    console.log("Fetching posts with cursor:", cursor, "limit:", limit, "userId:", userId)
     try {
         const posts = await prisma.post.findMany({
             where: {
@@ -40,14 +42,7 @@ export async function getPosts(cursor?: string, limit = 10, userId?: number) {
                 isDeleted: false, // Exclude deleted posts
             },
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
                 media: {
                     select: {
                         id: true,
@@ -55,13 +50,7 @@ export async function getPosts(cursor?: string, limit = 10, userId?: number) {
                         type: true,
                     },
                 },
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true,
-                        views: true,
-                    },
-                },
+                _count: { select: postCountSelect },
                 ...(userId && {
                     likes: {
                         where: {
@@ -95,7 +84,7 @@ export async function getPosts(cursor?: string, limit = 10, userId?: number) {
         }
     } catch (error) {
         console.error("Error fetching posts:", error)
-        // throw new Error("Failed to fetch posts")
+        return { posts: [], nextCursor: null }
     }
 }
 
@@ -105,6 +94,8 @@ export async function createPost(data: {
     media?: { url: string; type: "IMAGE" | "VIDEO" | "AUDIO" | "DOCUMENT" }[]
     creatorId: number
 }) {
+    const v = validateInput(createPostSchema, data)
+    if (!v.success) throw new Error("Invalid input")
     try {
         const post = await prisma.post.create({
             data: {
@@ -119,22 +110,9 @@ export async function createPost(data: {
                     : undefined,
             },
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
                 media: true,
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true,
-                        views: true,
-                    },
-                },
+                _count: { select: postCountSelect },
             },
         })
 
@@ -148,6 +126,8 @@ export async function createPost(data: {
 
 
 export async function toggleLike(postId: string, userId: number) {
+    const v = validateInput(toggleLikeSchema, { postId, userId })
+    if (!v.success) return { liked: false, error: "Invalid input" }
     try {
         const existingLike = await prisma.like.findUnique({
             where: {
@@ -181,7 +161,6 @@ export async function toggleLike(postId: string, userId: number) {
             })
 
             // ⚠️ Only send notification if user is not liking their own post
-            console.log("Like created:", like)
             // if (like.post.userId !== userId) {
             const { AppNotifications } = await import("@lib/notification/app-notifications");
             await AppNotifications.sendPostLike({
@@ -195,12 +174,13 @@ export async function toggleLike(postId: string, userId: number) {
         }
     } catch (error) {
         console.error("Error toggling like:", error)
-        // throw new Error("Failed to toggle like")
+        return { liked: false, error: "Failed to toggle like" }
     }
 }
 
 
 export async function trackView(postId: string, userId?: number) {
+    if (!postId) return;
     try {
         await prisma.view.create({
             data: {
@@ -215,6 +195,7 @@ export async function trackView(postId: string, userId?: number) {
 }
 
 export async function getComments(postId: string) {
+    if (!postId) throw new Error("Invalid input")
     try {
         const comments = await prisma.comment.findMany({
             where: {
@@ -222,14 +203,7 @@ export async function getComments(postId: string) {
                 parentCommentId: null, // Only top-level comments
             },
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
                 replies: {
                     include: {
                         creator: {
@@ -251,8 +225,6 @@ export async function getComments(postId: string) {
             },
         })
 
-        // console.log("Fetched comments for post:", postId, comments)
-
         return comments
     } catch (error) {
         console.error("Error fetching comments:", error)
@@ -266,18 +238,13 @@ export async function createComment(data: {
     creatorId: number
     parentCommentId?: string
 }) {
+    const v = validateInput(createCommentSchema, data)
+    if (!v.success) throw new Error("Invalid input")
     try {
         const comment = await prisma.comment.create({
             data,
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
             },
         })
 
@@ -298,6 +265,9 @@ export async function updatePost(
     },
     userId: number,
 ) {
+    if (!postId || !userId) throw new Error("Invalid input")
+    const v = validateInput(updatePostSchema, data)
+    if (!v.success) throw new Error("Invalid input")
     try {
         // Verify ownership
         const existingPost = await prisma.post.findUnique({
@@ -327,22 +297,9 @@ export async function updatePost(
                 updatedAt: new Date(),
             },
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
                 media: true,
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true,
-                        views: true,
-                    },
-                },
+                _count: { select: postCountSelect },
             },
         })
 
@@ -355,6 +312,7 @@ export async function updatePost(
 }
 
 export async function deletePost(postId: string, userId: number) {
+    if (!postId || !userId) throw new Error("Invalid input")
     try {
         // Verify ownership
         const existingPost = await prisma.post.findUnique({
@@ -382,6 +340,7 @@ export async function deletePost(postId: string, userId: number) {
 
 
 export async function updateComment(commentId: string, content: string, userId: number) {
+    if (!commentId || !content || !userId) throw new Error("Invalid input")
     try {
         // Verify ownership
         const existingComment = await prisma.comment.findUnique({
@@ -397,14 +356,7 @@ export async function updateComment(commentId: string, content: string, userId: 
             where: { id: commentId },
             data: { content },
             include: {
-                creator: {
-                    select: {
-                        id: true,
-                        username: true,
-                        name: true,
-                        picture: true,
-                    },
-                },
+                creator: { select: userBasicSelect },
             },
         })
 
@@ -417,6 +369,7 @@ export async function updateComment(commentId: string, content: string, userId: 
 }
 
 export async function deleteComment(commentId: string, userId: number) {
+    if (!commentId || !userId) throw new Error("Invalid input")
     try {
         // Verify ownership
         const existingComment = await prisma.comment.findUnique({
@@ -441,6 +394,7 @@ export async function deleteComment(commentId: string, userId: number) {
 }
 
 export async function checkUserCanPost(userId: number) {
+    if (!userId) return false
     try {
         const user = await prisma.user.findUnique({
             where: { id: userId },

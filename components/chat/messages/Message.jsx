@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { Check, CheckCheck, Reply } from "lucide-react";
 import useConversation from "zustand/useConversation";
+import { SYSTEM_USER_ID } from "@constants/app-config";
 import { cn } from "@lib/utils";
 import VoiceMessage from "./VoiceMessage";
 // import ImageMessage from "./ImageMessage";
@@ -24,7 +25,7 @@ const Message = memo(function Message({ message, isGrouped = false }) {
     return null; // don't render anything if message is invalid
   }
   const isFromMe = message?.senderId == session?.user?.id;
-  const isSystemMessage = message?.senderId === 141618;
+  const isSystemMessage = message?.senderId === SYSTEM_USER_ID;
 
   if (isSystemMessage) {
     return (
@@ -102,6 +103,8 @@ const Message = memo(function Message({ message, isGrouped = false }) {
               alt="Avatar"
               width={32}
               height={32}
+              sizes="32px"
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           </div>
@@ -112,11 +115,10 @@ const Message = memo(function Message({ message, isGrouped = false }) {
           className={cn(
             "relative rounded-lg px-3 py-2 shadow-sm",
             isFromMe
-              ? "text-white rounded-br-sm"
+              ? "bg-primary text-white rounded-br-sm"
               : "bg-white text-gray-900 rounded-bl-sm border border-gray-200",
             selectedConversation?.isGroup && !isFromMe && !isGrouped && "ml-10"
           )}
-          style={isFromMe ? { backgroundColor: "#2D75FB" } : {}}
           onContextMenu={(e) => {
             e.preventDefault();
             setShowMenu(true);
@@ -125,8 +127,7 @@ const Message = memo(function Message({ message, isGrouped = false }) {
           {/* Sender name for group chats */}
           {selectedConversation?.isGroup && !isFromMe && !isGrouped && (
             <div
-              className="text-xs font-medium mb-1"
-              style={{ color: "#2D75FB" }}
+              className="text-xs font-medium mb-1 text-primary"
             >
               {message.sender?.name || "Unknown"}
             </div>
@@ -137,9 +138,8 @@ const Message = memo(function Message({ message, isGrouped = false }) {
             <div
               className={cn(
                 "border-l-4 pl-2 mb-2 text-xs opacity-75",
-                isFromMe ? "border-white/50" : ""
+                isFromMe ? "border-white/50" : "border-primary"
               )}
-              style={!isFromMe ? { borderColor: "#2D75FB" } : {}}
             >
               <div className="font-medium">
                 {message.replyTo.sender?.name || "Unknown"}
@@ -167,19 +167,23 @@ const Message = memo(function Message({ message, isGrouped = false }) {
 
           {/* Message Menu */}
           {showMenu && (
-            <div className="absolute top-0 right-0 bg-white text-black rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2">
+            <div
+              className="absolute top-0 right-0 bg-white text-black rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+              role="menu"
+              onKeyDown={(e) => e.key === "Escape" && setShowMenu(false)}
+            >
+              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none flex items-center space-x-2" role="menuitem">
                 <Reply className="w-4 h-4" />
                 <span>Reply</span>
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none" role="menuitem">
                 Forward
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+              <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none" role="menuitem">
                 Star
               </button>
               {isFromMe && (
-                <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50">
+                <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none" role="menuitem">
                   Delete
                 </button>
               )}

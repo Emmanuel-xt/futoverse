@@ -15,7 +15,7 @@ import useConversation from "zustand/useConversation";
 import {
   findOrCreateConversation,
   getSearchedUsersForConversation,
-} from "@lib/actions/Chat.prisma";
+} from "@lib/actions/conversation.prisma";
 import { useSession } from "next-auth/react";
 
 // interface NewChatModalProps {
@@ -51,8 +51,10 @@ const NewChatModal = ({ open, onClose }) => {
   };
 
   const handleUserSelect = async (user) => {
-    const conversation = await findOrCreateConversation(currentUserId, user.id);
-    setSelectedConversation(conversation);
+    const result = await findOrCreateConversation(currentUserId, user.id);
+    if (result?.receiver) {
+      setSelectedConversation(result.receiver);
+    }
 
     onClose();
   };

@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Switch } from "@components/ui/switch";
-import { softDeleteUser } from "@lib/actions/user.prisma";
+import { softDeleteUser } from "@lib/actions/user-mutations";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteDB } from "idb";

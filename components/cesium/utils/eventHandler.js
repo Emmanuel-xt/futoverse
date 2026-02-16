@@ -14,7 +14,6 @@ import { checkIfTileOccupied } from "@constants/functions";
 export const setupEventHandlers = (viewer, handlers) => {
   const {
     shops,
-    setShowModal,
 
     setShowShopModal,
     setOccuppiedTileModal, //

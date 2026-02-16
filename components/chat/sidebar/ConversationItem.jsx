@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Check, CheckCheck, Users, VolumeX } from "lucide-react";
 import useConversation from "zustand/useConversation";
-import { markMessagesAsRead } from "@lib/actions/Chat.prisma";
+import { markMessagesAsRead } from "@lib/actions/message.prisma";
 import { useOnlineUsers } from "@components/providers/OnlineUsersProvider";
 import useTypingStore from "zustand/useTypingStore";
 import { cn } from "@lib/utils";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 import useSidebarConversations from "zustand/useSidebarConversations";
 import useImageModal from "hooks/useImageModal";
 
@@ -134,9 +134,11 @@ const ConversationItem = memo(function ConversationItem({ conversation }) {
               alt={conversation.name}
               width={48}
               height={48}
+              sizes="48px"
+              loading="lazy"
               className="w-full h-full object-cover"
               onClick={(e) => {
-                e.stopPropagation(); // prevent triggering the conversation select
+                e.stopPropagation();
                 if (conversation.picture) openModal(conversation.picture);
               }}
             />

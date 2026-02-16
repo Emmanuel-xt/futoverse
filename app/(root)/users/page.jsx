@@ -4,7 +4,7 @@ import {
   cancelFriendRequest,
   sendFriendRequest,
 } from "@lib/actions/connect.prisma";
-import { fetchAllUsersForListing } from "@lib/actions/user.prisma";
+import { fetchAllUsersForListing } from "@lib/actions/user-queries";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";

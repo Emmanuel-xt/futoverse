@@ -3,7 +3,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRef, useEffect } from "react";
 import { UserCard } from "../UserCard";
-import { fetchUnconnectedUsers } from "@lib/actions/user.prisma";
+import { fetchUnconnectedUsers } from "@lib/actions/user-queries";
 import { Skeleton } from "@components/ui/skeleton";
 import { Button } from "@components/ui/button";
 import Link from "next/link";

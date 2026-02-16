@@ -14,7 +14,7 @@ import { Textarea } from "@components/ui/textarea";
 import Image from "next/image";
 import { openDatabase } from "@lib/indexedDB";
 import { useSession } from "next-auth/react";
-import { createGroupChat } from "@lib/actions/Chat.prisma";
+import { createGroupChat } from "@lib/actions/conversation.prisma";
 
 // interface NewGroupModalProps {
 //   open: boolean

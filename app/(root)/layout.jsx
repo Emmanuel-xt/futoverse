@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "@styles/globals.css";
-import ButtomNav from "@components/ButtomNav";
+import BottomNav from "@components/BottomNav";
 import Provider from "@components/providers/SessionProvider";
 import {
   CoreProviders,
@@ -11,10 +11,22 @@ import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DailyRewardWrapper } from "@components/leaderboard/daily-reward-wrapper";
+import { ErrorBoundary } from "@components/ui/error-boundary";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+});
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata = {
+  metadataBase: new URL("https://futoverse.com"),
   title: "Futoverse - 3D Digital Twin of FUTO Campus",
   icons: {
     icon: "/icons/logo-192x192.png",
@@ -83,12 +95,14 @@ export default function RootLayout({ children }) {
             <RealtimeProviders>
               <LocationProvider>
                 <main className="bg-light">
+                  <ErrorBoundary>
                   <div className="">{children}</div>
+                  </ErrorBoundary>
                   <Toaster />
                   <Analytics />
                   <SpeedInsights />
                   <DailyRewardWrapper />
-                  <ButtomNav />
+                  <BottomNav />
                 </main>
               </LocationProvider>
             </RealtimeProviders>

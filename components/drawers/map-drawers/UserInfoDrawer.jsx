@@ -21,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Badge } from "@components/ui/badge";
 import { Skeleton } from "@components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { fetchOnlyUserInfo } from "@lib/actions/user.prisma";
+import { fetchOnlyUserInfo } from "@lib/actions/user-queries";
 import { drawLineBetweenPoints } from "@constants/functions";
 import { useCesiumViewer } from "@components/providers/CesiumViewerProvider";
 import { useLocation } from "@components/providers/LocationProvider";

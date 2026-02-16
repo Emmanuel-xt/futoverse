@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useConversation from "zustand/useConversation";
-import socket from "@components/socket/Socket";
+import socket from "@lib/socket";
 
 const TypingIndicator = () => {
   const [typingUsers, setTypingUsers] = useState([]);

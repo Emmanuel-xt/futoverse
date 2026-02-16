@@ -1,4 +1,4 @@
-import { getUsersForSidebar } from "@lib/actions/Chat.prisma";
+import { getUsersForSidebar } from "@lib/actions/conversation.prisma";
 import { openDatabase } from "@lib/indexedDB";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
@@ -58,6 +59,8 @@ export function CandidateEditForm({ candidate }) {
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(candidate.picture || "");
   const router = useRouter();
+  const { data: session } = useSession();
+  const userId = Number(session?.user?.id);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -112,7 +115,7 @@ export function CandidateEditForm({ candidate }) {
         picture: uploadedImageUrl,
       };
 
-      const result = await updateCandidate(candidate.id, candidateData, 1); // TODO: Replace with actual user ID from auth
+      const result = await updateCandidate(candidate.id, candidateData, userId);
 
       if (result.success) {
         setIsSubmitted(true);

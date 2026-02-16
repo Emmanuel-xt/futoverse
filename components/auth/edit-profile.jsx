@@ -14,7 +14,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-import { fetchUserByUsername, updateUser } from "@lib/actions/user.prisma";
+import { fetchUserByUsername } from "@lib/actions/user-queries";
+import { updateUser } from "@lib/actions/user-mutations";
 import { departments } from "@constants/arrays";
 import { cn } from "@lib/utils";
 // import { ProfileFormSkeleton } from "@/components/profile-form-skeleton";

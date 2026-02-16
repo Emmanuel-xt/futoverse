@@ -117,8 +117,8 @@ export class AppNotifications {
         })
 
         await NotificationService.sendQueuedNotification({
-            userId: postOwnerId,
-            senderId: likerId,
+            userId: String(postOwnerId),
+            senderId: String(likerId),
             title: "Post Liked",
             body: `${liker?.name} liked your post`,
             link: `/post/${postId}`,

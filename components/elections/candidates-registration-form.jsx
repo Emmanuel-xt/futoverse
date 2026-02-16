@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
@@ -56,6 +57,8 @@ export function CandidateRegistrationForm() {
   const [imageFile, setImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const { data: session } = useSession();
+  const userId = Number(session?.user?.id);
   const router = useRouter();
 
   const handleInputChange = (field, value) => {
@@ -111,7 +114,7 @@ export function CandidateRegistrationForm() {
         picture: uploadedImageUrl || formData.picture,
       };
 
-      const result = await createCandidate(candidateData, 1); // TODO: Replace with actual user ID from auth
+      const result = await createCandidate(candidateData, userId);
 
       if (result.success) {
         setIsSubmitted(true);

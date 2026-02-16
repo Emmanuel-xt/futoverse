@@ -70,7 +70,7 @@ export function PostFeedCompact({ userId, initialPosts }) {
     );
   }
 
-  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
+  const posts = data?.pages?.flatMap((page) => page?.posts ?? []) ?? [];
 
   if (posts.length === 0) {
     return (

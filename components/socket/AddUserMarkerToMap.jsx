@@ -21,73 +21,71 @@ export const AddUserMarkerToMap = () => {
   const markerIdRef = useRef(null);
 
   useEffect(() => {
-    if (viewer && currentPosition && session) {
-      const { longitude, latitude } = currentPosition;
-      const username = session?.user.username;
+    if (!socket || !viewer || !currentPosition || !session) return;
 
-      // Throttle location updates
-      const currentLocationString = `${longitude}-${latitude}`;
-      if (lastSentLocation.current === currentLocationString) return;
-      lastSentLocation.current = currentLocationString;
+    const { longitude, latitude } = currentPosition;
+    const username = session?.user.username;
 
-      // Fallback to username-based ID if socket.id is not available
-      const fallbackId = `user-${username}`;
-      const socketBasedId = socket.id ? `user-${socket.id}` : fallbackId;
-      markerIdRef.current = socketBasedId;
+    // Throttle location updates
+    const currentLocationString = `${longitude}-${latitude}`;
+    if (lastSentLocation.current === currentLocationString) return;
+    lastSentLocation.current = currentLocationString;
 
-      const position = Cartesian3.fromDegrees(longitude, latitude, 5);
+    // Fallback to username-based ID if socket.id is not available
+    const fallbackId = `user-${username}`;
+    const socketBasedId = socket.id ? `user-${socket.id}` : fallbackId;
+    markerIdRef.current = socketBasedId;
 
-      // Check if the user's marker already exists and update its position
-      const existingEntity = viewer.entities.getById(fallbackId);
-      if (existingEntity) {
-        existingEntity.position = position;
-        viewer.scene.requestRender();
-      } else {
-        viewer.entities.add({
-          id: `user-${username}`,
-          name: `User: ${username}`,
-          position: position,
-          properties: {
-            username: username,
-            type: "user",
-            coordinates: { longitude, latitude },
-          },
-          model: {
-            uri: "/models/boy.glb",
-            scale: 9.0,
-            minimumPixelSize: 100,
-            maximumScale: 9.0,
-            heightReference: HeightReference.CLAMP_TO_GROUND,
-          },
-          billboard: {
-            image: "/images/red-triangle.png", // Triangle hovering above
-            verticalOrigin: VerticalOrigin.BOTTOM,
-            pixelOffset: new Cartesian2(0, -30), // Adjust to sit on top of the head
-            scale: 0.4,
-            distanceDisplayCondition: new DistanceDisplayCondition(0.0, 1e7), // Always visible
-          },
-        });
-        viewer.scene.requestRender();
-      }
+    const position = Cartesian3.fromDegrees(longitude, latitude, 5);
 
-      // Emit location to the server for other users
-      if (socket.connected) {
-        socket.emit("update_location", {
-          socketId: socket.id,
-          username,
-          latitude,
-          longitude,
-        });
-      } else {
-        // console.log(
-        //   "My location updates wasnt sent because socket is not connected "
-        // );
-      }
+    // Check if the user's marker already exists and update its position
+    const existingEntity = viewer.entities.getById(fallbackId);
+    if (existingEntity) {
+      existingEntity.position = position;
+      viewer.scene.requestRender();
+    } else {
+      viewer.entities.add({
+        id: `user-${username}`,
+        name: `User: ${username}`,
+        position: position,
+        properties: {
+          username: username,
+          type: "user",
+          coordinates: { longitude, latitude },
+        },
+        model: {
+          uri: "/models/boy.glb",
+          scale: 9.0,
+          minimumPixelSize: 100,
+          maximumScale: 9.0,
+          heightReference: HeightReference.CLAMP_TO_GROUND,
+        },
+        billboard: {
+          image: "/images/red-triangle.png", // Triangle hovering above
+          verticalOrigin: VerticalOrigin.BOTTOM,
+          pixelOffset: new Cartesian2(0, -30), // Adjust to sit on top of the head
+          scale: 0.4,
+          distanceDisplayCondition: new DistanceDisplayCondition(0.0, 1e7), // Always visible
+        },
+      });
+      viewer.scene.requestRender();
     }
-  }, [currentPosition, session, viewer]);
+
+    // Emit location to the server for other users
+    if (socket.connected) {
+      socket.emit("update_location", {
+        socketId: socket.id,
+        username,
+        latitude,
+        longitude,
+      });
+    }
+  }, [currentPosition, session, viewer, socket]);
 
   // Update marker ID when socket.id becomes available
   useEffect(() => {
+    if (!socket || !viewer) return;
+
     if (
       socket.id &&
       markerIdRef.current &&
@@ -97,14 +95,12 @@ export const AddUserMarkerToMap = () => {
       const newMarkerId = `user-${socket.id}`;
       markerIdRef.current = newMarkerId;
 
-      // Update the entity's ID in Cesium
-      const existingEntity = viewer.entities.getById(oldMarkerId);
+      const existingEntity = viewer?.entities.getById(oldMarkerId);
       if (existingEntity) {
-        // console.log("we wanted to change to entity id , but it wasnt possible");
-        // existingEntity.id = newMarkerId;
+        // Can't change entity ID in Cesium — would need remove + re-add
       }
     }
-  }, [socket.id, viewer]);
+  }, [socket?.id, viewer]);
 
   return null;
 };
@@ -116,6 +112,8 @@ export const DisplayAllUserMarkers = () => {
   const socket = useSocket();
 
   useEffect(() => {
+    if (!socket || !viewer || !viewerReady) return;
+
     const handleUpdateEntities = (data) => {
       // console.log("connected clients =", data);
       // console.log("useRef =", userEntitiesRef);

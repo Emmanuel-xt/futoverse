@@ -50,7 +50,6 @@ export const PostCard = memo(function PostCard({ post, userId }) {
   const [showCommentDrawer, setShowCommentDrawer] = useState(false);
 
   const likeMutation = useLikeMutation(userId);
-  console.log("user id at post card", userId);
   const trackViewMutation = useTrackView();
 
   // Track view when post comes into view

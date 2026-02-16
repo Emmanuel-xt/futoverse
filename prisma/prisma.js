@@ -1,18 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
-let prisma;
+const globalForPrisma = globalThis;
 
-if (process.env.NODE_ENV === 'production'){
-    prisma = new PrismaClient()
-} else {
-    if(!global.prisma){
-        global.prisma = new PrismaClient({
-            log: ['info'],
-        })
-        console.log('Prisma Client established ...')
-    }
-    prisma = global.prisma
-    console.log('Prisma Client already established ...')
+const prisma =
+  globalForPrisma.__prisma ??
+  new PrismaClient({
+    datasourceUrl: process.env.DATABASE_URL,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.__prisma = prisma;
 }
 
-export default prisma
+export default prisma;

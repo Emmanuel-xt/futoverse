@@ -16,7 +16,7 @@ const ChatLayout = () => {
   useReadReceiptListener();
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-[100dvh] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <div
         className={cn(

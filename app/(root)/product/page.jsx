@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Search, ChevronDown, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
-import { fetchAllProductS } from "@lib/actions/product.prisma";
+import { fetchAllProducts } from "@lib/actions/product.prisma";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { flytoDestination } from "@constants/functions";
@@ -19,7 +19,7 @@ export default function ProductPage() {
   const fetchAllProducts = async () => {
     setLoading(true);
     try {
-      const all = await fetchAllProductS();
+      const all = await fetchAllProducts();
       setAllProducts(all);
       setProducts(all);
     } finally {

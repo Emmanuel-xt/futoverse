@@ -3,8 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import {
   ArrowLeft,
-  Phone,
-  Video,
   MoreVertical,
   Users,
   Search,
@@ -25,18 +23,14 @@ const MessageContainer = () => {
   const onlineUsers = useOnlineUsers();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
-  const [openProfilePanel, setOpenProfilePanel] = useState(false);
   const router = useRouter();
   const { openProfile } = useProfilePanel();
-
-  // console.log("Selected COnversation", selectedConversation);
 
   const isOnline =
     selectedConversation &&
     onlineUsers.some((user) => user.userId === selectedConversation.id);
 
   const handleBack = () => {
-    // setSelectedConversation(null);
     window.history.back();
   };
 
@@ -72,7 +66,7 @@ const MessageContainer = () => {
 
   if (!selectedConversation) {
     return (
-      <div className="hidden md:flex flex-1 z-40 items-center justify-center bg-gray-50">
+      <div className="hidden md:flex flex-1 z-40 items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="w-64 h-64 mx-auto mb-8 opacity-20">
             <svg viewBox="0 0 303 172" className="w-full h-full">
@@ -98,10 +92,10 @@ const MessageContainer = () => {
               </g>
             </svg>
           </div>
-          <h2 className="text-2xl font-light text-gray-600 mb-2">
+          <h2 className="text-2xl font-light text-gray-600 dark:text-gray-300 mb-2">
             Keep your phone connected
           </h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
             Futoverse connects to your phone to sync messages. To reduce data
             usage, connect your phone to Wi-Fi.
           </p>
@@ -113,24 +107,24 @@ const MessageContainer = () => {
   return (
     <div className="flex flex-col h-[100dvh] ">
       {/* Header */}
-      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 sticky top-0  z-50">
+      <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0  z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden p-2"
+              className="md:hidden p-2 focus-visible:ring-2 focus-visible:ring-primary"
               onClick={handleBack}
+              aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
 
             <div className="relative">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
                 {selectedConversation.isGroup ? (
                   <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: "#2D75FB" }}
+                    className="w-full h-full flex items-center justify-center bg-primary"
                   >
                     <Users className="w-5 h-5 text-white" />
                   </div>
@@ -142,23 +136,24 @@ const MessageContainer = () => {
                     alt={selectedConversation.name}
                     width={40}
                     height={40}
+                    sizes="40px"
+                    priority
                     className="w-full h-full object-cover"
                   />
                 )}
               </div>
               {!selectedConversation.isGroup && isOnline && (
                 <div
-                  className="absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full"
-                  style={{ backgroundColor: "#2D75FB" }}
+                  className="absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white dark:border-gray-900 rounded-full bg-primary"
                 />
               )}
             </div>
 
             <div className="flex-1 min-w-0">
-              <h2 className="font-medium text-gray-900 truncate">
+              <h2 className="font-medium text-gray-900 dark:text-white truncate">
                 {selectedConversation.name}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {selectedConversation.isGroup
                   ? `${selectedConversation.participantCount || 0} participants`
                   : isOnline
@@ -169,37 +164,38 @@ const MessageContainer = () => {
           </div>
 
           <div className="flex items-center space-x-1">
-            <Button variant="ghost" size="sm" className="p-2">
-              <Search className="w-5 h-5 text-gray-600" />
+            <Button variant="ghost" size="sm" className="p-2 focus-visible:ring-2 focus-visible:ring-primary" aria-label="Search messages">
+              <Search className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </Button>
-            {/* <Button variant="ghost" size="sm" className="p-2">
-              <Phone className="w-5 h-5 text-gray-600" />
-            </Button> */}
-            {/* <Button variant="ghost" size="sm" className="p-2">
-              <Video className="w-5 h-5 text-gray-600" />
-            </Button> */}
             <div className="relative" ref={menuRef}>
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-2 focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => setShowMenu(!showMenu)}
+                aria-label="More options"
+                aria-expanded={showMenu}
               >
-                <MoreVertical className="w-5 h-5 text-gray-600" />
+                <MoreVertical className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </Button>
 
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+                <div
+                  className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50"
+                  role="menu"
+                  onKeyDown={(e) => e.key === "Escape" && setShowMenu(false)}
+                >
+                  <button className="w-full px-4 py-2 text-left text-sm dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-visible:bg-gray-50 dark:focus-visible:bg-gray-700 focus-visible:outline-none" role="menuitem">
                     Contact info
                   </button>
                   <button
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                    className="w-full px-4 py-2 text-left text-sm dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus-visible:bg-gray-50 dark:focus-visible:bg-gray-700 focus-visible:outline-none"
                     onClick={handleViewProfile}
+                    role="menuitem"
                   >
                     View Profile
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50">
+                  <button className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus-visible:bg-gray-50 dark:focus-visible:bg-gray-700 focus-visible:outline-none" role="menuitem">
                     Delete chat
                   </button>
                 </div>
@@ -210,7 +206,7 @@ const MessageContainer = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 flex flex-col h-screen  bg-gray-50 relative">
+      <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 relative">
         {/* Background Pattern */}
         <div
           className="absolute inset-0 opacity-5"
@@ -223,7 +219,6 @@ const MessageContainer = () => {
         <TypingIndicator />
         <MessageInput />
       </div>
-      {/* {openProfilePanel && } */}
     </div>
   );
 };

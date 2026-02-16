@@ -21,7 +21,7 @@ import { ProfileActions } from "./profile-actions";
 import { useRouter } from "next/navigation";
 import Message from "@components/chat/messages/Message";
 import { MessagePanel } from "./message-panel";
-import { getConversationByUserId } from "@lib/actions/Chat.prisma";
+import { getConversationByUserId } from "@lib/actions/conversation.prisma";
 import useConversation from "zustand/useConversation";
 import MessageContainer from "@components/chat/messages/MessageContainer";
 import { signOut } from "next-auth/react";
@@ -132,12 +132,12 @@ export function ProfileHeader({
     }
 
     try {
-      const conversation = await getConversationByUserId(
+      const result = await getConversationByUserId(
         currentUserId,
         recieverId
       );
-      if (conversation) {
-        setSelectedConversation(conversation); // Set to Zustand or Context store
+      if (result?.receiver) {
+        setSelectedConversation(result.receiver); // Set to Zustand or Context store
       }
     } catch (err) {
       console.error("Failed to fetch conversation:", err);
@@ -280,6 +280,8 @@ export function ProfileHeader({
                 alt={user.name}
                 width={96}
                 height={96}
+                sizes="96px"
+                priority
                 className="w-full h-full object-cover"
               />
             </div>
