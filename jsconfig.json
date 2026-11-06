@@ -8,6 +8,7 @@
       "@prisma/*": ["prisma/*"],
       "@auth/*": ["auth/*"],
       "@constants/*": ["constants/*"],
+      "@/*": ["./*"]
     }
   }
 }
