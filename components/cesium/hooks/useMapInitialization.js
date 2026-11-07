@@ -51,7 +51,7 @@ export const useMapInitialization = ({
         6.963329954924063, // west
         5.350024989233731, // south
         7.024059572143244, // east
-        5.410862571178967 // north
+        5.410862571178967, // north
       );
 
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 50;
@@ -61,14 +61,14 @@ export const useMapInitialization = ({
       // Handle optional fly-to from URL
       // 🔹 Try restoring saved camera view
       const savedView = JSON.parse(
-        localStorage.getItem("cameraView") || "null"
+        localStorage.getItem("cameraView") || "null",
       );
       if (savedView) {
         viewer.camera.flyTo({
           destination: Cartesian3.fromRadians(
             savedView.lon,
             savedView.lat,
-            savedView.height
+            savedView.height,
           ),
           orientation: {
             heading: savedView.heading,
@@ -81,15 +81,11 @@ export const useMapInitialization = ({
         // Default view if no saved camera
         viewer.camera.flyTo({
           destination: Cartesian3.fromDegrees(
-            0.12211527832901911, // longitude
-            0.09381252264655088, // latitude
-            751.2011803076922 // height
+            6.996121931660761,
+            5.383035004589935,
+            600,
           ),
-          orientation: {
-            heading: 6.226261913948254, // radians
-            pitch: -0.8325870197715304,
-            roll: 0.000017565609374159408,
-          },
+          orientation: { heading: 0, pitch: -Math.PI / 3, roll: 0 },
         });
       }
 
@@ -121,7 +117,7 @@ export const useMapInitialization = ({
             heading: camera.heading,
             pitch: camera.pitch,
             roll: camera.roll,
-          })
+          }),
         );
       };
       viewer.camera.changed.addEventListener(saveCameraPosition);
